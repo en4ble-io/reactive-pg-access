@@ -152,10 +152,9 @@ enum class ExampleState(override var key: Int) : IntEnum {
 
 ## Contributing ##
 
-If you're interested in extending / improving this project, please contact me at mark@en4ble.io
+This project is work in progress and currently only supports the features that I need and find the time to implement.
 
-
-[]: https://github.com/vietj/reactive-pg-client/
+If you're interested in extending / improving this project, please contact me at mark@en4ble.io.
 
 ### TODO
 
