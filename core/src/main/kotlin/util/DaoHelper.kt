@@ -12,6 +12,7 @@ import io.reactiverse.kotlin.pgclient.preparedQueryAwait
 import io.reactiverse.kotlin.pgclient.queryAwait
 import io.reactiverse.pgclient.PgClient
 import io.reactiverse.pgclient.PgRowSet
+import io.reactiverse.pgclient.PgTransaction
 import io.reactiverse.pgclient.Row
 import org.jooq.Query
 import org.jooq.Record
@@ -136,8 +137,7 @@ object DaoHelper {
 
     private suspend fun runQuery(query: Query, client: PgClient, context: DatabaseContext, update: Boolean): PgRowSet {
         val sql = getSql(query, context)
-        val tx = null // context.getTx()
-        val inTx = if (tx != null) {
+        val inTx = if (client is PgTransaction) {
             "[Tx]"
         } else {
             "[NoTx]"
@@ -145,12 +145,11 @@ object DaoHelper {
         if (LOG.isTraceEnabled) {
             LOG.trace("{} about to run {}", inTx, sql)
         }
-        val connection = tx ?: client
         val result = if (query.bindValues.isEmpty()) {
             if (LOG.isTraceEnabled) {
                 LOG.trace("{} about to run {}: {}", inTx, if (update) "update" else "query", sql)
             }
-            connection.queryAwait(sql)
+            client.queryAwait(sql)
         } else {
             val params = JooqHelper.params(query)
             if (LOG.isTraceEnabled) {
@@ -161,7 +160,7 @@ object DaoHelper {
                     getQueryForLogging(sql, params)
                 )
             }
-            connection.preparedQueryAwait(sql, params)
+            client.preparedQueryAwait(sql, params)
         }
         if (LOG.isTraceEnabled) {
             LOG.trace("{} query returned {} results", inTx, result.size())

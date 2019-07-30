@@ -7,6 +7,7 @@ import io.en4ble.pgaccess.util.DaoHelperCommon.addLimit
 import io.en4ble.pgaccess.util.DaoHelperCommon.getQueryForLogging
 import io.en4ble.pgaccess.util.DaoHelperCommon.getSortFields
 import io.en4ble.pgaccess.util.JooqHelper.toUUIDList
+import io.reactiverse.pgclient.PgTransaction
 import io.reactiverse.reactivex.pgclient.PgClient
 import io.reactiverse.reactivex.pgclient.PgRowSet
 import io.reactiverse.reactivex.pgclient.Row
@@ -85,7 +86,7 @@ object RxDaoHelper {
     }
 
     fun readUUIDs(query: Query, page: PagingDTO? = null, context: DatabaseContext): Single<List<UUID>> {
-        return RxDaoHelper.readUUIDs(query, page, context.sqlClient, context)
+        return readUUIDs(query, page, context.sqlClient, context)
     }
 
     fun readUUIDs(
@@ -133,8 +134,7 @@ object RxDaoHelper {
 
     private fun runQuery(query: Query, client: PgClient, context: DatabaseContext, update: Boolean): Single<PgRowSet> {
         val sql = DaoHelperCommon.getSql(query, context)
-        val tx = null // context.getRxTx()
-        val inTx = if (tx != null) {
+        val inTx = if (client is PgTransaction) {
             "[Tx]"
         } else {
             "[NoTx]"
@@ -142,12 +142,11 @@ object RxDaoHelper {
         if (LOG.isTraceEnabled) {
             LOG.trace("{} about to run {}", inTx, sql)
         }
-        val connection = tx ?: client
         return if (query.bindValues.isEmpty()) {
             if (LOG.isTraceEnabled) {
                 LOG.trace("{} about to run {}: {}", inTx, if (update) "update" else "query", sql)
             }
-            connection.rxQuery(sql)
+            client.rxQuery(sql)
         } else {
             val params = JooqHelper.rxParams(query)
             if (LOG.isTraceEnabled) {
@@ -158,7 +157,7 @@ object RxDaoHelper {
                     getQueryForLogging(sql, params.delegate)
                 )
             }
-            connection.rxPreparedQuery(sql, params)
+            client.rxPreparedQuery(sql, params)
         }.map {
             if (LOG.isTraceEnabled) {
                 LOG.trace("{} query returned {} results", inTx, it.size())
