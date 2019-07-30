@@ -106,7 +106,7 @@ import static org.jooq.tools.StringUtils.defaultString;
  * @author Lukas Eder
  * @author Mark Hofmann (mark@en4ble.io)
  */
-@SuppressWarnings("ALL")
+@SuppressWarnings("unchecked")
 public class ExtendedJavaGenerator extends AbstractGenerator {
 
     private static final JooqLogger log = JooqLogger.getLogger(ExtendedJavaGenerator.class);
