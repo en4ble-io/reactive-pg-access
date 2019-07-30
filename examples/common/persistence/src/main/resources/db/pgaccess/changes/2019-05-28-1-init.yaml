@@ -1,0 +1,338 @@
+databaseChangeLog:
+  # we need to set the logical file path by hand so that we can run the script from both gradle and java
+  # otherwise the filename column will contain the full local path if run via gradle.
+  - logicalFilePath: db/pgaccess/changes/2019-05-28-1-init.yaml
+  - changeSet:
+      id: 2019-05-28-1-init-1
+      author: Mark Hofmann
+      changes:
+        - createTable:
+            remarks: An example table containing all datatypes that are supported by reactive-pg-access.
+            tableName: p_example
+            columns:
+              - column:
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: p_example_pk
+                  name: e_uuid
+                  type: UUID
+              - column:
+                  name: e_uuid_array
+                  type: _UUID
+              - column:
+                  name: e_text
+                  remarks: '{{minLength=10}}{{maxLength=200}}'
+                  type: TEXT
+              - column:
+                  name: e_text_array
+                  type: _TEXT
+              - column:
+                  name: e_string
+                  remarks: '{{minLength=4}}'
+                  type: VARCHAR(20)
+              - column:
+                  name: e_string_array
+                  type: _VARCHAR(20)
+              - column:
+                  name: e_short_value
+                  type: SMALLINT
+              - column:
+                  name: e_short_array
+                  type: _INT2
+              - column:
+                  name: e_integer_value
+                  type: INTEGER
+              - column:
+                  name: e_integer_array
+                  type: _INT4
+              - column:
+                  name: e_long_value
+                  type: BIGINT
+              - column:
+                  name: e_long_array
+                  type: _INT8
+              - column:
+                  name: e_float_value
+                  type: FLOAT4
+              - column:
+                  name: e_float_array
+                  type: _FLOAT4
+              - column:
+                  name: e_double_value
+                  type: FLOAT8
+              - column:
+                  name: e_double_array
+                  type: _FLOAT8
+              - column:
+                  name: e_boolean_value
+                  type: BOOLEAN
+              - column:
+                  name: e_boolean_array
+                  type: _BOOL
+              - column:
+                  name: e_date
+                  type: date
+              - column:
+                  name: e_date_array
+                  type: _DATE
+              - column:
+                  name: e_time
+                  type: TIME WITHOUT TIME ZONE
+              - column:
+                  name: e_time_array
+                  type: _TIME
+              - column:
+                  name: e_timetz
+                  type: TIME WITH TIME ZONE
+              - column:
+                  name: e_timetz_array
+                  type: _TIMETZ
+              - column:
+                  name: e_date_time
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: e_date_time_array
+                  type: _TIMESTAMP
+              - column:
+                  name: e_date_timetz
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  name: e_date_timetz_array
+                  type: _TIMESTAMPTZ
+              - column:
+                  name: e_jsonb
+                  type: JSONB
+              - column:
+                  name: e_jsonb_array
+                  type: _JSONB
+              - column:
+                  name: e_point
+                  type: POINT
+              - column:
+                  name: e_point_array
+                  type: _POINT
+              - column:
+                  name: e_line
+                  type: LINE
+              - column:
+                  name: e_line_array
+                  type: _LINE
+              - column:
+                  name: e_line_segment
+                  type: LSEG
+              - column:
+                  name: e_line_segment_array
+                  type: _LSEG
+              - column:
+                  name: e_box
+                  type: BOX
+              - column:
+                  name: e_box_array
+                  type: _BOX
+              - column:
+                  name: e_path
+                  type: PATH
+              - column:
+                  name: e_path_array
+                  type: _PATH
+              - column:
+                  name: e_polygon
+                  type: POLYGON
+              - column:
+                  name: e_polygon_array
+                  type: _POLYGON
+              - column:
+                  name: e_circle
+                  type: CIRCLE
+              - column:
+                  name: e_circle_array
+                  type: _CIRCLE
+              - column:
+                  name: e_name
+                  type: NAME
+              - column:
+                  name: e_name_array
+                  type: _NAME
+              - column:
+                  name: e_interval
+                  type: INTERVAL
+              - column:
+                  name: e_interval_array
+                  type: _INTERVAL
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                  name: e_short_serial
+                  type: SMALLINT
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                  name: e_serial
+                  type: SERIAL
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                  name: e_long_serial
+                  type: BIGSERIAL
+              - column:
+                  defaultValue: new
+                  name: e_state
+                  type: VARCHAR(3)
+        - createTable:
+            tableName: p_conference
+            remarks: A simple conference.
+            columns:
+              - column:
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: t_conference_pk
+                  name: c_id
+                  type: UUID
+              - column:
+                  defaultValueComputed: now()
+                  name: c_created
+                  remarks: '{{internal}}'
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  defaultValueComputed: now()
+                  name: c_updated
+                  remarks: '{{internal}}'
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: c_name
+                  remarks: 'The name of the conference. {{minLength=5}}{{maxLength=30}}'
+                  type: VARCHAR(30)
+              - column:
+                  name: c_about
+                  remarks: 'The description of the conference. {{minLength=20}}{{maxLength=2000}}'
+                  type: TEXT
+              - column:
+                  name: c_start_date
+                  type: date
+              - column:
+                  name: c_end_date
+                  type: date
+              - column:
+                  defaultValue: N
+                  name: c_state
+                  remarks: '{{default=NEW}}{{minLength=3}}{{maxLength=7}}{{readOnly}}'
+                  type: VARCHAR(2)
+              - column:
+                  name: c_location
+                  type: POINT
+  - changeSet:
+      id: 2019-05-28-1-init-2
+      author: Mark Hofmann
+      changes:
+        - insert:
+            tableName: p_conference
+            columns:
+              - column:
+                  name: c_id
+                  value: 'fead54b1-8340-4803-a9f8-2ba819e88cfb'
+              - column:
+                  name: c_name
+                  value: 'Test 1'
+              - column:
+                  name: c_about
+                  value: 'About Test 1'
+              - column:
+                  name: c_start_date
+                  value: '2019-07-20'
+              - column:
+                  name: c_end_date
+                  value: '2019-07-21'
+        - insert:
+            tableName: p_conference
+            columns:
+              - column:
+                  name: c_id
+                  value: 'fead54b1-8340-4803-a9f8-2ba819e88cfa'
+              - column:
+                  name: c_name
+                  value: 'Test 2'
+              - column:
+                  name: c_about
+                  value: 'About Test 2'
+              - column:
+                  name: c_start_date
+                  value: '2019-08-22'
+              - column:
+                  name: c_end_date
+                  value: '2019-08-24'
+        - insert:
+            tableName: p_conference
+            columns:
+              - column:
+                  name: c_id
+                  value: 'fead54b1-8340-4803-a9f8-2ba819e88cf0'
+              - column:
+                  name: c_name
+                  value: 'Test 3'
+              - column:
+                  name: c_about
+                  value: 'About Test 3'
+              - column:
+                  name: c_start_date
+                  value: '2019-05-12'
+              - column:
+                  name: c_end_date
+                  value: '2019-05-14'
+        - insert:
+            tableName: p_conference
+            columns:
+              - column:
+                  name: c_id
+                  value: 'fead54b1-8340-4803-a9f8-2ba819e88cf1'
+              - column:
+                  name: c_name
+                  value: 'Test 4'
+              - column:
+                  name: c_about
+                  value: 'About Test 4'
+              - column:
+                  name: c_start_date
+                  value: '2019-06-01'
+              - column:
+                  name: c_end_date
+                  value: '2019-06-01'
+        - insert:
+            tableName: p_conference
+            columns:
+              - column:
+                  name: c_id
+                  value: 'fead54b1-8340-4803-a9f8-2ba819e88cf2'
+              - column:
+                  name: c_name
+                  value: 'Test 5'
+              - column:
+                  name: c_about
+                  value: 'About Test 5'
+              - column:
+                  name: c_start_date
+                  value: '2019-08-09'
+              - column:
+                  name: c_end_date
+                  value: '2019-08-13'
+  - changeSet:
+      id: 2019-05-28-1-init-3
+      author: Mark Hofmann
+      changes:
+        - createView:
+            viewName: conference_v1
+            fullDefinition: false
+            remarks: A simple conference.
+            selectQuery: |2-
+               SELECT p_conference.c_id AS id,
+                  p_conference.c_name AS name,
+                  p_conference.c_about AS about,
+                  p_conference.c_start_date AS start_date,
+                  p_conference.c_end_date AS end_date,
+                  p_conference.c_location AS location,
+                  p_conference.c_state AS state
+                 FROM pgaccess.p_conference;

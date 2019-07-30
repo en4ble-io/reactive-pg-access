@@ -1,0 +1,33 @@
+description = 'async db access with jooq'
+
+dependencies {
+    compile project(":api")
+
+    compile "org.jooq:jooq:$jooqVersion"
+
+    compile "io.reactiverse:reactive-pg-client:$pgClientVersion"
+
+    compile "io.vertx:vertx-rx-java2:$vertxVersion"
+    compile "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+
+    compile "io.vertx:vertx-lang-kotlin:$vertxVersion"
+    compile "io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion"
+
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
+
+    testCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId archivesBaseName
+            from components.java
+            // define which artifacts should be published
+            artifact sourcesJar
+        }
+    }
+}
+repositories {
+    mavenCentral()
+}

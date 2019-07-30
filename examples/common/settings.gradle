@@ -1,0 +1,3 @@
+rootProject.name = "pgaccess-examples-common"
+include ':api',
+        ':persistence'

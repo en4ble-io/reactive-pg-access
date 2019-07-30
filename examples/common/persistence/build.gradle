@@ -1,0 +1,138 @@
+import groovy.xml.MarkupBuilder
+import org.jooq.codegen.GenerationTool
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
+        classpath "org.postgresql:postgresql:$postgresqlVersion"
+    }
+}
+plugins {
+    id 'org.liquibase.gradle' version '2.0.0'
+}
+
+dependencies {
+    compile project(":api")
+    compile "io.en4ble.reactive-pg-access:reactive-pg-access-core:$reactivePgAccessVersion"
+    compile "org.postgresql:postgresql:$postgresqlVersion"
+
+    compile('org.liquibase:liquibase-core:' + liquibaseVersion)
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
+    compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+
+    compile "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
+
+
+    liquibaseRuntime "org.liquibase:liquibase-core:$liquibaseVersion"
+    liquibaseRuntime "org.postgresql:postgresql:$postgresqlVersion"
+}
+
+def dbUser = 'postgres'
+def dbPassword = 'postgres'
+def dbSchema = 'pgaccess'
+
+// runs liquibase from gradle
+// NOTE that you need to set a symbolic link that points to the db directory
+// from the server directory since the liquibase gradle plugin cannot handle relative paths
+liquibase {
+    activities {
+        main {
+            changeLogFile 'src/main/resources/db/pgaccess/master.yaml'
+            url 'jdbc:postgresql://localhost:5432/postgres'
+            username dbUser
+            password dbPassword
+            defaultSchemaName dbSchema
+        }
+    }
+}
+
+task jooqGenerate {
+    doLast() {
+        def writer = new StringWriter()
+        def xml = new MarkupBuilder(writer)
+                .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.11.0.xsd') {
+                    jdbc {
+                        driver('org.postgresql.Driver')
+                        url('jdbc:postgresql://localhost:5432/postgres')
+                        user(dbUser)
+                        password(dbPassword)
+                    }
+                    generator {
+                        name('io.en4ble.pgaccess.generator.AsyncJooqWithOpenapiJavaGenerator')
+                        database {
+                            name('org.jooq.meta.postgres.PostgresDatabase')
+                            excludes('databasechangelog|databasechangeloglock')
+                            recordTimestampFields('.*_updated')
+                            inputSchema(dbSchema)
+                            includeTables(true)
+                            includeRoutines(true)
+                            includePackages(false)
+                            includeUDTs(true)
+                            includeSequences(true)
+                            forcedTypes {
+                                forcedType {
+                                    userType('io.en4ble.examples.enums.ConferenceState')
+                                    converter('io.en4ble.examples.converters.ConferenceStateEnumConverter')
+                                    expression('.*\\.p_conference\\.c_state')
+                                }
+                                forcedType {
+                                    userType('io.en4ble.examples.enums.ConferenceState')
+                                    converter('io.en4ble.examples.converters.ConferenceStateEnumConverter')
+                                    expression('.*\\.conference_v1\\.state')
+                                }
+                                forcedType {
+                                    userType('io.en4ble.examples.dto.TestDTO')
+                                    converter('io.en4ble.examples.converters.TestDTOConverter')
+                                    expression('.*\\.p_example\\.e_jsonb')
+                                }
+                                forcedType {
+                                    userType('io.en4ble.examples.dto.TestDTO[]')
+                                    converter('io.en4ble.examples.converters.TestDTOArrayConverter')
+                                    expression('.*\\.p_example\\.e_jsonb_array')
+                                }
+                            }
+                        }
+                        generate([:]) {
+                            deprecated false
+                            records true
+                            interfaces false
+                            fluentSetters true
+                            pojos true
+                            daos true
+                            javaTimeTypes true
+                        }
+                        target() {
+                            packageName('io.en4ble.examples.jooq')
+                            directory("$projectDir/src/main/jooq")
+                        }
+                        strategy {
+                            name('io.en4ble.pgaccess.generator.TablePrefixAwareGeneratorStrategy')
+                        }
+                    }
+                }
+        GenerationTool.generate(writer.toString())
+    }
+}
+jooqGenerate.doLast() {
+    def srcPath = "src/main/jooq/io/en4ble/examples/jooq/tables/pojos/"
+    def sourceDir = new File(project.projectDir, srcPath)
+    def targetDir = new File(project.projectDir, "../api/" + srcPath)
+    ant.delete(file: new File(project.projectDir, "../api/src/main/jooq/io"))
+    targetDir.mkdirs();
+    ant.move(file: sourceDir, tofile: targetDir)
+}
+
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            artifactId archivesBaseName
+//            from components.java
+//            artifact sourcesJar
+//        }
+//    }
+//}

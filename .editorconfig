@@ -1,0 +1,6 @@
+# https://editorconfig.org/
+# NOTE: this file is currently NOT honored by the ktlint plugin
+[*.{kt, kts, java}]
+indent_size = 4
+insert_final_newline = true
+max_line_length = 120

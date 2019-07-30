@@ -1,0 +1,23 @@
+micronaut:
+  application:
+    name: mn-pgaccess
+  server:
+    cors:
+      enabled: true
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /openapi/**
+jackson:
+  serialization:
+    writeDatesAsTimestamps: false
+en4ble:
+  db:
+    host: localhost
+    database: postgres
+    port: 5432
+    schema: example
+    maxPoolSize: 20
+    username: postgres
+    password: postgres

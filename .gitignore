@@ -1,0 +1,10 @@
+.idea
+.vertx
+build
+out
+generated
+/logs/
+.gradle
+*.lock
+file-uploads
+*.log

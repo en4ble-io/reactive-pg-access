@@ -1,0 +1,78 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
+        classpath "org.postgresql:postgresql:$postgresqlVersion"
+    }
+}
+plugins {
+    id "application"
+    id "org.jetbrains.kotlin.jvm" version '1.3.21'
+    id 'org.liquibase.gradle' version '2.0.0'
+    id "com.github.johnrengelman.shadow" version "4.0.2"
+    id "com.gorylenko.gradle-git-properties" version "2.0.0"
+}
+
+version "0.1"
+group "io.en4ble.examples"
+
+apply plugin: 'kotlin'
+apply plugin: 'maven'
+apply plugin: 'idea'
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+mainClassName = "io.en4ble.pgaccess.example.ServerKt"
+
+shadowJar {
+    baseName = 'server'
+    classifier = null
+    version = null
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+dependencies {
+    compile("io.en4ble.examples:persistence:$version")
+    compile "io.vertx:vertx-web:$vertxVersion"
+
+    compile "io.vertx:vertx-rx-java2:$vertxVersion"
+    compile "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+
+    compile "io.vertx:vertx-lang-kotlin:$vertxVersion"
+    compile "io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion"
+
+    // required for bugfixing (breakpoints in intellij) only
+    compile "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
+
+//    compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
+//    compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:" + jacksonVersion
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.4.2"
+//    testCompile "org.testcontainers:postgresql:$postgresqlTCVersion"
+}
+
+idea {
+    module {
+        downloadJavadoc = false
+        downloadSources = true
+    }
+}

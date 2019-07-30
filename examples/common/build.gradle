@@ -1,0 +1,72 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version '1.3.21'
+}
+
+subprojects {
+    apply plugin: 'kotlin'
+    apply plugin: 'maven'
+    apply plugin: 'idea'
+
+
+    version "0.1"
+    group "io.en4ble.examples"
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://jcenter.bintray.com" }
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs 'src/main/kotlin'
+                srcDirs 'src/main/java'
+                srcDirs 'src/main/jooq'
+            }
+        }
+    }
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = '1.8'
+            //Will retain parameter names for Java reflection
+            javaParameters = true
+        }
+    }
+
+    compileTestKotlin {
+        kotlinOptions {
+            jvmTarget = '1.8'
+            javaParameters = true
+        }
+    }
+
+    configurations {
+        tests
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        archiveClassifier.set('sources')
+        from sourceSets.main.allSource
+    }
+
+    task packageTests(type: Jar) {
+        archiveClassifier.set('tests')
+        archiveBaseName.set("${project.archivesBaseName}")
+        from sourceSets.test.output
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives packageTests
+        tests packageTests
+    }
+
+    idea {
+        module {
+            downloadJavadoc = false
+            downloadSources = true
+        }
+    }
+}

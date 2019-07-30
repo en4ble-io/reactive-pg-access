@@ -1,0 +1,13 @@
+dependencies {
+    compile "io.en4ble.reactive-pg-access:reactive-pg-access-api:$reactivePgAccessVersion"
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
+}
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            artifactId archivesBaseName
+//            from components.java
+//            artifact sourcesJar
+//        }
+//    }
+//}

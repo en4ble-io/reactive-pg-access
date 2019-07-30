@@ -1,0 +1,24 @@
+description = "generator for jooq"
+
+dependencies {
+    compile project(":core")
+    compile "org.jooq:jooq:$jooqVersion"
+    compile "org.jooq:jooq-codegen:$jooqVersion"
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId archivesBaseName
+            from components.java
+            // define which artifacts should be published
+            artifact sourcesJar
+        }
+    }
+}
+repositories {
+    mavenCentral()
+}
