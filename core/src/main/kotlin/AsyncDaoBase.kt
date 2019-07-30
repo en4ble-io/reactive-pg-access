@@ -278,6 +278,7 @@ protected constructor(
         return map(res)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <ID, VALUE> getReadPageQuery(
         order: OrderDTO,
         baseValue: VALUE?,

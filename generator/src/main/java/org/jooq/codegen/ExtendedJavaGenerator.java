@@ -106,6 +106,7 @@ import static org.jooq.tools.StringUtils.defaultString;
  * @author Lukas Eder
  * @author Mark Hofmann (mark@en4ble.io)
  */
+@SuppressWarnings("ALL")
 public class ExtendedJavaGenerator extends AbstractGenerator {
 
     private static final JooqLogger log = JooqLogger.getLogger(ExtendedJavaGenerator.class);
@@ -5561,6 +5562,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
         return getType(db, schema, t, p, s, name(u), javaType, defaultType, udtMode);
     }
 
+    @SuppressWarnings("deprecation")
     protected String getType(Database db, SchemaDefinition schema, String t, int p, int s, Name u, String javaType, String defaultType, Mode udtMode) {
         String type = defaultType;
 

@@ -40,13 +40,13 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.OffsetTime
-import java.util.Arrays
 import java.util.Collections.emptyList
 import java.util.UUID
 import kotlin.math.absoluteValue
 
 /** @author Mark Hofmann (mark@en4ble.io)
  */
+@Suppress("unused")
 open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     private val LOG = JooqLogger.getLogger(AsyncJooqWithOpenapiJavaGenerator::class.java)
     private lateinit var en4bleGeneratorStrategy: TablePrefixAwareGeneratorStrategy
@@ -54,16 +54,16 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     protected open val updatableDaoBaseClassFqn = "io.en4ble.pgaccess.UpdatableAsyncDaoBase"
 
     init {
-        System.out.println("Customized generator for JOOQ with support for OpenApi and JAXRS")
-        System.out.println("You can use the following in your column definitions to control the code generation:")
-        System.out.println("comment contains {{minLength=<int>}} - generates @org.hibernate.validator.constraints.Length(min=<int>)")
-        System.out.println("comment contains {{maxLength=<int>}} - generates @org.hibernate.validator.constraints.Length(max=<int>) ")
-        System.out.println("comment contains {{email}} - generates @javax.validation.constraints.Email")
-        System.out.println("comment contains {{default=<string>}} - generates defaultValue=\"your value\" - Use this with TypedEnum columns to override the database default value.")
-        System.out.println("comment contains {{readOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY")
-        System.out.println("comment contains {{writeOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY")
-        System.out.println("comment contains {{internal}} - generates @io.swagger.v3.oas.annotations.Hidden + @com.fasterxml.jackson.annotation.JsonIgnore - Use this to hide fields from the public API definitions.")
-        System.out.println("column name starts with 'internal_' - same as {{internal}} but can be used e.g. in database views to clearly indicate which fields will not be included in the public API.")
+        println("Customized generator for JOOQ with support for OpenApi and JAXRS")
+        println("You can use the following in your column definitions to control the code generation:")
+        println("comment contains {{minLength=<int>}} - generates @org.hibernate.validator.constraints.Length(min=<int>)")
+        println("comment contains {{maxLength=<int>}} - generates @org.hibernate.validator.constraints.Length(max=<int>) ")
+        println("comment contains {{email}} - generates @javax.validation.constraints.Email")
+        println("comment contains {{default=<string>}} - generates defaultValue=\"your value\" - Use this with TypedEnum columns to override the database default value.")
+        println("comment contains {{readOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY")
+        println("comment contains {{writeOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY")
+        println("comment contains {{internal}} - generates @io.swagger.v3.oas.annotations.Hidden + @com.fasterxml.jackson.annotation.JsonIgnore - Use this to hide fields from the public API definitions.")
+        println("column name starts with 'internal_' - same as {{internal}} but can be used e.g. in database views to clearly indicate which fields will not be included in the public API.")
     }
 
     override fun printTableJPAAnnotation(out: JavaWriter, table: TableDefinition) {
@@ -104,16 +104,13 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 accessMode = "WRITE_ONLY"
                 comment = comment.replace("{{writeOnly}}", "")
             }
-            var customMaxLength: Boolean
             val maxLengthStart = comment.indexOf("{{maxLength=")
             maxLength = if (maxLengthStart > -1) {
                 val maxLengthEnd = comment.indexOf("}}", maxLengthStart)
                 val length = comment.substring(maxLengthStart + 12, maxLengthEnd).toInt()
                 comment = comment.removeRange(maxLengthStart, maxLengthEnd + 2)
-                customMaxLength = true
                 length
             } else {
-                customMaxLength = false
                 getMaxLength(column)
             }
 
@@ -507,15 +504,15 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             val columnName = getStrategy().getJavaIdentifier(column)
             val javaMemberName = getJsonKeyName(column)
             val converter = column.type.converter
-            val attrName = getStrategy().getJavaMemberName(column)
-            val customJavaType = column.type.javaType
+//            val attrName = getStrategy().getJavaMemberName(column)
+//            val customJavaType = column.type.javaType
             val userType = column.type.userType
 //            println("$columnName::$columnType::$userType")
             if (handleCustomDBTypeFromRow(table, column, setter, columnType, javaMemberName, pos, out)) {
                 // handled by user
             } else if (handleGeometricDBTypeFromRow(table, column, setter, columnType, javaMemberName, pos, out)) {
                 // custom geometric types (uses dto from api package instead of pg-client types)
-            } else if (handleReactivePgClientTypeFromRow(table, column, setter, columnType, javaMemberName, pos, out)) {
+            } else if (handleReactivePgClientTypeFromRow(column, setter, pos, out)) {
                 // handle types of reactive-pg-client
             } else {
                 if (column.type.javaType != null && column.type.converter != null) {
@@ -565,8 +562,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     }
 
     private fun getArrayPostfix(type: DataTypeDefinition): String {
-        val a = if (type.userType.startsWith('_')) "[]" else ""
-        return a
+        return if (type.userType.startsWith('_')) "[]" else ""
     }
 
     private fun getPgClientAccessName(type: DataTypeDefinition): String {
@@ -716,11 +712,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     }
 
     private fun handleReactivePgClientTypeFromRow(
-        table: TableDefinition,
         column: TypedElementDefinition<*>,
         setter: String,
-        columnType: String?,
-        javaMemberName: String?,
         pos: Int,
         out: JavaWriter
     ): Boolean {
@@ -1190,8 +1183,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         return printDeprecationIfUnknownType(out, type, 1)
     }
 
+    @Suppress("SameParameterValue")
     private fun printDeprecationIfUnknownType(out: JavaWriter, type: String, indentation: Int): Boolean {
-        if (generateDeprecationOnUnknownTypes() && "java.lang.Object" == type) {
+        return if (generateDeprecationOnUnknownTypes() && "java.lang.Object" == type) {
             out.tab(indentation).javadoc(
                 "@deprecated Unknown data type. "
                     + "Please define an explicit {@link org.jooq.Binding} to specify how this "
@@ -1199,9 +1193,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                     + "in your code generator configuration."
             )
             out.tab(indentation).println("@java.lang.Deprecated")
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
@@ -1215,15 +1209,16 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     /**
      * Get a reference to a [Class].
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     fun ref(clazzOrId: String?): String? {
-        return if (clazzOrId == null) null else ref(Arrays.asList(clazzOrId), 1)[0]
+        return if (clazzOrId == null) null else ref(listOf(clazzOrId), 1)[0]
     }
 
     /**
      * Get a reference to a list of [Class].
      */
     fun ref(clazzOrId: Array<String>?): Array<String> {
-        return if (clazzOrId == null) emptyArray() else ref(Arrays.asList(*clazzOrId), 1).toTypedArray()
+        return if (clazzOrId == null) emptyArray() else ref(listOf(*clazzOrId), 1).toTypedArray()
     }
 
     /**
@@ -1239,15 +1234,16 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     /**
      * Get a reference to a [Class].
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     protected fun ref(clazzOrId: String?, keepSegments: Int): String? {
-        return if (clazzOrId == null) null else ref(Arrays.asList(clazzOrId), keepSegments)[0]
+        return if (clazzOrId == null) null else ref(listOf(clazzOrId), keepSegments)[0]
     }
 
     /**
      * Get a reference to a list of [Class].
      */
     protected fun ref(clazzOrId: Array<String>?, keepSegments: Int): Array<String> {
-        return if (clazzOrId == null) emptyArray() else ref(Arrays.asList(*clazzOrId), keepSegments).toTypedArray()
+        return if (clazzOrId == null) emptyArray() else ref(listOf(*clazzOrId), keepSegments).toTypedArray()
     }
 
     /**
@@ -1256,6 +1252,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
      *
      * Subtypes may override this to generate import statements.
      */
+    @Suppress("UNUSED_PARAMETER")
     protected fun ref(clazzOrId: List<String>?, keepSegments: Int): List<String> {
         return clazzOrId ?: emptyList()
     }
