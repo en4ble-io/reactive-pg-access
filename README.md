@@ -1,6 +1,6 @@
 # Reactive PostgreSQL Access Layer #
 
-Reactive Database Access Layer for PostgreSQL using JOOQ and the top ranking reactiverse [reactive-pg-client](https://www.julienviet.com/reactive-pg-client/).
+Reactive Database Access Layer for PostgreSQL using [JOOQ](https://jooq.org/) and the top ranking reactiverse [reactive-pg-client](https://www.julienviet.com/reactive-pg-client/).
 
 * Written in Kotlin with support for both RxJava2 and Kotlin Coroutines.
 * Generates Database Access Object (DAO), DTO/POJO and database definition classes using the JOOQ generator.
