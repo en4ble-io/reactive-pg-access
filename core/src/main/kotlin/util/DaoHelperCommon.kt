@@ -7,9 +7,9 @@ import io.en4ble.pgaccess.dto.OrderDTO
 import io.en4ble.pgaccess.dto.PagingDTO
 import io.en4ble.pgaccess.enumerations.SortDirection
 import io.en4ble.pgaccess.enumerations.TypedEnum
-import io.reactiverse.pgclient.Row
-import io.reactiverse.pgclient.Tuple
 import io.vertx.core.json.Json
+import io.vertx.sqlclient.Row
+import io.vertx.sqlclient.Tuple
 import org.jooq.Field
 import org.jooq.Query
 import org.jooq.Record

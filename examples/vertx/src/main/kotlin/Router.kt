@@ -24,8 +24,8 @@ class Router(
         put("/examples2").cr { exampleService.update2() }
 
         post("/conferences").rx { conferenceService.createConference(getForm(it, ConferenceDto::class.java)) }
+        get("/conferences/random").rx { conferenceService.randomConference() }
         get("/conferences/:id").rx { conferenceService.getConference(getId(it)) }
-        get("/conferences/random").cr { conferenceService.randomConference() }
         post("/conferences/search").rx {
             conferenceService.search(getForm(it, SearchForm::class.java))
         }

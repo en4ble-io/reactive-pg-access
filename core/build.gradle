@@ -5,7 +5,7 @@ dependencies {
 
     compile "org.jooq:jooq:$jooqVersion"
 
-    compile "io.reactiverse:reactive-pg-client:$pgClientVersion"
+    compile "io.vertx:vertx-pg-client:$vertxVersion"
 
     compile "io.vertx:vertx-rx-java2:$vertxVersion"
     compile "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"

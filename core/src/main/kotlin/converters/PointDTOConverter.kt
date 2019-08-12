@@ -1,7 +1,7 @@
 package io.en4ble.pgaccess.converters
 
 import io.en4ble.pgaccess.dto.PointDTO
-import io.reactiverse.pgclient.data.Point
+import io.vertx.pgclient.data.Point
 import org.jooq.Converter
 
 /** @author Mark Hofmann (mark@en4ble.io)

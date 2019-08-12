@@ -7,11 +7,11 @@ import io.en4ble.pgaccess.util.DaoHelperCommon.addLimit
 import io.en4ble.pgaccess.util.DaoHelperCommon.getQueryForLogging
 import io.en4ble.pgaccess.util.DaoHelperCommon.getSortFields
 import io.en4ble.pgaccess.util.JooqHelper.toUUIDList
-import io.reactiverse.pgclient.PgTransaction
-import io.reactiverse.reactivex.pgclient.PgClient
-import io.reactiverse.reactivex.pgclient.PgRowSet
-import io.reactiverse.reactivex.pgclient.Row
 import io.reactivex.Single
+import io.vertx.reactivex.sqlclient.Row
+import io.vertx.reactivex.sqlclient.RowSet
+import io.vertx.reactivex.sqlclient.SqlClient
+import io.vertx.reactivex.sqlclient.Transaction
 import org.jooq.Query
 import org.jooq.Record
 import org.jooq.SelectLimitStep
@@ -30,14 +30,14 @@ object RxDaoHelper {
     /**
      * Run a query using a connection from the pool.
      */
-    fun query(query: Query, context: DatabaseContext): Single<PgRowSet> {
+    fun query(query: Query, context: DatabaseContext): Single<RowSet> {
         return query(query, context.sqlClient, context)
     }
 
     /**
      * Run a query using a given connection.
      */
-    fun query(query: Query, client: PgClient, context: DatabaseContext): Single<PgRowSet> {
+    fun query(query: Query, client: SqlClient, context: DatabaseContext): Single<RowSet> {
         return runQuery(query, client, context, false)
     }
 
@@ -47,7 +47,7 @@ object RxDaoHelper {
     }
 
     @Throws(NoResultsException::class)
-    fun queryOne(query: Query, client: PgClient, context: DatabaseContext): Single<Row> {
+    fun queryOne(query: Query, client: SqlClient, context: DatabaseContext): Single<Row> {
         return query(query, client, context)
             .map {
                 if (it.size() == 0) {
@@ -61,7 +61,7 @@ object RxDaoHelper {
         return queryOptional(query, context.sqlClient, context)
     }
 
-    fun queryOptional(query: Query, client: PgClient, context: DatabaseContext): Single<Optional<Row>> {
+    fun queryOptional(query: Query, client: SqlClient, context: DatabaseContext): Single<Optional<Row>> {
         return query(query, client, context)
             .map {
                 if (it.size() == 0) {
@@ -76,7 +76,7 @@ object RxDaoHelper {
         return update(query, context.sqlClient, context)
     }
 
-    fun update(query: Query, client: PgClient, context: DatabaseContext): Single<Int> {
+    fun update(query: Query, client: SqlClient, context: DatabaseContext): Single<Int> {
         return runQuery(query, client, context, true)
             .map {
                 val updateCount = it.rowCount()
@@ -92,7 +92,7 @@ object RxDaoHelper {
     fun readUUIDs(
         query: Query,
         page: PagingDTO? = null,
-        client: PgClient,
+        client: SqlClient,
         context: DatabaseContext
     ): Single<List<UUID>> {
         return if (page == null || query !is SelectLimitStep<*>) {
@@ -111,7 +111,7 @@ object RxDaoHelper {
         table: Table<RECORD>,
         page: PagingDTO?,
         context: DatabaseContext
-    ): Single<PgRowSet> {
+    ): Single<RowSet> {
         return read(query, table, page, context.sqlClient, context)
     }
 
@@ -119,9 +119,9 @@ object RxDaoHelper {
         query: Query,
         table: Table<RECORD>,
         page: PagingDTO?,
-        client: PgClient,
+        client: SqlClient,
         context: DatabaseContext
-    ): Single<PgRowSet> {
+    ): Single<RowSet> {
         if (page != null) {
             val order = page.orderBy
             if (order != null && query is SelectOrderByStep<*>) {
@@ -132,9 +132,9 @@ object RxDaoHelper {
         return query(query, context)
     }
 
-    private fun runQuery(query: Query, client: PgClient, context: DatabaseContext, update: Boolean): Single<PgRowSet> {
+    private fun runQuery(query: Query, client: SqlClient, context: DatabaseContext, update: Boolean): Single<RowSet> {
         val sql = DaoHelperCommon.getSql(query, context)
-        val inTx = if (client is PgTransaction) {
+        val inTx = if (client is Transaction) {
             "[Tx]"
         } else {
             "[NoTx]"

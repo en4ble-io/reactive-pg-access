@@ -10,15 +10,15 @@ class ConferenceDtoMapper:io.en4ble.pgaccess.mappers.AbstractJooqMapper<Conferen
         fun instance():ConferenceDtoMapper {
             return instance
         }
-        fun map(row:io.reactiverse.pgclient.Row):ConferenceDto {
+        fun map(row:io.vertx.sqlclient.Row):ConferenceDto {
             return instance.toDto(row)
         }
-        fun map(res:io.reactiverse.pgclient.PgRowSet ):List<ConferenceDto>  {
+        fun map(res:io.vertx.sqlclient.RowSet ):List<ConferenceDto>  {
             return instance.toList(res)
         }
     }
     @SuppressWarnings("Duplicates", "unused")
-override fun toDto(row:io.reactiverse.pgclient.Row, offset:Int):ConferenceDto {
+override fun toDto(row:io.vertx.sqlclient.Row, offset:Int):ConferenceDto {
         val dto = ConferenceDto()
         dto.setId(row.getUUID(offset))
         dto.setCreated(row.getLocalDateTime(offset+1))
@@ -27,11 +27,14 @@ override fun toDto(row:io.reactiverse.pgclient.Row, offset:Int):ConferenceDto {
         dto.setAbout(row.getString(offset+4))
         dto.setStartDate(row.getLocalDate(offset+5))
         dto.setEndDate(row.getLocalDate(offset+6))
-        val c_state = (io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.converter as io.en4ble.examples.converters.ConferenceStateEnumConverter).from(row.getString(offset+7))
+        val c_state = row.getString(offset+7)
         if (c_state != null) {
-            dto.setState(c_state)
+            val c_state_converted=(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.converter as io.en4ble.examples.converters.ConferenceStateEnumConverter).from(c_state)
+            if(c_state_converted != null) {
+                dto.setState(c_state_converted)
+            }
         }
-        dto.setLocation(io.en4ble.pgaccess.util.JooqHelper.getPointDTO(row.getPoint(offset+8)))
+        dto.setLocation(io.en4ble.pgaccess.util.JooqHelper.getPointDTO(row.get(io.vertx.pgclient.data.Point::class.java,offset+8)))
         return dto
     }
     override fun getValueMap(o:Any):Map<org.jooq.Field<*>,*>  {

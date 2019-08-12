@@ -27,6 +27,8 @@ import kotlin.random.Random
 open class ExampleService(protected val exampleDao: ExampleDao) {
     suspend fun create(): ExampleDto {
         val form = ExampleDto()
+        form.uuid = UUID.randomUUID()
+
         form.booleanValue = true
         form.setBooleanArray(false, true)
 
@@ -58,7 +60,8 @@ open class ExampleService(protected val exampleDao: ExampleDao) {
         form.setIntervalArray(IntervalDTO(2), IntervalDTO(0, 2))
 
         form.jsonb = randomTestDTO()
-        form.setJsonbArray(randomTestDTO(), randomTestDTO())
+//        // TODO: support JsonArray
+//        form.setJsonbArray(randomTestDTO(), randomTestDTO())
 
         form.line = randomLine()
         form.setLineArray(randomLine(), randomLine())
@@ -83,10 +86,8 @@ open class ExampleService(protected val exampleDao: ExampleDao) {
         form.setPointArray(randomPoint(), randomPoint())
 
         form.polygon = randomPolygon()
-
         form.setPolygonArray(randomPolygon(), randomPolygon())
 
-        randomString()
         form.string = randomString()
         form.setStringArray(randomString(), randomString())
 
@@ -106,7 +107,6 @@ open class ExampleService(protected val exampleDao: ExampleDao) {
         form.timetz = OffsetTime.now()
         form.setTimetzArray(OffsetTime.now(), OffsetTime.now())
 
-        form.uuid = UUID.randomUUID()
         form.setUuidArray(UUID.randomUUID(), UUID.randomUUID())
 
         return exampleDao.createReturning(form)

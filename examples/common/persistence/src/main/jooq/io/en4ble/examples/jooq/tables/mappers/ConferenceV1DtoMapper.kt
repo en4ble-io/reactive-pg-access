@@ -10,25 +10,28 @@ class ConferenceV1DtoMapper:io.en4ble.pgaccess.mappers.AbstractJooqMapper<Confer
         fun instance():ConferenceV1DtoMapper {
             return instance
         }
-        fun map(row:io.reactiverse.pgclient.Row):ConferenceV1Dto {
+        fun map(row:io.vertx.sqlclient.Row):ConferenceV1Dto {
             return instance.toDto(row)
         }
-        fun map(res:io.reactiverse.pgclient.PgRowSet ):List<ConferenceV1Dto>  {
+        fun map(res:io.vertx.sqlclient.RowSet ):List<ConferenceV1Dto>  {
             return instance.toList(res)
         }
     }
     @SuppressWarnings("Duplicates", "unused")
-override fun toDto(row:io.reactiverse.pgclient.Row, offset:Int):ConferenceV1Dto {
+override fun toDto(row:io.vertx.sqlclient.Row, offset:Int):ConferenceV1Dto {
         val dto = ConferenceV1Dto()
         dto.setId(row.getUUID(offset))
         dto.setName(row.getString(offset+1))
         dto.setAbout(row.getString(offset+2))
         dto.setStartDate(row.getLocalDate(offset+3))
         dto.setEndDate(row.getLocalDate(offset+4))
-        dto.setLocation(io.en4ble.pgaccess.util.JooqHelper.getPointDTO(row.getPoint(offset+5)))
-        val state = (io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.STATE.converter as io.en4ble.examples.converters.ConferenceStateEnumConverter).from(row.getString(offset+6))
+        dto.setLocation(io.en4ble.pgaccess.util.JooqHelper.getPointDTO(row.get(io.vertx.pgclient.data.Point::class.java,offset+5)))
+        val state = row.getString(offset+6)
         if (state != null) {
-            dto.setState(state)
+            val state_converted=(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.STATE.converter as io.en4ble.examples.converters.ConferenceStateEnumConverter).from(state)
+            if(state_converted != null) {
+                dto.setState(state_converted)
+            }
         }
         return dto
     }

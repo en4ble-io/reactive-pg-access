@@ -9,24 +9,24 @@ import io.en4ble.pgaccess.dto.PathDTO
 import io.en4ble.pgaccess.dto.PointDTO
 import io.en4ble.pgaccess.dto.PolygonDTO
 import io.en4ble.pgaccess.enumerations.TypedEnum
-import io.reactiverse.kotlin.pgclient.data.boxOf
-import io.reactiverse.kotlin.pgclient.data.circleOf
-import io.reactiverse.kotlin.pgclient.data.intervalOf
-import io.reactiverse.kotlin.pgclient.data.lineOf
-import io.reactiverse.kotlin.pgclient.data.lineSegmentOf
-import io.reactiverse.kotlin.pgclient.data.pathOf
-import io.reactiverse.kotlin.pgclient.data.polygonOf
-import io.reactiverse.pgclient.PgRowSet
-import io.reactiverse.pgclient.Tuple
-import io.reactiverse.pgclient.data.Box
-import io.reactiverse.pgclient.data.Circle
-import io.reactiverse.pgclient.data.Interval
-import io.reactiverse.pgclient.data.Line
-import io.reactiverse.pgclient.data.LineSegment
-import io.reactiverse.pgclient.data.Path
-import io.reactiverse.pgclient.data.Point
-import io.reactiverse.pgclient.data.Polygon
 import io.vertx.core.json.JsonArray
+import io.vertx.kotlin.pgclient.data.boxOf
+import io.vertx.kotlin.pgclient.data.circleOf
+import io.vertx.kotlin.pgclient.data.intervalOf
+import io.vertx.kotlin.pgclient.data.lineOf
+import io.vertx.kotlin.pgclient.data.lineSegmentOf
+import io.vertx.kotlin.pgclient.data.pathOf
+import io.vertx.kotlin.pgclient.data.polygonOf
+import io.vertx.pgclient.data.Box
+import io.vertx.pgclient.data.Circle
+import io.vertx.pgclient.data.Interval
+import io.vertx.pgclient.data.Line
+import io.vertx.pgclient.data.LineSegment
+import io.vertx.pgclient.data.Path
+import io.vertx.pgclient.data.Point
+import io.vertx.pgclient.data.Polygon
+import io.vertx.sqlclient.RowSet
+import io.vertx.sqlclient.Tuple
 import org.jooq.Condition
 import org.jooq.Converter
 import org.jooq.Field
@@ -62,13 +62,13 @@ object JooqHelper {
         )
     }
 
-    fun rxParams(query: Query): io.reactiverse.reactivex.pgclient.Tuple {
+    fun rxParams(query: Query): io.vertx.reactivex.sqlclient.Tuple {
         val values = query.bindValues
         if (values.isEmpty()) {
             throw RuntimeException("query does not contain parameters")
         }
         val dbValues = getDbValues(query)
-        val tuple = io.reactiverse.reactivex.pgclient.Tuple.of(values[0])
+        val tuple = io.vertx.reactivex.sqlclient.Tuple.of(values[0])
         if (dbValues.size > 1) {
             for (value in dbValues.subList(1, dbValues.size)) {
                 tuple.addValue(value)
@@ -90,7 +90,15 @@ object JooqHelper {
         if (param == null) {
             return null
         }
-        return when (val value = param.value) {
+        return convertToDbType(param, param.value)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun convertToDbType(param: Param<*>, value: Any?): Any? {
+        if (value == null) {
+            return null
+        }
+        return when (value) {
             is PointDTO -> getPoint(value)
             is LineDTO -> lineOf(value.a, value.b, value.c)
             is LineSegmentDTO -> lineSegmentOf(getPoint(value.a), getPoint(value.b))
@@ -108,11 +116,31 @@ object JooqHelper {
                 value.years
             )
             is TypedEnum<*> -> value.key
+            is Array<*> -> {
+                when {
+                    value.isArrayOf<PointDTO>() -> convertArray2DbTypes(value, param, Point::class.java)
+                    value.isArrayOf<LineDTO>() -> convertArray2DbTypes(value, param, Line::class.java)
+                    value.isArrayOf<LineSegmentDTO>() -> convertArray2DbTypes(value, param, LineSegment::class.java)
+                    value.isArrayOf<PolygonDTO>() -> convertArray2DbTypes(value, param, Polygon::class.java)
+                    value.isArrayOf<PathDTO>() -> convertArray2DbTypes(value, param, Path::class.java)
+                    value.isArrayOf<CircleDTO>() -> convertArray2DbTypes(value, param, Circle::class.java)
+                    value.isArrayOf<BoxDTO>() -> convertArray2DbTypes(value, param, Box::class.java)
+                    value.isArrayOf<IntervalDTO>() -> convertArray2DbTypes(value, param, Interval::class.java)
+                    else -> (param.converter as Converter<Any, Any>).to(value)
+                }
+            }
             else -> {
-                val converter = param.converter as Converter<Any, Any>
-                converter.to(value)
+                (param.converter as Converter<Any, Any>).to(value)
             }
         }
+    }
+
+    private inline fun <reified T> convertArray2DbTypes(dtos: Array<*>, param: Param<*>, type: Class<T>): Array<T?> {
+        val array = arrayOfNulls<T>(dtos.size)
+        for (i in dtos.indices) {
+            array[i] = convertToDbType(param, dtos[i]) as T
+        }
+        return array
     }
 
     fun convertFromDbType(value: Any?): Any? {
@@ -140,15 +168,15 @@ object JooqHelper {
         }
     }
 
-    fun toStringList(res: PgRowSet): List<String> {
+    fun toStringList(res: RowSet): List<String> {
         return res.toList().map { it.getString(0) }
     }
 
-    fun toUUIDList(res: PgRowSet): List<UUID> {
+    fun toUUIDList(res: RowSet): List<UUID> {
         return res.toList().map { it.getUUID(0) }
     }
 
-    fun toIntegerList(res: PgRowSet): List<Int> {
+    fun toIntegerList(res: RowSet): List<Int> {
         return res.toList().map { it.getInteger(0) }
     }
 

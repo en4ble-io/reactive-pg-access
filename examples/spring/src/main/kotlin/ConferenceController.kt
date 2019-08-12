@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.rx2.rxSingle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.adapter.rxjava.RxJava2Adapter.singleToMono
@@ -31,7 +34,8 @@ import javax.validation.Valid
 @ApiResponses(
     ApiResponse(responseCode = "500", description = "Fatal error - the request could not be processed")
 )
-@RestController("/conferences")
+@RestController
+@RequestMapping("/conferences")
 class ConferenceController {
     @Autowired
     private lateinit var service: SpringConferenceService
@@ -57,9 +61,8 @@ class ConferenceController {
         ApiResponse(responseCode = "404", description = "The conference does not exist.")
     )
     @GetMapping("/{id}")
-    suspend fun getConf(id: UUID): ConferenceV1Dto {
-        return service.getConference(id)
-//        return singleToMono(GlobalScope.rxSingle { service.getConference(id) })
+    fun getConf(id: UUID): Mono<ConferenceV1Dto> {
+        return singleToMono(GlobalScope.rxSingle { service.getConference(id) })
     }
 
     @GetMapping("/random")

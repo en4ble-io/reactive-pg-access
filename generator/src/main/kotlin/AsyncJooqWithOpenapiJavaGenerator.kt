@@ -8,17 +8,18 @@ import io.en4ble.pgaccess.dto.LineSegmentDTO
 import io.en4ble.pgaccess.dto.PathDTO
 import io.en4ble.pgaccess.dto.PointDTO
 import io.en4ble.pgaccess.dto.PolygonDTO
-import io.reactiverse.pgclient.data.Box
-import io.reactiverse.pgclient.data.Circle
-import io.reactiverse.pgclient.data.Interval
-import io.reactiverse.pgclient.data.Json
-import io.reactiverse.pgclient.data.Line
-import io.reactiverse.pgclient.data.LineSegment
-import io.reactiverse.pgclient.data.Numeric
-import io.reactiverse.pgclient.data.Path
-import io.reactiverse.pgclient.data.Point
-import io.reactiverse.pgclient.data.Polygon
 import io.vertx.core.buffer.Buffer
+import io.vertx.core.json.JsonArray
+import io.vertx.core.json.JsonObject
+import io.vertx.pgclient.data.Box
+import io.vertx.pgclient.data.Circle
+import io.vertx.pgclient.data.Interval
+import io.vertx.pgclient.data.Line
+import io.vertx.pgclient.data.LineSegment
+import io.vertx.pgclient.data.Path
+import io.vertx.pgclient.data.Point
+import io.vertx.pgclient.data.Polygon
+import io.vertx.sqlclient.data.Numeric
 import org.jooq.Constants
 import org.jooq.Record
 import org.jooq.codegen.ExtendedJavaGenerator
@@ -223,23 +224,23 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val tableRecord = out.ref(getStrategy().getFullJavaClassName(table, Mode.RECORD))
 
         out.tab(1)
-            .println("override fun map(row:io.reactiverse.pgclient.Row, table:org.jooq.Table<$tableRecord>,offset:Int): $dtoType {")
+            .println("override fun map(row:io.vertx.sqlclient.Row, table:org.jooq.Table<$tableRecord>,offset:Int): $dtoType {")
         out.tab(2)
             .println("return ${dtoMapper(mapperPackage, mappers, dtoType)}(table).toDto(row, offset)")
         out.tab(1).println("}")
 
         out.tab(1)
-            .println("override fun map(rs:io.reactiverse.pgclient.PgRowSet, table:org.jooq.Table<$tableRecord>, offset:Int): List<$dtoType>  {")
+            .println("override fun map(rs:io.vertx.sqlclient.RowSet, table:org.jooq.Table<$tableRecord>, offset:Int): List<$dtoType>  {")
         out.tab(2)
             .println("val mapper = ${dtoMapper(mapperPackage, mappers, dtoType)}(table)")
         out.tab(2).println("return mapper.toList(rs,offset)")
         out.tab(1).println("}")
 
-        out.tab(1).println("override fun map(row:io.reactiverse.pgclient.Row, offset:Int):$dtoType {")
+        out.tab(1).println("override fun map(row:io.vertx.sqlclient.Row, offset:Int):$dtoType {")
         out.tab(2).println("return map(row, $fullJavaTableName,offset)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override fun map(rs:io.reactiverse.pgclient.PgRowSet, offset:Int):List<$dtoType> {")
+            .println("override fun map(rs:io.vertx.sqlclient.RowSet, offset:Int):List<$dtoType> {")
         out.tab(2).println("return map(rs, $fullJavaTableName, offset)")
         out.tab(1).println("}")
 
@@ -247,7 +248,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return read(condition, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun read(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):List<$dtoType> {")
+            .println("override suspend fun read(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):List<$dtoType> {")
         out.tab(1).println("return read(condition, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -255,7 +256,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return rxRead(condition, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override fun rxRead(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<List<$dtoType>> {")
+            .println("override fun rxRead(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<List<$dtoType>> {")
         out.tab(1).println("return rxRead(condition, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -263,7 +264,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return read(query, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun read(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):List<$dtoType> {")
+            .println("override suspend fun read(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):List<$dtoType> {")
         out.tab(1).println("return read(query, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -271,7 +272,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return rxRead(query, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override fun rxRead(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<List<$dtoType>> {")
+            .println("override fun rxRead(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<List<$dtoType>> {")
         out.tab(1).println("return rxRead(query, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -279,7 +280,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return readOne(condition, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun readOne(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):$dtoType {")
+            .println("override suspend fun readOne(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):$dtoType {")
         out.tab(1).println("return readOne(condition, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -287,7 +288,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return rxReadOne(condition, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override fun rxReadOne(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<$dtoType> {")
+            .println("override fun rxReadOne(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<$dtoType> {")
         out.tab(1).println("return rxReadOne(condition, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -295,7 +296,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return readOne(query, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun readOne(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):$dtoType {")
+            .println("override suspend fun readOne(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):$dtoType {")
         out.tab(1).println("return readOne(query, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -303,7 +304,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return rxReadOne(query, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override fun rxReadOne(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<$dtoType> {")
+            .println("override fun rxReadOne(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<$dtoType> {")
         out.tab(1).println("return rxReadOne(query, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -312,7 +313,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return readOptional(condition, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun readOptional(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):java.util.Optional<$dtoType> {")
+            .println("override suspend fun readOptional(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):java.util.Optional<$dtoType> {")
         out.tab(1).println("return readOptional(condition, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -321,7 +322,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return rxReadOptional(condition, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override fun rxReadOptional(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<java.util.Optional<$dtoType>> {")
+            .println("override fun rxReadOptional(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<java.util.Optional<$dtoType>> {")
         out.tab(1).println("return rxReadOptional(condition, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -329,7 +330,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return readOptional(query, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun readOptional(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):java.util.Optional<$dtoType> {")
+            .println("override suspend fun readOptional(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):java.util.Optional<$dtoType> {")
         out.tab(1).println("return readOptional(query, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -338,7 +339,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return rxReadOptional(query, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override fun rxReadOptional(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<java.util.Optional<$dtoType>> {")
+            .println("override fun rxReadOptional(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<java.util.Optional<$dtoType>> {")
         out.tab(1).println("return rxReadOptional(query, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -356,14 +357,14 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("suspend fun update(dto:$dtoType, condition:org.jooq.Condition, client:io.reactiverse.reactivex.pgclient.PgClient):Int {")
+                .println("suspend fun update(dto:$dtoType, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient):Int {")
             printMapper(out, mapperGetter)
             out.tab(2)
                 .println("return query(dsl.update($fullJavaTableName).set(map).where(condition), client).rowCount()")
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("fun rxUpdate(dto:$dtoType, condition:org.jooq.Condition, client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<Int> {")
+                .println("fun rxUpdate(dto:$dtoType, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<Int> {")
             printMapper(out, mapperGetter)
             out.tab(2)
                 .println("return rxQuery(dsl.update($fullJavaTableName).set(map).where(condition),client).map{ it.delegate.rowCount() }")
@@ -400,14 +401,14 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("suspend fun updateReturning(dto:$dtoType, condition:org.jooq.Condition, client:io.reactiverse.reactivex.pgclient.PgClient):$dtoType {")
+                .println("suspend fun updateReturning(dto:$dtoType, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient):$dtoType {")
             printMapper(out, mapperGetter)
             out.tab(2)
                 .println("return map(queryOne(dsl.update($fullJavaTableName).set(map).where(condition).returning(*$fullJavaTableName.fields()), client))")
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("fun rxUpdateReturning(dto:$dtoType, condition:org.jooq.Condition, client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<$dtoType> {")
+                .println("fun rxUpdateReturning(dto:$dtoType, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<$dtoType> {")
             printMapper(out, mapperGetter)
             out.tab(2)
                 .println("return rxQueryOne(dsl.update($fullJavaTableName).set(map).where(condition).returning(*$fullJavaTableName.fields()),client).map{ map(it.delegate) }")
@@ -420,7 +421,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("suspend fun create(dto:$dtoType,client:io.reactiverse.reactivex.pgclient.PgClient):Int {")
+                .println("suspend fun create(dto:$dtoType,client:io.vertx.reactivex.sqlclient.SqlClient):Int {")
             printMapper(out, mapperGetter)
             out.tab(1)
                 .println("return query(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values), client).rowCount()")
@@ -433,7 +434,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("suspend fun createReturning(dto:$dtoType,client:io.reactiverse.reactivex.pgclient.PgClient):$dtoType {")
+                .println("suspend fun createReturning(dto:$dtoType,client:io.vertx.reactivex.sqlclient.SqlClient):$dtoType {")
             printMapper(out, mapperGetter)
             out.tab(1)
                 .println("return map(queryOne(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values).returning(*$fullJavaTableName.fields()), client))")
@@ -446,7 +447,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("fun rxCreate(dto:$dtoType,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<Int> {")
+                .println("fun rxCreate(dto:$dtoType,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<Int> {")
             out.tab(2)
             printMapper(out, mapperGetter)
             out.tab(1)
@@ -460,7 +461,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("fun rxCreateReturning(dto:$dtoType,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<$dtoType> {")
+                .println("fun rxCreateReturning(dto:$dtoType,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<$dtoType> {")
             printMapper(out, mapperGetter)
             out.tab(1)
                 .println("return rxQueryOne(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values).returning(*$fullJavaTableName.fields()), client).map{ map(it.delegate) }")
@@ -491,7 +492,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1)
             .println(
                 "@SuppressWarnings(\"Duplicates\", \"unused\")\n" +
-                    "override fun toDto(row:io.reactiverse.pgclient.Row, offset:Int):$dtoType {"
+                    "override fun toDto(row:io.vertx.sqlclient.Row, offset:Int):$dtoType {"
             )
 
         out.tab(2).println("val dto = %s()", dtoType, dtoType)
@@ -510,19 +511,36 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
 //            println("$columnName::$columnType::$userType")
             if (handleCustomDBTypeFromRow(table, column, setter, columnType, javaMemberName, pos, out)) {
                 // handled by user
+            } else if (handleJsonFromRow(table, column, setter, columnType, javaMemberName, pos, out)) {
+                // handling of vertx json types
             } else if (handleGeometricDBTypeFromRow(table, column, setter, columnType, javaMemberName, pos, out)) {
                 // custom geometric types (uses dto from api package instead of pg-client types)
-            } else if (handleReactivePgClientTypeFromRow(column, setter, pos, out)) {
+            } else if (handleReactiveSqlClientTypeFromRow(column, setter, columnType, javaMemberName, pos, out)) {
                 // handle types of reactive-pg-client
             } else {
                 if (column.type.javaType != null && column.type.converter != null) {
-                    val accessName = getPgClientAccessName(column.type)
-                    val spread = if (userType.startsWith('_')) "*" else ""
-                    out.tab(2)
-                        .println("val ${column.name} = row.get$accessName($offset)")
+                    // TODO: check if arrays of custom object are stored as json or _json
+                    val isArray = userType.startsWith('_')
+                    val spread = if (isArray) "*" else ""
+                    if (userType == "json" || userType == "jsonb") {
+                        val type = JsonObject::class.java.name
+                        out.tab(2)
+                            .println("val ${column.name} = row.get($type::class.java,$offset)")
+                    } else if (userType == "_json" || userType == "_jsonb") {
+                        val type = JsonArray::class.java.name
+                        out.tab(2)
+                            .println("val ${column.name} = row.get($type::class.java,$offset)")
+                    } else {
+                        val accessName = getSqlClientAccessName(column.type)
+                        out.tab(2)
+                            .println("val ${column.name} = row.get$accessName($offset)")
+                    }
                     out.tab(2).println("if (${column.name} != null) {")
                     out.tab(3)
-                        .println("dto.$setter($spread($fullJavaTableName.$columnName.converter as $converter).from(${column.name}))")
+                        .println("val ${column.name}_converted=($fullJavaTableName.$columnName.converter as $converter).from(${column.name})")
+                    out.tab(3).println("if(${column.name}_converted != null) {")
+                    out.tab(4).println("dto.$setter($spread${column.name}_converted)")
+                    out.tab(3).println("}")
                     out.tab(2).println("}")
                 } else {
                     LOG.warn(
@@ -556,8 +574,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         }
         val geometricJavaType = getGeometricJavaType(type, udtMode)
         if (geometricJavaType != null) return geometricJavaType
-        val pgClientType = getPgClientType(type)
-        if (pgClientType != null) return pgClientType.name + getArrayPostfix(type)
+        val pgClientType = getSqlClientType(type)
+        if (pgClientType != null) {
+            return pgClientType.name + getArrayPostfix(type)
+        }
         return super.getJavaType(type, udtMode)
     }
 
@@ -565,8 +585,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         return if (type.userType.startsWith('_')) "[]" else ""
     }
 
-    private fun getPgClientAccessName(type: DataTypeDefinition): String {
-        val pgClientType = getPgClientType(type)
+    private fun getSqlClientAccessName(type: DataTypeDefinition): String {
+        val pgClientType = getSqlClientType(type)
         val userType = type.userType
         val typeName = if (pgClientType != null) {
             pgClientType.simpleName
@@ -587,12 +607,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             "name" -> String::class.java.simpleName
             else -> getJavaType(type)
         }
-        return if (userType.startsWith("_")) {
-            typeName + "Array"
-        } else typeName
+        return if (userType.startsWith("_")) typeName + "Array" else typeName
     }
 
-    private fun getPgClientType(type: DataTypeDefinition): Class<*>? {
+    private fun getSqlClientType(type: DataTypeDefinition): Class<*>? {
         return when (val userType = type.userType.removePrefix("_")) {
             // basic types
             "bytea" -> Buffer::class.java
@@ -620,8 +638,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             "timestamptz" -> OffsetDateTime::class.java
 
             // json
-            "json" -> Json::class.java
-            "jsonb" -> Json::class.java
+//            "json" -> JsonObject::class.java
+//            "jsonb" -> JsonObject::class.java
+//            "_json" -> JsonArray::class.java
+//            "_jsonb" -> JsonArray::class.java
 
             // geometric types
             "point" -> Point::class.java
@@ -711,9 +731,11 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("}")
     }
 
-    private fun handleReactivePgClientTypeFromRow(
+    private fun handleReactiveSqlClientTypeFromRow(
         column: TypedElementDefinition<*>,
         setter: String,
+        columnType: String?,
+        javaMemberName: String?,
         pos: Int,
         out: JavaWriter
     ): Boolean {
@@ -762,26 +784,26 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             "_timestamptz" -> "OffsetDateTimeArray"
 
             // json
-            "json" -> "Json"
-            "_json" -> "JsonArray"
-            "jsonb" -> "Json"
-            "_jsonb" -> "JsonArray"
+//            "json" -> "Json"
+//            "_json" -> "JsonArray"
+//            "jsonb" -> "Json"
+//            "_jsonb" -> "JsonArray"
 
             // geometric types
-            "point" -> "Point"
-            "_point" -> "PointArray"
-            "line" -> "Line"
-            "_line" -> "LineArray"
-            "lseg" -> "LineSegment"
-            "_lseg" -> "LineSegmentArray"
-            "box" -> "Box"
-            "_box" -> "BoxArray"
-            "path" -> "Path"
-            "_path" -> "PathArray"
-            "polygon" -> "Polygon"
-            "_polygon" -> "PolygonArray"
-            "circle" -> "Circle"
-            "_circle" -> "CircleArray"
+//            "point" -> "Point"
+//            "_point" -> "PointArray"
+//            "line" -> "Line"
+//            "_line" -> "LineArray"
+//            "lseg" -> "LineSegment"
+//            "_lseg" -> "LineSegmentArray"
+//            "box" -> "Box"
+//            "_box" -> "BoxArray"
+//            "path" -> "Path"
+//            "_path" -> "PathArray"
+//            "polygon" -> "Polygon"
+//            "_polygon" -> "PolygonArray"
+//            "circle" -> "Circle"
+//            "_circle" -> "CircleArray"
 
             "uuid" -> "UUID"
             "_uuid" -> "UUIDArray"
@@ -796,9 +818,19 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         }
 
         if (typeName != null) {
-            val a = if (userType.startsWith('_')) "*" else ""
-            out.tab(2).println("dto.$setter(${a}row.get$typeName($offset))")
+            if (userType.startsWith("_")) {
+                out.tab(2).println("val $javaMemberName = row.get$typeName($offset)")
+                out.tab(2).println("if($javaMemberName != null) {")
+                out.tab(3).println("dto.$setter(*$javaMemberName)")
+                out.tab(2).println("}")
+            } else {
+                out.tab(2).println("dto.$setter(row.get$typeName($offset))")
+            }
             return true
+//
+//            val a = if (userType.startsWith('_')) "*" else ""
+//            out.tab(2).println("dto.$setter(${a})")
+//            return true
         }
         return false
     }
@@ -826,22 +858,30 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val userType = column.type.userType
         val offset = getOffset(pos)
         val s = when (userType) {
-            "point" -> "getPointDTO(row.getPoint($offset))"
-            "_point" -> "getPointDTOs(row.getPointArray($offset))"
-            "line" -> "getLineDTO(row.getLine($offset))"
-            "_line" -> "getLineDTOs(row.getLineArray($offset))"
-            "lseg" -> "getLineSegmentDTO(row.getLineSegment($offset))"
-            "_lseg" -> "getLineSegmentDTOs(row.getLineSegmentArray($offset))"
-            "box" -> "getBoxDTO(row.getBox($offset))"
-            "_box" -> "getBoxDTOs(row.getBoxArray($offset))"
-            "path" -> "getPathDTO(row.getPath($offset))"
-            "_path" -> "getPathDTOs(row.getPathArray($offset))"
-            "polygon" -> "getPolygonDTO(row.getPolygon($offset))"
-            "_polygon" -> "getPolygonDTOs(row.getPolygonArray($offset))"
-            "circle" -> "getCircleDTO(row.getCircle($offset))"
-            "_circle" -> "getCircleDTOs(row.getCircleArray($offset))"
-            "interval" -> "getIntervalDTO(row.getInterval($offset))"
-            "_interval" -> "getIntervalDTOs(row.getIntervalArray($offset))"
+            "point" -> "getPointDTO(row.get(io.vertx.pgclient.data.Point::class.java,$offset))"
+            "_point" -> "getPointDTOs(row.getValues(io.vertx.pgclient.data.Point::class.java,$offset))"
+
+            "line" -> "getLineDTO(row.get(io.vertx.pgclient.data.Line::class.java,$offset))"
+            "_line" -> "getLineDTOs(row.getValues(io.vertx.pgclient.data.Line::class.java,$offset))"
+
+            "lseg" -> "getLineSegmentDTO(row.get(io.vertx.pgclient.data.LineSegment::class.java,$offset))"
+            "_lseg" -> "getLineSegmentDTOs(row.getValues(io.vertx.pgclient.data.LineSegment::class.java,$offset))"
+
+            "box" -> "getBoxDTO(row.get(io.vertx.pgclient.data.Box::class.java,$offset))"
+            "_box" -> "getBoxDTOs(row.getValues(io.vertx.pgclient.data.Box::class.java,$offset))"
+
+            "path" -> "getPathDTO(row.get(io.vertx.pgclient.data.Path::class.java,$offset))"
+            "_path" -> "getPathDTOs(row.getValues(io.vertx.pgclient.data.Path::class.java,$offset))"
+
+            "polygon" -> "getPolygonDTO(row.get(io.vertx.pgclient.data.Polygon::class.java,$offset))"
+            "_polygon" -> "getPolygonDTOs(row.getValues(io.vertx.pgclient.data.Polygon::class.java,$offset))"
+
+            "circle" -> "getCircleDTO(row.get(io.vertx.pgclient.data.Circle::class.java,$offset))"
+            "_circle" -> "getCircleDTOs(row.getValues(io.vertx.pgclient.data.Circle::class.java,$offset))"
+
+            "interval" -> "getIntervalDTO(row.get(io.vertx.pgclient.data.Interval::class.java,$offset))"
+            "_interval" -> "getIntervalDTOs(row.getValues(io.vertx.pgclient.data.Interval::class.java,$offset))"
+
             else -> null
         }
 
@@ -854,6 +894,38 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             } else {
                 out.tab(2).println("dto.$setter(io.en4ble.pgaccess.util.JooqHelper.$s)")
             }
+            return true
+        }
+        return false
+    }
+
+    open fun handleJsonFromRow(
+        table: TableDefinition,
+        column: TypedElementDefinition<*>,
+        setter: String,
+        columnType: String?,
+        javaMemberName: String?,
+        pos: Int,
+        out: JavaWriter
+    ): Boolean {
+        // custom java type was specified (using custom converter)
+        if (column.type.javaType != null) {
+            return false
+        }
+        val userType = column.type.userType
+        val offset = getOffset(pos)
+        val s = when (userType) {
+            "json" -> "row.get(io.vertx.core.json.JsonObject::class.java,$offset)"
+            "_json" -> "row.getValues(io.vertx.core.json.JsonArray::class.java,$offset)"
+
+            "jsonb" -> "row.get(io.vertx.core.json.JsonObject::class.java,$offset)"
+            "_jsonb" -> "row.getValues(io.vertx.core.json.JsonArray::class.java,$offset)"
+
+            else -> null
+        }
+
+        if (s != null) {
+            out.tab(2).println("dto.$setter($s)")
             return true
         }
         return false
@@ -873,7 +945,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
 //        val offset = getOffset(pos)
 //        when (userType) {
 //            "geography" -> {
-//                s = "io.en4ble.pgaccess.util.JooqHelper.INSTANCE.getPointDTO(row.getPoint($offset))"
+//                s = "io.en4ble.pgaccess.util.JooqHelper.INSTANCE.getPointDTO(row.getPoint,$offset))"
 //            }
 //        }
 //
@@ -964,11 +1036,11 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(2).println("fun instance():$mapperName {")
         out.tab(3).println("return instance")
         out.tab(2).println("}")
-        out.tab(2).println("fun map(row:io.reactiverse.pgclient.Row):$pojoName {")
+        out.tab(2).println("fun map(row:io.vertx.sqlclient.Row):$pojoName {")
         out.tab(3).println("return instance.toDto(row)")
         out.tab(2).println("}")
 
-        out.tab(2).println("fun map(res:io.reactiverse.pgclient.PgRowSet ):List<$pojoName>  {")
+        out.tab(2).println("fun map(res:io.vertx.sqlclient.RowSet ):List<$pojoName>  {")
         out.tab(3).println("return instance.toList(res)")
         out.tab(2).println("}")
         out.tab(1).println("}")

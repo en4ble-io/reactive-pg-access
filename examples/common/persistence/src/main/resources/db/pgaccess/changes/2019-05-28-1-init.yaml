@@ -102,9 +102,10 @@ databaseChangeLog:
               - column:
                   name: e_jsonb
                   type: JSONB
-              - column:
-                  name: e_jsonb_array
-                  type: _JSONB
+# TODO: support JsonArray
+#              - column:
+#                  name: e_jsonb_array
+#                  type: _JSONB
               - column:
                   name: e_point
                   type: POINT

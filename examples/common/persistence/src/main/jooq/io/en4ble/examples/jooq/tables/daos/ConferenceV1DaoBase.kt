@@ -200,89 +200,89 @@ abstract class ConferenceV1DaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext)
     override fun getDbField(dtoField: String): org.jooq.Field<*> {
     return dbFieldMap[dtoField] ?: throw javax.validation.ValidationException("Unknown field $dtoField")
     }
-    override fun map(row:io.reactiverse.pgclient.Row, table:org.jooq.Table<ConferenceV1Record>,offset:Int): ConferenceV1Dto {
+    override fun map(row:io.vertx.sqlclient.Row, table:org.jooq.Table<ConferenceV1Record>,offset:Int): ConferenceV1Dto {
         return io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(table).toDto(row, offset)
     }
-    override fun map(rs:io.reactiverse.pgclient.PgRowSet, table:org.jooq.Table<ConferenceV1Record>, offset:Int): List<ConferenceV1Dto>  {
+    override fun map(rs:io.vertx.sqlclient.RowSet, table:org.jooq.Table<ConferenceV1Record>, offset:Int): List<ConferenceV1Dto>  {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(table)
         return mapper.toList(rs,offset)
     }
-    override fun map(row:io.reactiverse.pgclient.Row, offset:Int):ConferenceV1Dto {
+    override fun map(row:io.vertx.sqlclient.Row, offset:Int):ConferenceV1Dto {
         return map(row, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1,offset)
     }
-    override fun map(rs:io.reactiverse.pgclient.PgRowSet, offset:Int):List<ConferenceV1Dto> {
+    override fun map(rs:io.vertx.sqlclient.RowSet, offset:Int):List<ConferenceV1Dto> {
         return map(rs, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, offset)
     }
     override suspend fun read(condition:org.jooq.Condition):List<ConferenceV1Dto> {
     return read(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun read(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):List<ConferenceV1Dto> {
+    override suspend fun read(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):List<ConferenceV1Dto> {
     return read(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxRead(condition:org.jooq.Condition):io.reactivex.Single<List<ConferenceV1Dto>> {
     return rxRead(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override fun rxRead(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<List<ConferenceV1Dto>> {
+    override fun rxRead(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<List<ConferenceV1Dto>> {
     return rxRead(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override suspend fun read(query:org.jooq.Query):List<ConferenceV1Dto> {
     return read(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun read(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):List<ConferenceV1Dto> {
+    override suspend fun read(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):List<ConferenceV1Dto> {
     return read(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxRead(query:org.jooq.Query):io.reactivex.Single<List<ConferenceV1Dto>> {
     return rxRead(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override fun rxRead(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<List<ConferenceV1Dto>> {
+    override fun rxRead(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<List<ConferenceV1Dto>> {
     return rxRead(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override suspend fun readOne(condition:org.jooq.Condition):ConferenceV1Dto {
     return readOne(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun readOne(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):ConferenceV1Dto {
+    override suspend fun readOne(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):ConferenceV1Dto {
     return readOne(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxReadOne(condition:org.jooq.Condition):io.reactivex.Single<ConferenceV1Dto> {
     return rxReadOne(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override fun rxReadOne(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<ConferenceV1Dto> {
+    override fun rxReadOne(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<ConferenceV1Dto> {
     return rxReadOne(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override suspend fun readOne(query:org.jooq.Query):ConferenceV1Dto {
     return readOne(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun readOne(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):ConferenceV1Dto {
+    override suspend fun readOne(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):ConferenceV1Dto {
     return readOne(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxReadOne(query:org.jooq.Query):io.reactivex.Single<ConferenceV1Dto> {
     return rxReadOne(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override fun rxReadOne(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<ConferenceV1Dto> {
+    override fun rxReadOne(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<ConferenceV1Dto> {
     return rxReadOne(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override suspend fun readOptional(condition:org.jooq.Condition):java.util.Optional<ConferenceV1Dto> {
     return readOptional(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun readOptional(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):java.util.Optional<ConferenceV1Dto> {
+    override suspend fun readOptional(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):java.util.Optional<ConferenceV1Dto> {
     return readOptional(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxReadOptional(condition:org.jooq.Condition):io.reactivex.Single<java.util.Optional<ConferenceV1Dto>> {
     return rxReadOptional(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override fun rxReadOptional(condition:org.jooq.Condition,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<java.util.Optional<ConferenceV1Dto>> {
+    override fun rxReadOptional(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<java.util.Optional<ConferenceV1Dto>> {
     return rxReadOptional(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override suspend fun readOptional(query:org.jooq.Query):java.util.Optional<ConferenceV1Dto> {
     return readOptional(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun readOptional(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):java.util.Optional<ConferenceV1Dto> {
+    override suspend fun readOptional(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):java.util.Optional<ConferenceV1Dto> {
     return readOptional(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxReadOptional(query:org.jooq.Query):io.reactivex.Single<java.util.Optional<ConferenceV1Dto>> {
     return rxReadOptional(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override fun rxReadOptional(query:org.jooq.Query,client:io.reactiverse.reactivex.pgclient.PgClient):io.reactivex.Single<java.util.Optional<ConferenceV1Dto>> {
+    override fun rxReadOptional(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<java.util.Optional<ConferenceV1Dto>> {
     return rxReadOptional(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
 }

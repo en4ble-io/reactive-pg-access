@@ -8,12 +8,12 @@ import io.en4ble.pgaccess.util.DaoHelperCommon.getQueryForLogging
 import io.en4ble.pgaccess.util.DaoHelperCommon.getSortFields
 import io.en4ble.pgaccess.util.DaoHelperCommon.getSql
 import io.en4ble.pgaccess.util.JooqHelper.toUUIDList
-import io.reactiverse.kotlin.pgclient.preparedQueryAwait
-import io.reactiverse.kotlin.pgclient.queryAwait
-import io.reactiverse.pgclient.PgClient
-import io.reactiverse.pgclient.PgRowSet
-import io.reactiverse.pgclient.PgTransaction
-import io.reactiverse.pgclient.Row
+import io.vertx.kotlin.sqlclient.preparedQueryAwait
+import io.vertx.kotlin.sqlclient.queryAwait
+import io.vertx.sqlclient.Row
+import io.vertx.sqlclient.RowSet
+import io.vertx.sqlclient.SqlClient
+import io.vertx.sqlclient.Transaction
 import org.jooq.Query
 import org.jooq.Record
 import org.jooq.SelectLimitStep
@@ -32,14 +32,14 @@ object DaoHelper {
     /**
      * Run a query using a connection from the pool.
      */
-    suspend fun query(query: Query, context: DatabaseContext): PgRowSet {
+    suspend fun query(query: Query, context: DatabaseContext): RowSet {
         return query(query, context.sqlClient.delegate, context)
     }
 
     /**
      * Run a query using a given connection.
      */
-    suspend fun query(query: Query, client: PgClient, context: DatabaseContext): PgRowSet {
+    suspend fun query(query: Query, client: SqlClient, context: DatabaseContext): RowSet {
         return runQuery(query, client, context, false)
     }
 
@@ -57,7 +57,7 @@ object DaoHelper {
      * @throws NoResultsException if no matching row was found.
      */
     @Throws(NoResultsException::class)
-    suspend fun queryOne(query: Query, client: PgClient, context: DatabaseContext): Row {
+    suspend fun queryOne(query: Query, client: SqlClient, context: DatabaseContext): Row {
         val res = query(query, client, context)
         if (res.size() == 0) {
             throw NoResultsException(getQueryForLogging(query))
@@ -72,7 +72,7 @@ object DaoHelper {
         return queryOptional(query, context.sqlClient.delegate, context)
     }
 
-    suspend fun queryOptional(query: Query, client: PgClient, context: DatabaseContext): Optional<Row> {
+    suspend fun queryOptional(query: Query, client: SqlClient, context: DatabaseContext): Optional<Row> {
         val res = query(query, client, context)
         return if (res.size() == 0) {
             Optional.empty()
@@ -85,7 +85,7 @@ object DaoHelper {
         return update(query, context.sqlClient.delegate, context)
     }
 
-    suspend fun update(query: Query, client: PgClient, context: DatabaseContext): Int {
+    suspend fun update(query: Query, client: SqlClient, context: DatabaseContext): Int {
         val res = runQuery(query, client, context, true)
         val updateCount = res.rowCount()
         LOG.trace("updated: {} rows", updateCount)
@@ -99,7 +99,7 @@ object DaoHelper {
     suspend fun readUUIDs(
         query: Query,
         page: PagingDTO? = null,
-        client: PgClient,
+        client: SqlClient,
         context: DatabaseContext
     ): List<UUID> {
         return if (page == null || query !is SelectLimitStep<*>) {
@@ -114,7 +114,7 @@ object DaoHelper {
         table: Table<RECORD>,
         page: PagingDTO?,
         context: DatabaseContext
-    ): PgRowSet {
+    ): RowSet {
         return read(query, table, page, context.sqlClient.delegate, context)
     }
 
@@ -122,9 +122,9 @@ object DaoHelper {
         query: Query,
         table: Table<RECORD>,
         page: PagingDTO?,
-        client: PgClient,
+        client: SqlClient,
         context: DatabaseContext
-    ): PgRowSet {
+    ): RowSet {
         if (page != null) {
             val order = page.orderBy
             if (order != null && query is SelectOrderByStep<*>) {
@@ -135,9 +135,9 @@ object DaoHelper {
         return query(query, context)
     }
 
-    private suspend fun runQuery(query: Query, client: PgClient, context: DatabaseContext, update: Boolean): PgRowSet {
+    private suspend fun runQuery(query: Query, client: SqlClient, context: DatabaseContext, update: Boolean): RowSet {
         val sql = getSql(query, context)
-        val inTx = if (client is PgTransaction) {
+        val inTx = if (client is Transaction) {
             "[Tx]"
         } else {
             "[NoTx]"

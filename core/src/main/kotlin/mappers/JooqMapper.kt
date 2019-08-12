@@ -1,7 +1,7 @@
 package io.en4ble.pgaccess.mappers
 
-import io.reactiverse.pgclient.PgRowSet
-import io.reactiverse.pgclient.Row
+import io.vertx.sqlclient.Row
+import io.vertx.sqlclient.RowSet
 
 /**
  *
@@ -13,11 +13,11 @@ interface JooqMapper<T> {
         return toDto(row, 0)
     }
 
-    fun toList(res: PgRowSet): List<T> {
+    fun toList(res: RowSet): List<T> {
         return toList(res, 0)
     }
 
-    fun toList(res: PgRowSet, offset: Int): List<T> {
+    fun toList(res: RowSet, offset: Int): List<T> {
         val list = arrayListOf<T>()
         res.forEach { array -> list.add(toDto(array, offset)) }
         return list

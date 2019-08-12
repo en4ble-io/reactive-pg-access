@@ -80,6 +80,7 @@ open class RouterBase(
                 try {
                     ctx.response().end(Json.encode(fn(ctx)))
                 } catch (e: Exception) {
+                    LOG.error("error in request", e)
                     ctx.fail(e)
                 }
             }
@@ -100,6 +101,7 @@ open class RouterBase(
                         else -> ctx.response().end(Json.encode(res))
                     }
                 } catch (e: Exception) {
+                    LOG.error("error in request",e)
                     ctx.fail(e)
                 }
             }

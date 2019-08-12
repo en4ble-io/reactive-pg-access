@@ -2,13 +2,14 @@
 
 package io.en4ble.pgaccess
 
-import io.reactiverse.kotlin.pgclient.beginAwait
-import io.reactiverse.pgclient.PgPool
-import io.reactiverse.pgclient.PgPoolOptions
-import io.reactiverse.reactivex.pgclient.PgClient
-import io.reactiverse.reactivex.pgclient.PgTransaction
 import io.reactivex.Single
+import io.vertx.kotlin.sqlclient.beginAwait
+import io.vertx.pgclient.PgConnectOptions
+import io.vertx.pgclient.PgPool
 import io.vertx.reactivex.core.Vertx
+import io.vertx.reactivex.sqlclient.SqlClient
+import io.vertx.reactivex.sqlclient.Transaction
+import io.vertx.sqlclient.PoolOptions
 import org.jooq.Configuration
 import org.jooq.SQLDialect
 import org.jooq.Schema
@@ -23,7 +24,7 @@ import org.slf4j.LoggerFactory
 open class DatabaseContext(val vertx: Vertx?, val settings: DatabaseSettings, val schema: Schema?) {
     private val LOG by lazy { LoggerFactory.getLogger(DatabaseContext::class.java) }
     val dsl = DSL.using(SQLDialect.POSTGRES_10)!!
-    val sqlClient: PgClient
+    val sqlClient: SqlClient
 
     constructor(vertx: Vertx, settings: DatabaseSettings) : this(vertx, settings, null)
     constructor(settings: DatabaseSettings, schema: Schema) : this(null, settings, schema)
@@ -47,26 +48,30 @@ open class DatabaseContext(val vertx: Vertx?, val settings: DatabaseSettings, va
         this.sqlClient = initSqlClient()
     }
 
-    private fun sqlClient(): PgClient {
+    private fun sqlClient(): SqlClient {
         return sqlClient
     }
 
-    private fun initSqlClient(): PgClient {
-        val options = PgPoolOptions()
+    private fun initSqlClient(): SqlClient {
+        val connectOptions = PgConnectOptions()
             .setHost(settings.host)
             .setPort(settings.port)
             .setDatabase(settings.database)
             .setUser(settings.username)
             .setPassword(settings.password)
-            .setMaxSize(settings.maxPoolSize)
-        return if (vertx != null) PgClient.pool(vertx, options) else PgClient.pool(options)
+        val poolOptions = PoolOptions().setMaxSize(settings.maxPoolSize)
+        return if (vertx != null) {
+            io.vertx.reactivex.pgclient.PgPool.pool(vertx, connectOptions, poolOptions)
+        } else {
+            io.vertx.reactivex.pgclient.PgPool.pool(connectOptions, poolOptions)
+        }
     }
 
-    fun rxCreateTx(): Single<PgTransaction> {
-        return (sqlClient as io.reactiverse.reactivex.pgclient.PgPool).rxBegin()
+    fun rxCreateTx(): Single<Transaction> {
+        return (sqlClient as io.vertx.reactivex.pgclient.PgPool).rxBegin()
     }
 
-    suspend fun createTx(): io.reactiverse.pgclient.PgTransaction {
+    suspend fun createTx(): io.vertx.sqlclient.Transaction {
         return (sqlClient.delegate as PgPool).beginAwait()
     }
 
@@ -85,7 +90,7 @@ open class DatabaseContext(val vertx: Vertx?, val settings: DatabaseSettings, va
 //        if (tx != null) {
 //            throw RuntimeException("transaction already exists")
 //        }
-//        val pool = sqlClient as io.reactiverse.reactivex.pgclient.PgPool
+//        val pool = sqlClient as io.vertx.reactivex.sqlclient.PgPool
 //        return pool.rxBegin().map {
 //            it.abortHandler {
 //                // TODO?
@@ -164,28 +169,28 @@ open class DatabaseContext(val vertx: Vertx?, val settings: DatabaseSettings, va
 //    }
 //
 //    @Suppress("UsePropertyAccessSyntax")
-//    fun getTx(): PgTransaction? {
+//    fun getTx(): Transaction? {
 //        val ctx = vertx.delegate.getOrCreateContext()
 //        return ctx.get("tx")
 //    }
 //
 //    @Suppress("UsePropertyAccessSyntax")
-//    fun getRxTx(): io.reactiverse.reactivex.pgclient.PgTransaction? {
+//    fun getRxTx(): io.vertx.reactivex.sqlclient.Transaction? {
 //        val ctx = vertx.getOrCreateContext()
 //        return ctx.get("tx")
 //    }
 //
 //    @Suppress("UsePropertyAccessSyntax")
-//    private fun getCtxTx(): Pair<Context, PgTransaction?> {
+//    private fun getCtxTx(): Pair<Context, Transaction?> {
 //        val ctx = vertx.delegate.getOrCreateContext()
-//        val tx = ctx.get<PgTransaction>("tx")
+//        val tx = ctx.get<Transaction>("tx")
 //        return Pair(ctx, tx)
 //    }
 //
 //    @Suppress("UsePropertyAccessSyntax")
-//    private fun getRxCtxTx(): Pair<io.vertx.reactivex.core.Context, io.reactiverse.reactivex.pgclient.PgTransaction?> {
+//    private fun getRxCtxTx(): Pair<io.vertx.reactivex.core.Context, io.vertx.reactivex.sqlclient.Transaction?> {
 //        val ctx = vertx.getOrCreateContext()
-//        val tx = ctx.get<io.reactiverse.reactivex.pgclient.PgTransaction>("tx")
+//        val tx = ctx.get<io.vertx.reactivex.sqlclient.Transaction>("tx")
 //        return Pair(ctx, tx)
 //    }
 //

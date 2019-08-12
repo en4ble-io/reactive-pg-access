@@ -4,44 +4,22 @@
 package io.en4ble.examples.jooq.tables;
 
 
-import io.en4ble.examples.converters.TestDTOArrayConverter;
 import io.en4ble.examples.converters.TestDTOConverter;
 import io.en4ble.examples.dto.TestDTO;
 import io.en4ble.examples.jooq.Indexes;
 import io.en4ble.examples.jooq.Keys;
 import io.en4ble.examples.jooq.Pgaccess;
 import io.en4ble.examples.jooq.tables.records.ExampleRecord;
-import io.en4ble.pgaccess.dto.BoxDTO;
-import io.en4ble.pgaccess.dto.CircleDTO;
-import io.en4ble.pgaccess.dto.IntervalDTO;
-import io.en4ble.pgaccess.dto.LineDTO;
-import io.en4ble.pgaccess.dto.LineSegmentDTO;
-import io.en4ble.pgaccess.dto.PathDTO;
-import io.en4ble.pgaccess.dto.PointDTO;
-import io.en4ble.pgaccess.dto.PolygonDTO;
+import io.en4ble.pgaccess.dto.*;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
+import java.time.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -49,7 +27,7 @@ import org.jooq.impl.TableImpl;
  */
 public class Example extends TableImpl<ExampleRecord> implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = 1700557000;
+    private static final long serialVersionUID = 304106312;
 
     /**
      * The reference instance of <code>pgaccess.p_example</code>
@@ -237,12 +215,6 @@ public class Example extends TableImpl<ExampleRecord> implements Serializable, C
      */
 // ----- A jsonb
     public final TableField<ExampleRecord, TestDTO> JSONB = createField("e_jsonb", org.jooq.impl.CustomSQLDataType.JSONB, this, "", new TestDTOConverter());
-
-    /**
-     * The column <code>pgaccess.p_example.e_jsonb_array</code>.
-     */
-// ----- A _jsonb
-    public final TableField<ExampleRecord, TestDTO[]> JSONB_ARRAY = createField("e_jsonb_array", org.jooq.impl.CustomSQLDataType.JSONB.getArrayDataType(), this, "", new TestDTOArrayConverter());
 
     /**
      * The column <code>pgaccess.p_example.e_point</code>.

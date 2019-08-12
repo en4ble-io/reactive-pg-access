@@ -1,6 +1,6 @@
 package io.en4ble.pgaccess.util
 
-import io.reactiverse.pgclient.data.Point
+import io.vertx.pgclient.data.Point
 import org.slf4j.LoggerFactory
 
 /** @author Mark Hofmann (mark@en4ble.io)

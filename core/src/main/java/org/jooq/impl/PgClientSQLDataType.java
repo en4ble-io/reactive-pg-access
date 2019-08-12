@@ -14,8 +14,10 @@
 package org.jooq.impl;
 
 import io.en4ble.pgaccess.dto.*;
-import io.reactiverse.pgclient.data.*;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.data.*;
+import io.vertx.sqlclient.data.Numeric;
 import org.jooq.DataType;
 
 /**
@@ -23,9 +25,10 @@ import org.jooq.DataType;
  */
 public final class PgClientSQLDataType {
     public static final DataType<Numeric> NUMERIC = new DefaultDataType<>(null, Numeric.class, "numeric");
-    public static final DataType<Json> JSON = new DefaultDataType<>(null, Json.class, "json");
-    public static final DataType<Json> JSONB = new DefaultDataType<>(null, Json.class, "jsonb");
     public static final DataType<Buffer> BYTEA = new DefaultDataType<>(null, Buffer.class, "bytea");
+
+    public static final DataType<JsonObject> JSON = new DefaultDataType<>(null, JsonObject.class, "json");
+    public static final DataType<JsonObject> JSONB = new DefaultDataType<>(null, JsonObject.class, "jsonb");
 
     public static final DataType<Point> POINT = new DefaultDataType<>(null, Point.class, "point");
     public static final DataType<PointDTO> POINT_DTO = new DefaultDataType<>(null, PointDTO.class, "point");

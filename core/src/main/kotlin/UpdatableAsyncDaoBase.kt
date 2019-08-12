@@ -5,8 +5,8 @@ import io.en4ble.pgaccess.mappers.JooqMapper
 import io.en4ble.pgaccess.util.DaoHelper
 import io.en4ble.pgaccess.util.DaoHelperCommon
 import io.en4ble.pgaccess.util.RxDaoHelper
-import io.reactiverse.reactivex.pgclient.PgClient
 import io.reactivex.Single
+import io.vertx.reactivex.sqlclient.SqlClient
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.Query
@@ -57,7 +57,7 @@ constructor(
         return DaoHelper.update(query, context)
     }
 
-    suspend fun update(query: Query, client: PgClient, context: DatabaseContext): Int {
+    suspend fun update(query: Query, client: SqlClient, context: DatabaseContext): Int {
         return DaoHelper.update(query, client.delegate, context)
     }
 
@@ -65,7 +65,7 @@ constructor(
         return RxDaoHelper.update(query, context)
     }
 
-    fun rxUpdate(query: Query, client: PgClient, context: DatabaseContext): Single<Int> {
+    fun rxUpdate(query: Query, client: SqlClient, context: DatabaseContext): Single<Int> {
         return RxDaoHelper.update(query, client, context)
     }
 
@@ -73,7 +73,7 @@ constructor(
         return DaoHelper.update(query, context)
     }
 
-    suspend fun update(query: Query, client: PgClient): Int {
+    suspend fun update(query: Query, client: SqlClient): Int {
         return DaoHelper.update(query, client.delegate, context)
     }
 
@@ -81,7 +81,7 @@ constructor(
         return RxDaoHelper.update(query, context)
     }
 
-    fun rxUpdate(query: Query, client: PgClient): Single<Int> {
+    fun rxUpdate(query: Query, client: SqlClient): Single<Int> {
         return RxDaoHelper.update(query, client, context)
     }
 

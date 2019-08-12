@@ -9,12 +9,12 @@ import io.en4ble.pgaccess.util.DaoHelper
 import io.en4ble.pgaccess.util.DaoHelperCommon
 import io.en4ble.pgaccess.util.JooqHelper
 import io.en4ble.pgaccess.util.RxDaoHelper
-import io.reactiverse.pgclient.PgRowSet
-import io.reactiverse.pgclient.Row
-import io.reactiverse.reactivex.pgclient.PgClient
 import io.reactivex.Single
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
+import io.vertx.reactivex.sqlclient.SqlClient
+import io.vertx.sqlclient.Row
+import io.vertx.sqlclient.RowSet
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.Field
@@ -40,7 +40,7 @@ protected constructor(
 ) {
     protected val dsl: DSLContext = context.dsl
 
-    protected val sqlClient: PgClient = context.sqlClient
+    protected val sqlClient: SqlClient = context.sqlClient
 
     protected open fun table(): Table<RECORD> {
         return table
@@ -50,15 +50,15 @@ protected constructor(
         return DaoHelper.queryOptional(query, context)
     }
 
-    suspend fun queryOptional(query: Query, client: PgClient): Optional<Row> {
+    suspend fun queryOptional(query: Query, client: SqlClient): Optional<Row> {
         return DaoHelper.queryOptional(query, client.delegate, context)
     }
 
-    fun rxQueryOptional(query: Query): Single<Optional<io.reactiverse.reactivex.pgclient.Row>> {
+    fun rxQueryOptional(query: Query): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
         return RxDaoHelper.queryOptional(query, context)
     }
 
-    fun rxQueryOptional(query: Query, client: PgClient): Single<Optional<io.reactiverse.reactivex.pgclient.Row>> {
+    fun rxQueryOptional(query: Query, client: SqlClient): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
         return RxDaoHelper.queryOptional(query, client, context)
     }
 
@@ -66,61 +66,61 @@ protected constructor(
         return DaoHelper.queryOptional(query, context)
     }
 
-    suspend fun queryOptional(query: Query, client: PgClient, context: DatabaseContext): Optional<Row> {
+    suspend fun queryOptional(query: Query, client: SqlClient, context: DatabaseContext): Optional<Row> {
         return DaoHelper.queryOptional(query, client.delegate, context)
     }
 
     fun rxQueryOptional(
         query: Query,
         context: DatabaseContext
-    ): Single<Optional<io.reactiverse.reactivex.pgclient.Row>> {
+    ): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
         return RxDaoHelper.queryOptional(query, context)
     }
 
     fun rxQueryOptional(
-        query: Query, client: PgClient, context: DatabaseContext
-    ): Single<Optional<io.reactiverse.reactivex.pgclient.Row>> {
+        query: Query, client: SqlClient, context: DatabaseContext
+    ): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
         return RxDaoHelper.queryOptional(query, client, context)
     }
 
-    suspend fun query(condition: Condition, context: DatabaseContext): PgRowSet {
+    suspend fun query(condition: Condition, context: DatabaseContext): RowSet {
         return DaoHelper.query(getQuery(condition, table()), context)
     }
 
-    suspend fun query(condition: Condition, client: PgClient, context: DatabaseContext): PgRowSet {
+    suspend fun query(condition: Condition, client: SqlClient, context: DatabaseContext): RowSet {
         return DaoHelper.query(getQuery(condition, table()), client.delegate, context)
     }
 
     fun rxQuery(
-        condition: Condition, client: PgClient, context: DatabaseContext
-    ): Single<io.reactiverse.reactivex.pgclient.PgRowSet> {
+        condition: Condition, client: SqlClient, context: DatabaseContext
+    ): Single<io.vertx.reactivex.sqlclient.RowSet> {
         return RxDaoHelper.query(getQuery(condition, table()), client, context)
     }
 
     fun rxQuery(
         condition: Condition,
         context: DatabaseContext
-    ): Single<io.reactiverse.reactivex.pgclient.PgRowSet> {
+    ): Single<io.vertx.reactivex.sqlclient.RowSet> {
         return RxDaoHelper.query(getQuery(condition, table()), context)
     }
 
-    suspend fun query(query: Query, context: DatabaseContext): PgRowSet {
+    suspend fun query(query: Query, context: DatabaseContext): RowSet {
         return DaoHelper.query(query, context)
     }
 
-    suspend fun query(query: Query, client: PgClient, context: DatabaseContext): PgRowSet {
+    suspend fun query(query: Query, client: SqlClient, context: DatabaseContext): RowSet {
         return DaoHelper.query(query, client.delegate, context)
     }
 
-    fun rxQuery(query: Query, context: DatabaseContext): Single<io.reactiverse.reactivex.pgclient.PgRowSet> {
+    fun rxQuery(query: Query, context: DatabaseContext): Single<io.vertx.reactivex.sqlclient.RowSet> {
         return RxDaoHelper.query(query, context)
     }
 
     fun rxQuery(
         query: Query,
-        client: PgClient,
+        client: SqlClient,
         context: DatabaseContext
-    ): Single<io.reactiverse.reactivex.pgclient.PgRowSet> {
+    ): Single<io.vertx.reactivex.sqlclient.RowSet> {
         return RxDaoHelper.query(query, client, context)
     }
 
@@ -128,20 +128,20 @@ protected constructor(
         return DaoHelper.queryOne(getQuery(condition, table()), context)
     }
 
-    suspend fun queryOne(condition: Condition, client: PgClient, context: DatabaseContext): Row {
+    suspend fun queryOne(condition: Condition, client: SqlClient, context: DatabaseContext): Row {
         return DaoHelper.queryOne(getQuery(condition, table()), client.delegate, context)
     }
 
     fun rxQueryOne(
         condition: Condition,
         context: DatabaseContext
-    ): Single<io.reactiverse.reactivex.pgclient.Row> {
+    ): Single<io.vertx.reactivex.sqlclient.Row> {
         return RxDaoHelper.queryOne(getQuery(condition, table()), context)
     }
 
     fun rxQueryOne(
-        condition: Condition, client: PgClient, context: DatabaseContext
-    ): Single<io.reactiverse.reactivex.pgclient.Row> {
+        condition: Condition, client: SqlClient, context: DatabaseContext
+    ): Single<io.vertx.reactivex.sqlclient.Row> {
         return RxDaoHelper.queryOne(getQuery(condition, table()), client, context)
     }
 
@@ -149,15 +149,15 @@ protected constructor(
         return DaoHelper.queryOne(query, context)
     }
 
-    suspend fun queryOne(query: Query, client: PgClient, context: DatabaseContext): Row {
+    suspend fun queryOne(query: Query, client: SqlClient, context: DatabaseContext): Row {
         return DaoHelper.queryOne(query, client.delegate, context)
     }
 
-    suspend fun query(query: Query): PgRowSet {
+    suspend fun query(query: Query): RowSet {
         return DaoHelper.query(query, context)
     }
 
-    suspend fun query(query: Query, client: PgClient): PgRowSet {
+    suspend fun query(query: Query, client: SqlClient): RowSet {
         return DaoHelper.query(query, client.delegate, context)
     }
 
@@ -165,35 +165,35 @@ protected constructor(
         return DaoHelper.queryOne(query, context)
     }
 
-    suspend fun queryOne(query: Query, client: PgClient): Row {
+    suspend fun queryOne(query: Query, client: SqlClient): Row {
         return DaoHelper.queryOne(query, client.delegate, context)
     }
 
-    fun rxQueryOne(query: Query, context: DatabaseContext): Single<io.reactiverse.reactivex.pgclient.Row> {
+    fun rxQueryOne(query: Query, context: DatabaseContext): Single<io.vertx.reactivex.sqlclient.Row> {
         return RxDaoHelper.queryOne(query, context)
     }
 
     fun rxQueryOne(
         query: Query,
-        client: PgClient,
+        client: SqlClient,
         context: DatabaseContext
-    ): Single<io.reactiverse.reactivex.pgclient.Row> {
+    ): Single<io.vertx.reactivex.sqlclient.Row> {
         return RxDaoHelper.queryOne(query, client, context)
     }
 
-    fun rxQuery(query: Query): Single<io.reactiverse.reactivex.pgclient.PgRowSet> {
+    fun rxQuery(query: Query): Single<io.vertx.reactivex.sqlclient.RowSet> {
         return RxDaoHelper.query(query, context)
     }
 
-    fun rxQuery(query: Query, client: PgClient): Single<io.reactiverse.reactivex.pgclient.PgRowSet> {
+    fun rxQuery(query: Query, client: SqlClient): Single<io.vertx.reactivex.sqlclient.RowSet> {
         return RxDaoHelper.query(query, client, context)
     }
 
-    fun rxQueryOne(query: Query): Single<io.reactiverse.reactivex.pgclient.Row> {
+    fun rxQueryOne(query: Query): Single<io.vertx.reactivex.sqlclient.Row> {
         return RxDaoHelper.queryOne(query, context)
     }
 
-    fun rxQueryOne(query: Query, client: PgClient): Single<io.reactiverse.reactivex.pgclient.Row> {
+    fun rxQueryOne(query: Query, client: SqlClient): Single<io.vertx.reactivex.sqlclient.Row> {
         return RxDaoHelper.queryOne(query, client, context)
     }
 
@@ -204,7 +204,7 @@ protected constructor(
     }
 
     suspend fun readUUIDs(
-        idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null, client: PgClient
+        idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null, client: SqlClient
     ): List<UUID> {
         val query = dsl.select(idField).from(idField.table).where(condition)
         return DaoHelper.readUUIDs(query, page, client.delegate, context)
@@ -217,7 +217,7 @@ protected constructor(
     }
 
     fun rxReadUUIDs(
-        idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null, client: PgClient
+        idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null, client: SqlClient
     ): Single<List<UUID>> {
         val query = dsl.select(idField).from(idField.table).where(condition)
         return RxDaoHelper.readUUIDs(query, page, client, context)
@@ -227,7 +227,7 @@ protected constructor(
         return DaoHelper.readUUIDs(query, page, context)
     }
 
-    suspend fun readUUIDs(query: Query, page: PagingDTO? = null, client: PgClient): List<UUID> {
+    suspend fun readUUIDs(query: Query, page: PagingDTO? = null, client: SqlClient): List<UUID> {
         return DaoHelper.readUUIDs(query, page, client.delegate, context)
     }
 
@@ -235,7 +235,7 @@ protected constructor(
         return RxDaoHelper.readUUIDs(query, page, context)
     }
 
-    fun rxReadUUIDs(query: Query, page: PagingDTO? = null, client: PgClient): Single<List<UUID>> {
+    fun rxReadUUIDs(query: Query, page: PagingDTO? = null, client: SqlClient): Single<List<UUID>> {
         return RxDaoHelper.readUUIDs(query, page, client, context)
     }
 
@@ -318,11 +318,11 @@ protected constructor(
         return read(dsl.select().from(table), table)
     }
 
-    suspend fun readAll(client: PgClient): List<DTO> {
+    suspend fun readAll(client: SqlClient): List<DTO> {
         return read(dsl.select().from(table), table, client)
     }
 
-    suspend fun readAll(table: Table<RECORD>, client: PgClient): List<DTO> {
+    suspend fun readAll(table: Table<RECORD>, client: SqlClient): List<DTO> {
         return read(dsl.select().from(table), table, client)
     }
 
@@ -334,11 +334,11 @@ protected constructor(
         return rxRead(dsl.select().from(table), table)
     }
 
-    fun rxReadAll(client: PgClient): Single<List<DTO>> {
+    fun rxReadAll(client: SqlClient): Single<List<DTO>> {
         return rxRead(dsl.select().from(table), table, client)
     }
 
-    fun rxReadAll(table: Table<RECORD>? = null, client: PgClient): Single<List<DTO>> {
+    fun rxReadAll(table: Table<RECORD>? = null, client: SqlClient): Single<List<DTO>> {
         return rxRead(dsl.select().from(table), table ?: this.table, client)
     }
 
@@ -346,7 +346,7 @@ protected constructor(
         return read(getQuery(condition, table), table)
     }
 
-    suspend fun read(condition: Condition, table: Table<RECORD>, client: PgClient): List<DTO> {
+    suspend fun read(condition: Condition, table: Table<RECORD>, client: SqlClient): List<DTO> {
         return read(getQuery(condition, table), table, client)
     }
 
@@ -354,7 +354,7 @@ protected constructor(
         return rxRead(getQuery(condition, table), table)
     }
 
-    fun rxRead(condition: Condition, table: Table<RECORD>, client: PgClient): Single<List<DTO>> {
+    fun rxRead(condition: Condition, table: Table<RECORD>, client: SqlClient): Single<List<DTO>> {
         return rxRead(getQuery(condition, table), table, client)
     }
 
@@ -362,7 +362,7 @@ protected constructor(
         return read(getQuery(condition, table), table, page)
     }
 
-    suspend fun read(condition: Condition, table: Table<RECORD>, page: PagingDTO?, client: PgClient): List<DTO> {
+    suspend fun read(condition: Condition, table: Table<RECORD>, page: PagingDTO?, client: SqlClient): List<DTO> {
         return read(getQuery(condition, table), table, page, client)
     }
 
@@ -370,7 +370,7 @@ protected constructor(
         return rxRead(getQuery(condition, table), table, page)
     }
 
-    fun rxRead(condition: Condition, table: Table<RECORD>, page: PagingDTO?, client: PgClient): Single<List<DTO>> {
+    fun rxRead(condition: Condition, table: Table<RECORD>, page: PagingDTO?, client: SqlClient): Single<List<DTO>> {
         return rxRead(getQuery(condition, table), table, page, client)
     }
 
@@ -378,7 +378,7 @@ protected constructor(
         return read(condition, table(), PagingDTO(orderBy))
     }
 
-    suspend fun read(condition: Condition, orderBy: List<OrderDTO>, client: PgClient): List<DTO> {
+    suspend fun read(condition: Condition, orderBy: List<OrderDTO>, client: SqlClient): List<DTO> {
         return read(condition, table(), PagingDTO(orderBy), client)
     }
 
@@ -386,7 +386,7 @@ protected constructor(
         return rxRead(condition, table(), PagingDTO(orderBy))
     }
 
-    fun rxRead(condition: Condition, orderBy: List<OrderDTO>, client: PgClient): Single<List<DTO>> {
+    fun rxRead(condition: Condition, orderBy: List<OrderDTO>, client: SqlClient): Single<List<DTO>> {
         return rxRead(condition, table(), PagingDTO(orderBy), client)
     }
 
@@ -394,7 +394,12 @@ protected constructor(
         return read(condition, table, PagingDTO(orderBy))
     }
 
-    suspend fun read(condition: Condition, table: Table<RECORD>, orderBy: List<OrderDTO>, client: PgClient): List<DTO> {
+    suspend fun read(
+        condition: Condition,
+        table: Table<RECORD>,
+        orderBy: List<OrderDTO>,
+        client: SqlClient
+    ): List<DTO> {
         return read(condition, table, PagingDTO(orderBy), client)
     }
 
@@ -406,7 +411,7 @@ protected constructor(
         condition: Condition,
         table: Table<RECORD>,
         orderBy: List<OrderDTO>,
-        client: PgClient
+        client: SqlClient
     ): Single<List<DTO>> {
         return rxRead(condition, table, PagingDTO(orderBy), client)
     }
@@ -415,7 +420,7 @@ protected constructor(
         return read(query, table, null)
     }
 
-    suspend fun read(query: Query, table: Table<RECORD>, client: PgClient): List<DTO> {
+    suspend fun read(query: Query, table: Table<RECORD>, client: SqlClient): List<DTO> {
         return read(query, table, null, client)
     }
 
@@ -423,7 +428,7 @@ protected constructor(
         return rxRead(query, table, null)
     }
 
-    fun rxRead(query: Query, table: Table<RECORD>, client: PgClient): Single<List<DTO>> {
+    fun rxRead(query: Query, table: Table<RECORD>, client: SqlClient): Single<List<DTO>> {
         return rxRead(query, table, null, client)
     }
 
@@ -439,7 +444,7 @@ protected constructor(
         query: Query,
         table: Table<RECORD>,
         page: PagingDTO?,
-        client: PgClient
+        client: SqlClient
     ): List<DTO> {
         return DaoHelper.read(query, table, page, client.delegate, context).map { map(it, table) }
     }
@@ -456,7 +461,7 @@ protected constructor(
         query: Query,
         table: Table<RECORD>,
         page: PagingDTO?,
-        client: PgClient
+        client: SqlClient
     ): Single<List<DTO>> {
         return RxDaoHelper.read(query, table, page, client, context).map { map(it.delegate, table) }
     }
@@ -465,7 +470,7 @@ protected constructor(
         return readOne(getQuery(condition, table), table)
     }
 
-    suspend fun readOne(condition: Condition, table: Table<RECORD>, client: PgClient): DTO {
+    suspend fun readOne(condition: Condition, table: Table<RECORD>, client: SqlClient): DTO {
         return readOne(getQuery(condition, table), table, client)
     }
 
@@ -473,7 +478,7 @@ protected constructor(
         return rxReadOne(getQuery(condition, table), table)
     }
 
-    fun rxReadOne(condition: Condition, table: Table<RECORD>, client: PgClient): Single<DTO> {
+    fun rxReadOne(condition: Condition, table: Table<RECORD>, client: SqlClient): Single<DTO> {
         return rxReadOne(getQuery(condition, table), table, client)
     }
 
@@ -481,7 +486,7 @@ protected constructor(
         return map(queryOne(query), table)
     }
 
-    suspend fun readOne(query: Query, table: Table<RECORD>, client: PgClient): DTO {
+    suspend fun readOne(query: Query, table: Table<RECORD>, client: SqlClient): DTO {
         return map(queryOne(query, client), table)
     }
 
@@ -491,7 +496,7 @@ protected constructor(
         }
     }
 
-    fun rxReadOne(query: Query, table: Table<RECORD>, client: PgClient): Single<DTO> {
+    fun rxReadOne(query: Query, table: Table<RECORD>, client: SqlClient): Single<DTO> {
         return rxQueryOne(query, client).map {
             map(it.delegate, table)
         }
@@ -501,7 +506,7 @@ protected constructor(
         return readOptional(getQuery(condition, table), table)
     }
 
-    suspend fun readOptional(condition: Condition, table: Table<RECORD>, client: PgClient): Optional<DTO> {
+    suspend fun readOptional(condition: Condition, table: Table<RECORD>, client: SqlClient): Optional<DTO> {
         return readOptional(getQuery(condition, table), table, client)
     }
 
@@ -509,7 +514,7 @@ protected constructor(
         return rxReadOptional(getQuery(condition, table), table)
     }
 
-    fun rxReadOptional(condition: Condition, table: Table<RECORD>, client: PgClient): Single<Optional<DTO>> {
+    fun rxReadOptional(condition: Condition, table: Table<RECORD>, client: SqlClient): Single<Optional<DTO>> {
         return rxReadOptional(getQuery(condition, table), table, client)
     }
 
@@ -517,7 +522,7 @@ protected constructor(
         return readOptional(query, table, context.sqlClient)
     }
 
-    suspend fun readOptional(query: Query, table: Table<RECORD>, client: PgClient): Optional<DTO> {
+    suspend fun readOptional(query: Query, table: Table<RECORD>, client: SqlClient): Optional<DTO> {
         val res = queryOptional(query, client)
         return if (res.isPresent) {
             Optional.of(map(res.get(), table))
@@ -530,7 +535,7 @@ protected constructor(
         return rxReadOptional(query, table, context.sqlClient)
     }
 
-    fun rxReadOptional(query: Query, table: Table<RECORD>, client: PgClient): Single<Optional<DTO>> {
+    fun rxReadOptional(query: Query, table: Table<RECORD>, client: SqlClient): Single<Optional<DTO>> {
         return rxQueryOptional(query, client).map {
             if (it.isPresent) {
                 Optional.of(map(it.get().delegate, table))
@@ -544,7 +549,7 @@ protected constructor(
         return queryOne(countQuery).getInteger(0)
     }
 
-    suspend fun readCount(countQuery: Query, client: PgClient): Int {
+    suspend fun readCount(countQuery: Query, client: SqlClient): Int {
         return queryOne(countQuery, client).getInteger(0)
     }
 
@@ -552,7 +557,7 @@ protected constructor(
         return rxQueryOne(countQuery).map { it.getInteger(0) }
     }
 
-    fun rxReadCount(countQuery: Query, client: PgClient): Single<Int> {
+    fun rxReadCount(countQuery: Query, client: SqlClient): Single<Int> {
         return rxQueryOne(countQuery, client).map { it.getInteger(0) }
     }
 
@@ -560,7 +565,7 @@ protected constructor(
         return readCount(getQuery(countCondition, table))
     }
 
-    suspend fun readCount(countCondition: Condition, client: PgClient): Int {
+    suspend fun readCount(countCondition: Condition, client: SqlClient): Int {
         return readCount(getQuery(countCondition, table), client)
     }
 
@@ -568,7 +573,7 @@ protected constructor(
         return rxReadCount(getQuery(countCondition, table))
     }
 
-    fun rxReadCount(countCondition: Condition, client: PgClient): Single<Int> {
+    fun rxReadCount(countCondition: Condition, client: SqlClient): Single<Int> {
         return rxReadCount(getQuery(countCondition, table), client)
     }
 
@@ -576,7 +581,7 @@ protected constructor(
         return readCount(getQuery(countCondition, table))
     }
 
-    suspend fun readCount(countCondition: Condition, table: Table<*>, client: PgClient): Int {
+    suspend fun readCount(countCondition: Condition, table: Table<*>, client: SqlClient): Int {
         return readCount(getQuery(countCondition, table), client)
     }
 
@@ -584,47 +589,47 @@ protected constructor(
         return rxReadCount(getQuery(countCondition, table))
     }
 
-    fun rxReadCount(countCondition: Condition, table: Table<*>, client: PgClient): Single<Int> {
+    fun rxReadCount(countCondition: Condition, table: Table<*>, client: SqlClient): Single<Int> {
         return rxReadCount(getQuery(countCondition, table), client)
     }
 
     private fun getQuery(condition: Condition, table: Table<*>) = dsl.select().from(table).where(condition)
 
     abstract suspend fun read(query: Query): List<DTO>
-    abstract suspend fun read(query: Query, client: PgClient): List<DTO>
+    abstract suspend fun read(query: Query, client: SqlClient): List<DTO>
     abstract fun rxRead(query: Query): Single<List<DTO>>
-    abstract fun rxRead(query: Query, client: PgClient): Single<List<DTO>>
+    abstract fun rxRead(query: Query, client: SqlClient): Single<List<DTO>>
 
     abstract suspend fun read(condition: Condition): List<DTO>
-    abstract suspend fun read(condition: Condition, client: PgClient): List<DTO>
+    abstract suspend fun read(condition: Condition, client: SqlClient): List<DTO>
     abstract fun rxRead(condition: Condition): Single<List<DTO>>
-    abstract fun rxRead(condition: Condition, client: PgClient): Single<List<DTO>>
+    abstract fun rxRead(condition: Condition, client: SqlClient): Single<List<DTO>>
 
     abstract suspend fun readOne(condition: Condition): DTO
-    abstract suspend fun readOne(condition: Condition, client: PgClient): DTO
+    abstract suspend fun readOne(condition: Condition, client: SqlClient): DTO
     abstract fun rxReadOne(condition: Condition): Single<DTO>
-    abstract fun rxReadOne(condition: Condition, client: PgClient): Single<DTO>
+    abstract fun rxReadOne(condition: Condition, client: SqlClient): Single<DTO>
 
     abstract suspend fun readOne(query: Query): DTO
-    abstract suspend fun readOne(query: Query, client: PgClient): DTO
+    abstract suspend fun readOne(query: Query, client: SqlClient): DTO
     abstract fun rxReadOne(query: Query): Single<DTO>
-    abstract fun rxReadOne(query: Query, client: PgClient): Single<DTO>
+    abstract fun rxReadOne(query: Query, client: SqlClient): Single<DTO>
 
     abstract suspend fun readOptional(query: Query): Optional<DTO>
-    abstract suspend fun readOptional(query: Query, client: PgClient): Optional<DTO>
+    abstract suspend fun readOptional(query: Query, client: SqlClient): Optional<DTO>
     abstract fun rxReadOptional(query: Query): Single<Optional<DTO>>
-    abstract fun rxReadOptional(query: Query, client: PgClient): Single<Optional<DTO>>
+    abstract fun rxReadOptional(query: Query, client: SqlClient): Single<Optional<DTO>>
 
     abstract suspend fun readOptional(condition: Condition): Optional<DTO>
-    abstract suspend fun readOptional(condition: Condition, client: PgClient): Optional<DTO>
+    abstract suspend fun readOptional(condition: Condition, client: SqlClient): Optional<DTO>
     abstract fun rxReadOptional(condition: Condition): Single<Optional<DTO>>
-    abstract fun rxReadOptional(condition: Condition, client: PgClient): Single<Optional<DTO>>
+    abstract fun rxReadOptional(condition: Condition, client: SqlClient): Single<Optional<DTO>>
 
     abstract fun map(row: Row, table: Table<RECORD>, offset: Int = 0): DTO
     abstract fun map(row: Row, offset: Int = 0): DTO
 
-    abstract fun map(rs: PgRowSet, table: Table<RECORD>, offset: Int = 0): List<DTO>
-    abstract fun map(rs: PgRowSet, offset: Int = 0): List<DTO>
+    abstract fun map(rs: RowSet, table: Table<RECORD>, offset: Int = 0): List<DTO>
+    abstract fun map(rs: RowSet, offset: Int = 0): List<DTO>
 
     // ----------- CRUD helper methods
 
@@ -660,15 +665,15 @@ protected constructor(
         return JooqHelper.any(id, field)
     }
 
-    fun toStringList(res: PgRowSet): List<String> {
+    fun toStringList(res: RowSet): List<String> {
         return JooqHelper.toStringList(res)
     }
 
-    fun toUUIDList(res: PgRowSet): List<UUID> {
+    fun toUUIDList(res: RowSet): List<UUID> {
         return JooqHelper.toUUIDList(res)
     }
 
-    fun toIntegerList(res: PgRowSet): List<Int> {
+    fun toIntegerList(res: RowSet): List<Int> {
         return JooqHelper.toIntegerList(res)
     }
 
