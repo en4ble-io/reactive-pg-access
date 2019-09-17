@@ -22,8 +22,8 @@ dependencies {
 
     compile('org.liquibase:liquibase-core:' + liquibaseVersion)
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
-    compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-reflect"
 
     compile "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
 
@@ -90,12 +90,11 @@ task jooqGenerate {
                                     converter('io.en4ble.examples.converters.TestDTOConverter')
                                     expression('.*\\.p_example\\.e_jsonb')
                                 }
-                                // TODO: support JsonArray
-//                                forcedType {
-//                                    userType('io.en4ble.examples.dto.TestDTO[]')
-//                                    converter('io.en4ble.examples.converters.TestDTOArrayConverter')
-//                                    expression('.*\\.p_example\\.e_jsonb_array')
-//                                }
+                                forcedType {
+                                    userType('io.en4ble.examples.dto.TestDTO[]')
+                                    converter('io.en4ble.examples.converters.TestDTOArrayConverter')
+                                    expression('.*\\.p_example\\.e_jsonb_array')
+                                }
                             }
                         }
                         generate([:]) {

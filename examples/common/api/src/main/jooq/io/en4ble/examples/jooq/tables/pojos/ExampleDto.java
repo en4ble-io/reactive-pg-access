@@ -30,7 +30,7 @@ import java.util.UUID;
 @io.swagger.v3.oas.annotations.media.Schema(name="Example", title="An example table containing all datatypes that are supported by reactive-pg-access.")
 public class ExampleDto extends Object implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = 107513953;
+    private static final long serialVersionUID = -404530586;
 
     private UUID             uuid;
     private UUID[]           uuidArray;
@@ -61,6 +61,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     private OffsetDateTime   dateTimetz;
     private OffsetDateTime[] dateTimetzArray;
     private TestDTO          jsonb;
+    private TestDTO[]        jsonbArray;
     private PointDTO         point;
     private PointDTO[]       pointArray;
     private LineDTO          line;
@@ -116,6 +117,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         this.dateTimetz = value.dateTimetz;
         this.dateTimetzArray = value.dateTimetzArray;
         this.jsonb = value.jsonb;
+        this.jsonbArray = value.jsonbArray;
         this.point = value.point;
         this.pointArray = value.pointArray;
         this.line = value.line;
@@ -170,6 +172,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         OffsetDateTime   dateTimetz,
         OffsetDateTime[] dateTimetzArray,
         TestDTO          jsonb,
+        TestDTO[]        jsonbArray,
         PointDTO         point,
         PointDTO[]       pointArray,
         LineDTO          line,
@@ -222,6 +225,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         this.dateTimetz = dateTimetz;
         this.dateTimetzArray = dateTimetzArray;
         this.jsonb = jsonb;
+        this.jsonbArray = jsonbArray;
         this.point = point;
         this.pointArray = pointArray;
         this.line = line;
@@ -539,6 +543,16 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="jsonbArray")
+    public TestDTO[] getJsonbArray() {
+        return this.jsonbArray;
+    }
+
+    public ExampleDto setJsonbArray(TestDTO... jsonbArray) {
+        this.jsonbArray = jsonbArray;
+        return this;
+    }
+
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="point")
     public PointDTO getPoint() {
         return this.point;
@@ -793,6 +807,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         sb.append(", ").append(dateTimetz);
         sb.append(", ").append(Arrays.toString(dateTimetzArray));
         sb.append(", ").append(jsonb);
+        sb.append(", ").append(Arrays.toString(jsonbArray));
         sb.append(", ").append(point);
         sb.append(", ").append(Arrays.toString(pointArray));
         sb.append(", ").append(line);

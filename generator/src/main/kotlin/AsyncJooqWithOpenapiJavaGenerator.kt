@@ -9,7 +9,6 @@ import io.en4ble.pgaccess.dto.PathDTO
 import io.en4ble.pgaccess.dto.PointDTO
 import io.en4ble.pgaccess.dto.PolygonDTO
 import io.vertx.core.buffer.Buffer
-import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.pgclient.data.Box
 import io.vertx.pgclient.data.Circle
@@ -527,9 +526,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                         out.tab(2)
                             .println("val ${column.name} = row.get($type::class.java,$offset)")
                     } else if (userType == "_json" || userType == "_jsonb") {
-                        val type = JsonArray::class.java.name
                         out.tab(2)
-                            .println("val ${column.name} = row.get($type::class.java,$offset)")
+                            .println("val ${column.name} = row.get(Array<io.vertx.core.json.JsonObject>::class.java,$offset)")
                     } else {
                         val accessName = getSqlClientAccessName(column.type)
                         out.tab(2)
@@ -916,10 +914,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val offset = getOffset(pos)
         val s = when (userType) {
             "json" -> "row.get(io.vertx.core.json.JsonObject::class.java,$offset)"
-            "_json" -> "row.getValues(io.vertx.core.json.JsonArray::class.java,$offset)"
+            "_json" -> "row.getValues(Array<io.vertx.core.json.JsonObject>::class.java,$offset)"
 
             "jsonb" -> "row.get(io.vertx.core.json.JsonObject::class.java,$offset)"
-            "_jsonb" -> "row.getValues(io.vertx.core.json.JsonArray::class.java,$offset)"
+            "_jsonb" -> "row.getValues(Array<io.vertx.core.json.JsonObject>::class.java,$offset)"
 
             else -> null
         }

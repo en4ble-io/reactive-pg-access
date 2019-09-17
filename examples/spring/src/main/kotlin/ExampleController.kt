@@ -7,6 +7,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.rx2.rxSingle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -23,6 +24,11 @@ class ExampleController {
 
     @Autowired
     private lateinit var exampleService: SpringExampleService
+
+    @PostMapping("/")
+    fun create(): Mono<ExampleDto> {
+        return RxJava2Adapter.singleToMono(GlobalScope.rxSingle { exampleService.create() })
+    }
 
     @GetMapping("/randomRx")
     fun example(): Mono<ExampleDto> {

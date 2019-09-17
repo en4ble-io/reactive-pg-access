@@ -60,8 +60,7 @@ open class ExampleService(protected val exampleDao: ExampleDao) {
         form.setIntervalArray(IntervalDTO(2), IntervalDTO(0, 2))
 
         form.jsonb = randomTestDTO()
-//        // TODO: support JsonArray
-//        form.setJsonbArray(randomTestDTO(), randomTestDTO())
+        form.setJsonbArray(randomTestDTO(), randomTestDTO())
 
         form.line = randomLine()
         form.setLineArray(randomLine(), randomLine())

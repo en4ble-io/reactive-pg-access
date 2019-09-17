@@ -696,6 +696,7 @@ abstract class ExampleDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) : io
     "dateTimetz" to io.en4ble.examples.jooq.tables.Example.EXAMPLE.DATE_TIMETZ,
     "dateTimetzArray" to io.en4ble.examples.jooq.tables.Example.EXAMPLE.DATE_TIMETZ_ARRAY,
     "jsonb" to io.en4ble.examples.jooq.tables.Example.EXAMPLE.JSONB,
+    "jsonbArray" to io.en4ble.examples.jooq.tables.Example.EXAMPLE.JSONB_ARRAY,
     "point" to io.en4ble.examples.jooq.tables.Example.EXAMPLE.POINT,
     "pointArray" to io.en4ble.examples.jooq.tables.Example.EXAMPLE.POINT_ARRAY,
     "line" to io.en4ble.examples.jooq.tables.Example.EXAMPLE.LINE,
