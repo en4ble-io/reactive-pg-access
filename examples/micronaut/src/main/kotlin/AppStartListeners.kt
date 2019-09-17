@@ -12,7 +12,7 @@ import io.micronaut.runtime.event.annotation.EventListener
  * @author Mark Hofmann (mark@en4ble.io)
  */
 @Suppress("UNUSED_PARAMETER", "unused")
-class AppStartListerners(private val conf: ExampleConfiguration, private val context: ExampleContext) {
+class AppStartListeners(private val conf: ExampleConfiguration, private val context: ExampleContext) {
     @EventListener
     fun onStartup(event: ServiceStartedEvent) {
         updateDatabase(Conference.CONFERENCE.schema, conf.db!!)
