@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.rx2.rxSingle
 import java.util.UUID
 import javax.validation.Valid
@@ -58,7 +57,7 @@ class ConferenceController(private val service: MnConferenceService) {
 
     @Get("/{id}")
     fun getConf(id: UUID): Single<ConferenceV1Dto> {
-        return GlobalScope.rxSingle { service.getConference(id) }
+        return rxSingle { service.getConference(id) }
     }
 
     @Get("/random")
