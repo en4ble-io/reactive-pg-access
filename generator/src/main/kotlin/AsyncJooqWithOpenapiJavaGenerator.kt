@@ -514,7 +514,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 // handling of vertx json types
             } else if (handleGeometricDBTypeFromRow(table, column, setter, columnType, javaMemberName, pos, out)) {
                 // custom geometric types (uses dto from api package instead of pg-client types)
-            } else if (handleReactiveSqlClientTypeFromRow(column, setter, columnType, javaMemberName, pos, out)) {
+            } else if (handleReactiveSqlClientTypeFromRow(column, setter, javaMemberName, pos, out)) {
                 // handle types of reactive-pg-client
             } else {
                 if (column.type.javaType != null && column.type.converter != null) {
@@ -732,7 +732,6 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     private fun handleReactiveSqlClientTypeFromRow(
         column: TypedElementDefinition<*>,
         setter: String,
-        columnType: String?,
         javaMemberName: String?,
         pos: Int,
         out: JavaWriter

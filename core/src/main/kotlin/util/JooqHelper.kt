@@ -135,6 +135,7 @@ object JooqHelper {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private inline fun <reified T> convertArray2DbTypes(dtos: Array<*>, param: Param<*>, type: Class<T>): Array<T?> {
         val array = arrayOfNulls<T>(dtos.size)
         for (i in dtos.indices) {

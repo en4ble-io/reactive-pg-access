@@ -38,11 +38,71 @@
 package org.jooq.codegen;
 
 
-import org.jooq.*;
+import org.jooq.AggregateFunction;
+import org.jooq.Catalog;
+import org.jooq.Configuration;
+import org.jooq.Constants;
+import org.jooq.DataType;
+import org.jooq.EnumType;
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.OrderField;
+import org.jooq.Parameter;
+import org.jooq.Record;
+import org.jooq.Result;
+import org.jooq.Row;
+import org.jooq.Schema;
+import org.jooq.Sequence;
+import org.jooq.SortOrder;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UDT;
+import org.jooq.UDTField;
+import org.jooq.UniqueKey;
 import org.jooq.codegen.GeneratorStrategy.Mode;
 import org.jooq.exception.SQLDialectNotSupportedException;
-import org.jooq.impl.*;
-import org.jooq.meta.*;
+import org.jooq.impl.AbstractRoutine;
+import org.jooq.impl.CatalogImpl;
+import org.jooq.impl.CustomSQLDataType;
+import org.jooq.impl.DAOImpl;
+import org.jooq.impl.DSL;
+import org.jooq.impl.DefaultDataType;
+import org.jooq.impl.Internal;
+import org.jooq.impl.SQLDataType;
+import org.jooq.impl.SchemaImpl;
+import org.jooq.impl.SequenceImpl;
+import org.jooq.impl.TableImpl;
+import org.jooq.impl.TableRecordImpl;
+import org.jooq.impl.UDTImpl;
+import org.jooq.impl.UDTRecordImpl;
+import org.jooq.impl.UpdatableRecordImpl;
+import org.jooq.meta.ArrayDefinition;
+import org.jooq.meta.AttributeDefinition;
+import org.jooq.meta.CatalogDefinition;
+import org.jooq.meta.ColumnDefinition;
+import org.jooq.meta.DataTypeDefinition;
+import org.jooq.meta.Database;
+import org.jooq.meta.DefaultDataTypeDefinition;
+import org.jooq.meta.Definition;
+import org.jooq.meta.DomainDefinition;
+import org.jooq.meta.EnumDefinition;
+import org.jooq.meta.ForeignKeyDefinition;
+import org.jooq.meta.IdentityDefinition;
+import org.jooq.meta.IndexColumnDefinition;
+import org.jooq.meta.IndexDefinition;
+import org.jooq.meta.JavaTypeResolver;
+import org.jooq.meta.PackageDefinition;
+import org.jooq.meta.ParameterDefinition;
+import org.jooq.meta.RoutineDefinition;
+import org.jooq.meta.SchemaDefinition;
+import org.jooq.meta.SequenceDefinition;
+import org.jooq.meta.TableDefinition;
+import org.jooq.meta.TypedElementDefinition;
+import org.jooq.meta.UDTDefinition;
+import org.jooq.meta.UniqueKeyDefinition;
 import org.jooq.meta.postgres.PostgresDatabase;
 import org.jooq.tools.JooqLogger;
 import org.jooq.tools.StopWatch;
@@ -57,7 +117,19 @@ import java.lang.reflect.TypeVariable;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,25 +145,6 @@ import static org.jooq.meta.AbstractTypedElementDefinition.getDataType;
 import static org.jooq.tools.StringUtils.defaultIfBlank;
 import static org.jooq.tools.StringUtils.defaultString;
 
-// ...
-// ...
-// ...
-// ...
-// ...
-// ...
-// ...
-
-// ...
-// ...
-// ...
-// ...
-// ...
-// ...
-// ...
-// ...
-// ...
-
-
 /**
  * A default implementation for code generation.
  * <p>
@@ -106,7 +159,7 @@ import static org.jooq.tools.StringUtils.defaultString;
  * @author Lukas Eder
  * @author Mark Hofmann (mark@en4ble.io)
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "WeakerAccess"})
 public class ExtendedJavaGenerator extends AbstractGenerator {
 
     private static final JooqLogger log = JooqLogger.getLogger(ExtendedJavaGenerator.class);
@@ -167,24 +220,24 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
     /**
      * All files modified by this generator.
      */
-    private Set<File> files = new LinkedHashSet<File>();
+    private Set<File> files = new LinkedHashSet<>();
 
     /**
      * These directories were not modified by this generator, but flagged as not
      * for removal (e.g. because of {@link #schemaVersions} or
      * {@link #catalogVersions}).
      */
-    private Set<File> directoriesNotForRemoval = new LinkedHashSet<File>();
+    private Set<File> directoriesNotForRemoval = new LinkedHashSet<>();
 
     private final boolean scala;
     private final String tokenVoid;
     private final Files fileCache;
 
     static {
-        CUSTOM_SQLDATATYPE_LITERAL_LOOKUP = new IdentityHashMap<DataType<?>, String>();
-        SQLDATATYPE_LITERAL_LOOKUP = new IdentityHashMap<DataType<?>, String>();
-        SQLDATATYPE_WITH_LENGTH = new HashSet<String>();
-        SQLDATATYPE_WITH_PRECISION = new HashSet<String>();
+        CUSTOM_SQLDATATYPE_LITERAL_LOOKUP = new IdentityHashMap<>();
+        SQLDATATYPE_LITERAL_LOOKUP = new IdentityHashMap<>();
+        SQLDATATYPE_WITH_LENGTH = new HashSet<>();
+        SQLDATATYPE_WITH_PRECISION = new HashSet<>();
 
         try {
             for (java.lang.reflect.Field f : SQLDataType.class.getFields()) {
@@ -193,13 +246,13 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
                     Modifier.isFinal(f.getModifiers()))
                     SQLDATATYPE_LITERAL_LOOKUP.put((DataType<?>) f.get(SQLDataType.class), f.getName());
             }
+
             for (java.lang.reflect.Field f : CustomSQLDataType.class.getFields()) {
                 if (Modifier.isPublic(f.getModifiers()) &&
                     Modifier.isStatic(f.getModifiers()) &&
                     Modifier.isFinal(f.getModifiers()))
                     CUSTOM_SQLDATATYPE_LITERAL_LOOKUP.put((DataType<?>) f.get(CustomSQLDataType.class), f.getName());
             }
-
 
             for (java.lang.reflect.Method m : SQLDataType.class.getMethods()) {
                 if (Modifier.isPublic(m.getModifiers()) &&
@@ -235,8 +288,8 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
     @Override
     public final void generate(Database db) {
         this.isoDate = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
-        this.schemaVersions = new LinkedHashMap<SchemaDefinition, String>();
-        this.catalogVersions = new LinkedHashMap<CatalogDefinition, String>();
+        this.schemaVersions = new LinkedHashMap<>();
+        this.catalogVersions = new LinkedHashMap<>();
 
         this.database = db;
         this.database.addFilter(new AvoidAmbiguousClassesFilter());
@@ -521,7 +574,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
 
     private class AvoidAmbiguousClassesFilter implements Database.Filter {
 
-        private Map<String, String> included = new HashMap<String, String>();
+        private Map<String, String> included = new HashMap<>();
 
         @Override
         public boolean exclude(Definition definition) {
@@ -571,9 +624,9 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
         else
             out.println("public class Keys {");
 
-        List<IdentityDefinition> allIdentities = new ArrayList<IdentityDefinition>();
-        List<UniqueKeyDefinition> allUniqueKeys = new ArrayList<UniqueKeyDefinition>();
-        List<ForeignKeyDefinition> allForeignKeys = new ArrayList<ForeignKeyDefinition>();
+        List<IdentityDefinition> allIdentities = new ArrayList<>();
+        List<UniqueKeyDefinition> allUniqueKeys = new ArrayList<>();
+        List<ForeignKeyDefinition> allForeignKeys = new ArrayList<>();
 
         out.tab(1).header("IDENTITY definitions");
         out.println();
@@ -734,7 +787,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
         else
             out.println("public class Indexes {");
 
-        List<IndexDefinition> allIndexes = new ArrayList<IndexDefinition>();
+        List<IndexDefinition> allIndexes = new ArrayList<>();
 
         out.tab(1).header("INDEX definitions");
         out.println();
@@ -1019,7 +1072,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
         generateRecord0(udt, out);
     }
 
-    private final void generateRecord0(Definition tableOrUdt, JavaWriter out) {
+    private void generateRecord0(Definition tableOrUdt, JavaWriter out) {
         final UniqueKeyDefinition key = (tableOrUdt instanceof TableDefinition)
             ? ((TableDefinition) tableOrUdt).getPrimaryKey()
             : null;
@@ -1049,7 +1102,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
 
         int degree = columns.size();
         String rowType = null;
-        String rowTypeRecord = null;
+        String rowTypeRecord;
 
         // [#3130] Invalid UDTs may have a degree of 0
         // [#6072] Generate these super types only if configured to do so
@@ -1262,8 +1315,8 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
                 }
             }
 
-            List<String> arguments = new ArrayList<String>(degree);
-            List<String> calls = new ArrayList<String>(degree);
+            List<String> arguments = new ArrayList<>(degree);
+            List<String> calls = new ArrayList<>(degree);
             for (int i = 1; i <= degree; i++) {
                 TypedElementDefinition<?> column = columns.get(i - 1);
 
@@ -1315,7 +1368,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
         // [#3130] Invalid UDTs may have a degree of 0
         // [#3176] Avoid generating constructors for tables with more than 255 columns (Java's method argument limit)
         if (degree > 0 && degree < 256) {
-            List<String> arguments = new ArrayList<String>(degree);
+            List<String> arguments = new ArrayList<>(degree);
 
             for (int i = 0; i < degree; i++) {
                 final TypedElementDefinition<?> column = columns.get(i);
@@ -1832,14 +1885,14 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
 
             if (scala) {
                 printDeprecationIfUnknownType(out, attrTypeFull);
-                out.tab(1).println("private val %s : %s[%s, %s] = %s.createField(\"%s\", %s, this, \"%s\"" + converterTemplate(converter) + converterTemplate(binding) + ")",
+                out.tab(1).println("private val %s : %s[%s, %s] = %s.createField(DSL.name(\"%s\"), %s, this, \"%s\"" + converterTemplate(converter) + converterTemplate(binding) + ")",
                     attrId, UDTField.class, recordType, attrType, UDTImpl.class, attrName, attrTypeRef, escapeString(""), converter, binding);
             } else {
                 if (!printDeprecationIfUnknownType(out, attrTypeFull))
                     out.tab(1).javadoc("The attribute <code>%s</code>.%s", attribute.getQualifiedOutputName(), columnComment(attribute, attrComment));
 
                 out.println("// ----- B ");
-                out.tab(1).println("public static final %s<%s, %s> %s = createField(\"%s\", %s, %s, \"%s\"" + converterTemplate(converter) + converterTemplate(binding) + ");",
+                out.tab(1).println("public static final %s<%s, %s> %s = createField(DSL.name(\"%s\"), %s, %s, \"%s\"" + converterTemplate(converter) + converterTemplate(binding) + ");",
                     UDTField.class, recordType, attrType, attrId, attrName, attrTypeRef, udtId, escapeString(""), converter, binding);
             }
         }
@@ -2145,7 +2198,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
         final String className = getStrategy().getJavaClassName(e, Mode.ENUM);
         final List<String> interfaces = out.ref(getStrategy().getJavaClassImplements(e, Mode.ENUM));
         final List<String> literals = e.getLiterals();
-        final List<String> identifiers = new ArrayList<String>(literals.size());
+        final List<String> identifiers = new ArrayList<>(literals.size());
 
         for (int i = 0; i < literals.size(); i++) {
             String identifier = convertToIdentifier(literals.get(i), language);
@@ -2938,7 +2991,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
             // [#3010] Invalid UDTs may have no attributes. Avoid generating this constructor in that case
             int size = getTypedElements(tableOrUDT).size();
             if (size > 0) {
-                List<String> nulls = new ArrayList<String>(size);
+                List<String> nulls = new ArrayList<>(size);
                 for (TypedElementDefinition<?> column : getTypedElements(tableOrUDT))
 
                     // Avoid ambiguities between a single-T-value constructor
@@ -3389,14 +3442,14 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
                 out.tab(1).javadoc("The column <code>%s</code>.%s", column.getQualifiedOutputName(), columnComment(column, columnComment));
 
             if (scala) {
-                out.tab(1).println("val %s : %s[%s, %s] = createField(\"%s\", %s, \"%s\"" + converterTemplate(converter) + converterTemplate(binding) + ")",
+                out.tab(1).println("val %s : %s[%s, %s] = createField(DSL.name(\"%s\"), %s, \"%s\"" + converterTemplate(converter) + converterTemplate(binding) + ")",
                     columnId, TableField.class, recordType, columnType, columnName, columnTypeRef, escapeString(columnComment), converter, binding);
             } else {
                 String isStatic = generateInstanceFields() ? "" : "static ";
                 String tableRef = generateInstanceFields() ? "this" : out.ref(getStrategy().getJavaIdentifier(table), 2);
 
                 out.println("// ----- A " + column.getType().getUserType());
-                out.tab(1).println("public %sfinal %s<%s, %s> %s = createField(\"%s\", %s, %s, \"%s\"" + converterTemplate(converter) + converterTemplate(binding) + ");",
+                out.tab(1).println("public %sfinal %s<%s, %s> %s = createField(DSL.name(\"%s\"), %s, %s, \"%s\"" + converterTemplate(converter) + converterTemplate(binding) + ");",
                     isStatic, TableField.class, recordType, columnType, columnId, columnName, columnTypeRef, tableRef, escapeString(columnComment), converter, binding);
             }
         }
@@ -4061,7 +4114,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
             out.tab(1).println("public static final %s %s = new %s();", className, catalogId, className);
         }
 
-        List<SchemaDefinition> schemas = new ArrayList<SchemaDefinition>();
+        List<SchemaDefinition> schemas = new ArrayList<>();
         if (generateGlobalSchemaReferences()) {
             for (SchemaDefinition schema : catalog.getSchemata()) {
                 if (generateSchemaIfEmpty(schema)) {
@@ -4918,7 +4971,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
 
         // [#2502] - Some name mangling in the event of procedure arguments
         // called "configuration"
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
 
         for (Definition definition : definitions) {
             names.add(getStrategy().getJavaMemberName(definition));
@@ -5824,7 +5877,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
     @SafeVarargs
 
     private static final <T> List<T> list(T... objects) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
 
         if (objects != null)
             for (T object : objects)
@@ -5835,7 +5888,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
     }
 
     private static final <T> List<T> list(T first, List<T> remaining) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
 
         result.addAll(list(first));
         result.addAll(remaining);
@@ -5844,7 +5897,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
     }
 
     private static final <T> List<T> first(Collection<T> objects) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
 
         if (objects != null) {
             for (T object : objects) {
@@ -5857,7 +5910,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
     }
 
     private static final <T> List<T> remaining(Collection<T> objects) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
 
         if (objects != null) {
             result.addAll(objects);

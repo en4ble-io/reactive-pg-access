@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory
 @Suppress("MemberVisibilityCanBePrivate")
 open class DatabaseContext(val vertx: Vertx?, val settings: DatabaseSettings, val schema: Schema?) {
     private val LOG by lazy { LoggerFactory.getLogger(DatabaseContext::class.java) }
-    val dsl = DSL.using(SQLDialect.POSTGRES_10)!!
+    val dsl = DSL.using(SQLDialect.POSTGRES)!!
     val sqlClient: SqlClient
 
     constructor(vertx: Vertx, settings: DatabaseSettings) : this(vertx, settings, null)
