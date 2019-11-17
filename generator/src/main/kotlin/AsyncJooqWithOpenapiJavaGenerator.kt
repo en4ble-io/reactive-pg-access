@@ -529,7 +529,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                         out.tab(2)
                             .println("val ${column.name} = row.get(Array<io.vertx.core.json.JsonObject>::class.java,$offset)")
                     } else {
-                        val accessName = getSqlClientAccessName(column.type)
+                        val accessName = getSqlClientAccessName(column.definedType)
                         out.tab(2)
                             .println("val ${column.name} = row.get$accessName($offset)")
                     }
@@ -603,7 +603,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             "bigint" -> Long::class.java.simpleName
             "bool" -> Boolean::class.java.simpleName
             "name" -> String::class.java.simpleName
-            else -> getJavaType(type)
+            else -> {
+                val fqn = getJavaType(type)
+                fqn.substring(fqn.lastIndexOf(".") + 1)
+            }
         }
         return if (userType.startsWith("_")) typeName + "Array" else typeName
     }
