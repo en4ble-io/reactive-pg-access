@@ -58,7 +58,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("You can use the following in your column definitions to control the code generation:")
         println("comment contains {{minLength=<int>}} - generates @org.hibernate.validator.constraints.Length(min=<int>)")
         println("comment contains {{maxLength=<int>}} - generates @org.hibernate.validator.constraints.Length(max=<int>) ")
-        println("comment contains {{email}} - generates @javax.validation.constraints.Email")
+        println("comment contains {{email}} or column name contains 'email' - generates @javax.validation.constraints.Email")
         println("comment contains {{default=<string>}} - generates defaultValue=\"your value\" - Use this with TypedEnum columns to override the database default value.")
         println("comment contains {{readOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY")
         println("comment contains {{writeOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY")
@@ -76,11 +76,14 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val fullComment = column.comment
         var comment: String? = null
         var isInternal = false
-//    System.out.println("column: ${column.name}, comment: ${fullComment}")
+        val columnName = column.name
         var minLength = 0
         var maxLength = getMaxLength(column)
         var defaultValue: String? = column.definedType.defaultValue
         var accessMode = "READ_WRITE"
+        if (columnName.toLowerCase().contains("email")) {
+            out.tab(1).println("@javax.validation.constraints.Email")
+        }
         if (fullComment != null && fullComment.isNotEmpty()) {
             if (fullComment.contains("{{internal}}")) {
                 comment = fullComment.replace("{{internal}}", "")
