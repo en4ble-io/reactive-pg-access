@@ -17,11 +17,17 @@ import org.jooq.impl.CatalogImpl
 import org.jooq.impl.DSL
 import org.jooq.impl.SchemaImpl
 import org.slf4j.LoggerFactory
+import javax.validation.Validator
 
 /** @author Mark Hofmann (mark@en4ble.io)
  */
 @Suppress("MemberVisibilityCanBePrivate")
-open class DatabaseContext(val vertx: Vertx?, val settings: DatabaseSettings, val schema: Schema?) {
+open class DatabaseContext(
+    val vertx: Vertx?,
+    val settings: DatabaseSettings,
+    val schema: Schema?,
+    val validator: Validator? = null // optional validator, will be used before create
+) {
     private val LOG by lazy { LoggerFactory.getLogger(DatabaseContext::class.java) }
     val dsl = DSL.using(SQLDialect.POSTGRES)!!
     val sqlClient: SqlClient
@@ -33,7 +39,8 @@ open class DatabaseContext(val vertx: Vertx?, val settings: DatabaseSettings, va
     constructor(databaseContext: DatabaseContext) : this(
         databaseContext.vertx,
         databaseContext.settings,
-        databaseContext.schema
+        databaseContext.schema,
+        databaseContext.validator
     )
 
     companion object {

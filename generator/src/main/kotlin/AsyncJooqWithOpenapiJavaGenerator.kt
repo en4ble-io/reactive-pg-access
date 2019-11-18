@@ -84,6 +84,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         if (columnName.toLowerCase().contains("email")) {
             out.tab(1).println("@javax.validation.constraints.Email")
         }
+        if (!column.definedType.isNullable) {
+            out.tab(1).println("@javax.validation.constraints.NotNull")
+        }
         if (fullComment != null && fullComment.isNotEmpty()) {
             if (fullComment.contains("{{internal}}")) {
                 comment = fullComment.replace("{{internal}}", "")
@@ -417,61 +420,64 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1).println("suspend fun create(dto:$dtoType):Int {")
-            printMapper(out, mapperGetter)
+            printMapper(out, mapperGetter, true)
             out.tab(2)
                 .println("return query(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values)).rowCount()")
             out.tab(1).println("}")
 
             out.tab(1)
                 .println("suspend fun create(dto:$dtoType,client:io.vertx.reactivex.sqlclient.SqlClient):Int {")
-            printMapper(out, mapperGetter)
-            out.tab(1)
+            printMapper(out, mapperGetter, true)
+            out.tab(2)
                 .println("return query(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values), client).rowCount()")
             out.tab(1).println("}")
 
             out.tab(1).println("suspend fun createReturning(dto:$dtoType):$dtoType {")
-            printMapper(out, mapperGetter)
-            out.tab(1)
+            printMapper(out, mapperGetter, true)
+            out.tab(2)
                 .println("return map(queryOne(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values).returning(*$fullJavaTableName.fields())))")
             out.tab(1).println("}")
 
             out.tab(1)
                 .println("suspend fun createReturning(dto:$dtoType,client:io.vertx.reactivex.sqlclient.SqlClient):$dtoType {")
-            printMapper(out, mapperGetter)
-            out.tab(1)
+            printMapper(out, mapperGetter, true)
+            out.tab(2)
                 .println("return map(queryOne(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values).returning(*$fullJavaTableName.fields()), client))")
             out.tab(1).println("}")
 
             out.tab(1).println("fun rxCreate(dto:$dtoType):io.reactivex.Single<Int> {")
-            printMapper(out, mapperGetter)
-            out.tab(1)
+            printMapper(out, mapperGetter, true)
+            out.tab(2)
                 .println("return rxQuery(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values)).map{ it.delegate.rowCount() }")
             out.tab(1).println("}")
 
             out.tab(1)
                 .println("fun rxCreate(dto:$dtoType,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<Int> {")
             out.tab(2)
-            printMapper(out, mapperGetter)
-            out.tab(1)
+            printMapper(out, mapperGetter, true)
+            out.tab(2)
                 .println("return rxQuery(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values), client).map{ it.delegate.rowCount() }")
             out.tab(1).println("}")
 
             out.tab(1).println("fun rxCreateReturning(dto:$dtoType):io.reactivex.Single<$dtoType> {")
-            printMapper(out, mapperGetter)
-            out.tab(1)
+            printMapper(out, mapperGetter, true)
+            out.tab(2)
                 .println("return rxQueryOne(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values).returning(*$fullJavaTableName.fields())).map{ map(it.delegate) }")
             out.tab(1).println("}")
 
             out.tab(1)
                 .println("fun rxCreateReturning(dto:$dtoType,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<$dtoType> {")
-            printMapper(out, mapperGetter)
-            out.tab(1)
+            printMapper(out, mapperGetter, true)
+            out.tab(2)
                 .println("return rxQueryOne(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values).returning(*$fullJavaTableName.fields()), client).map{ map(it.delegate) }")
             out.tab(1).println("}")
         }
     }
 
-    private fun printMapper(out: JavaWriter, mapperGetter: String) {
+    private fun printMapper(out: JavaWriter, mapperGetter: String, validate: Boolean = false) {
+        if (validate) {
+            out.tab(2).println("validate(dto)")
+        }
         out.tab(2).println("val mapper = $mapperGetter")
         out.tab(2).println("val map = mapper.getValueMap(dto)")
     }

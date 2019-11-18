@@ -27,6 +27,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
+import javax.validation.ConstraintViolationException
 import javax.validation.ValidationException
 
 /** @author Mark Hofmann (mark@en4ble.io)
@@ -736,5 +737,14 @@ protected constructor(
 
     protected fun <O> jsonArray(o: List<O>?): JsonArray? {
         return if (o == null) null else JsonArray(o)
+    }
+
+    protected fun validate(dto: Any?) {
+        if (dto != null && context.validator != null) {
+            val validationErrors = context.validator.validate(dto)
+            if (validationErrors.isNotEmpty()) {
+                throw ConstraintViolationException(validationErrors)
+            }
+        }
     }
 }
