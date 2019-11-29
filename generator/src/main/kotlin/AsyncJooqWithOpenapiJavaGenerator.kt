@@ -222,7 +222,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val mappers = getMappersClassName(table.schema)
         val mapperPackage = getMapperPackage(table)
         // if the table is marked with a {{view}} comment it is regarded as a view and will be read only.
-        val readonly = table.comment.isNullOrBlank() && table.comment.contains("{{view}}")
+        val readonly = table.comment != null && table.comment.contains("{{view}}")
 
         val dtoType = out.ref(getStrategy().getFullJavaClassName(table, Mode.POJO))
 
