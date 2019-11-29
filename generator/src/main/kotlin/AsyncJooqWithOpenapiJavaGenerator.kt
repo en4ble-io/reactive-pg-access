@@ -56,6 +56,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     init {
         println("Customized generator for JOOQ with support for OpenApi and JAXRS")
         println("You can use the following in your column definitions to control the code generation:")
+        println("table comment contains {{view}} - The table is regarded as a view - no write/update methods will be generated.")
         println("comment contains {{minLength=<int>}} - generates @org.hibernate.validator.constraints.Length(min=<int>)")
         println("comment contains {{maxLength=<int>}} - generates @org.hibernate.validator.constraints.Length(max=<int>) ")
         println("comment contains {{email}} or column name contains 'email' - generates @javax.validation.constraints.Email")
@@ -220,8 +221,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         super.generateDaoClassFooter(table, out)
         val mappers = getMappersClassName(table.schema)
         val mapperPackage = getMapperPackage(table)
-        // if the table does not have a primary key, it's because it is a view table - which are readonly
-        val readonly = table.primaryKey == null
+        // if the table is marked with a {{view}} comment it is regarded as a view and will be read only.
+        val readonly = table.comment.isNullOrBlank() && table.comment.contains("{{view}}")
 
         val dtoType = out.ref(getStrategy().getFullJavaClassName(table, Mode.POJO))
 
