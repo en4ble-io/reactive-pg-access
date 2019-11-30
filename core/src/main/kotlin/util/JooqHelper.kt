@@ -25,6 +25,7 @@ import io.vertx.pgclient.data.LineSegment
 import io.vertx.pgclient.data.Path
 import io.vertx.pgclient.data.Point
 import io.vertx.pgclient.data.Polygon
+import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.RowSet
 import io.vertx.sqlclient.Tuple
 import org.jooq.Condition
@@ -169,15 +170,15 @@ object JooqHelper {
         }
     }
 
-    fun toStringList(res: RowSet): List<String> {
+    fun toStringList(res: RowSet<Row>): List<String> {
         return res.toList().map { it.getString(0) }
     }
 
-    fun toUUIDList(res: RowSet): List<UUID> {
+    fun toUUIDList(res: RowSet<Row>): List<UUID> {
         return res.toList().map { it.getUUID(0) }
     }
 
-    fun toIntegerList(res: RowSet): List<Int> {
+    fun toIntegerList(res: RowSet<Row>): List<Int> {
         return res.toList().map { it.getInteger(0) }
     }
 

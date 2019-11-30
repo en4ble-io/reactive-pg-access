@@ -13,11 +13,11 @@ interface JooqMapper<T> {
         return toDto(row, 0)
     }
 
-    fun toList(res: RowSet): List<T> {
+    fun toList(res: RowSet<Row>): List<T> {
         return toList(res, 0)
     }
 
-    fun toList(res: RowSet, offset: Int): List<T> {
+    fun toList(res: RowSet<Row>, offset: Int): List<T> {
         val list = arrayListOf<T>()
         res.forEach { array -> list.add(toDto(array, offset)) }
         return list

@@ -7,6 +7,8 @@ import io.en4ble.pgaccess.util.DaoHelperCommon
 import io.en4ble.pgaccess.util.RxDaoHelper
 import io.reactivex.Single
 import io.vertx.reactivex.sqlclient.SqlClient
+import io.vertx.sqlclient.Row
+import io.vertx.sqlclient.RowSet
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.Query
@@ -508,7 +510,7 @@ constructor(
             update1,
             condition
         ).returning(*fields)
-        return rxQuery(query).map { mapper.toList(it.delegate) }
+        return rxQuery(query).map { mapper.toList(it.delegate as RowSet<Row>) }
     }
 
     suspend fun <T1, T2, R> updateReturning(
@@ -535,7 +537,7 @@ constructor(
             update2,
             condition
         ).returning(*fields)
-        return rxQuery(query).map { mapper.toList(it.delegate) }
+        return rxQuery(query).map { mapper.toList(it.delegate as RowSet<Row>) }
     }
 
     suspend fun <T1, T2, T3, R> updateReturning(
@@ -565,7 +567,7 @@ constructor(
             update3,
             condition
         ).returning(*fields)
-        return rxQuery(query).map { mapper.toList(it.delegate) }
+        return rxQuery(query).map { mapper.toList(it.delegate as RowSet<Row>) }
     }
 
     suspend fun <T1, T2, T3, T4, R> updateReturning(
@@ -598,7 +600,7 @@ constructor(
             update4,
             condition
         ).returning(*fields)
-        return rxQuery(query).map { mapper.toList(it.delegate) }
+        return rxQuery(query).map { mapper.toList(it.delegate as RowSet<Row>) }
     }
 
     suspend fun <T1, T2, T3, T4, T5, R> updateReturning(
@@ -640,7 +642,7 @@ constructor(
             update5,
             condition
         ).returning(*fields)
-        return rxQuery(query).map { mapper.toList(it.delegate) }
+        return rxQuery(query).map { mapper.toList(it.delegate as RowSet<Row>) }
     }
 
     suspend fun <T1, T2, T3, T4, T5, T6, R> updateReturning(
@@ -686,7 +688,7 @@ constructor(
             update6,
             condition
         ).returning(*fields)
-        return rxQuery(query).map { mapper.toList(it.delegate) }
+        return rxQuery(query).map { mapper.toList(it.delegate as RowSet<Row>) }
     }
 
     suspend fun <T1, T2, T3, T4, T5, T6, T7, R> updateReturning(
@@ -736,7 +738,7 @@ constructor(
             update7,
             condition
         ).returning(*fields)
-        return rxQuery(query).map { mapper.toList(it.delegate) }
+        return rxQuery(query).map { mapper.toList(it.delegate as RowSet<Row>) }
     }
 
     suspend fun <T1, T2, T3, T4, T5, T6, T7, T8, R> updateReturning(
@@ -790,7 +792,7 @@ constructor(
             update8,
             condition
         ).returning(*fields)
-        return rxQuery(query).map { mapper.toList(it.delegate) }
+        return rxQuery(query).map { mapper.toList(it.delegate as RowSet<Row>) }
     }
 
     suspend fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> updateReturning(
@@ -848,7 +850,7 @@ constructor(
             update9,
             condition
         ).returning(*fields)
-        return rxQuery(query).map { mapper.toList(it.delegate) }
+        return rxQuery(query).map { mapper.toList(it.delegate as RowSet<Row>) }
     }
 
     suspend fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> updateReturning(
@@ -910,7 +912,7 @@ constructor(
             update10,
             condition
         ).returning(*fields)
-        return rxQuery(query).map { mapper.toList(it.delegate) }
+        return rxQuery(query).map { mapper.toList(it.delegate as RowSet<Row>) }
     }
 
     suspend fun <T1> update(

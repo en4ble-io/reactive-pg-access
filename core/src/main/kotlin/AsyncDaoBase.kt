@@ -84,36 +84,39 @@ protected constructor(
         return RxDaoHelper.queryOptional(query, client, context)
     }
 
-    suspend fun query(condition: Condition, context: DatabaseContext): RowSet {
+    suspend fun query(condition: Condition, context: DatabaseContext): RowSet<Row> {
         return DaoHelper.query(getQuery(condition, table()), context)
     }
 
-    suspend fun query(condition: Condition, client: SqlClient, context: DatabaseContext): RowSet {
+    suspend fun query(condition: Condition, client: SqlClient, context: DatabaseContext): RowSet<Row> {
         return DaoHelper.query(getQuery(condition, table()), client.delegate, context)
     }
 
     fun rxQuery(
         condition: Condition, client: SqlClient, context: DatabaseContext
-    ): Single<io.vertx.reactivex.sqlclient.RowSet> {
+    ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
         return RxDaoHelper.query(getQuery(condition, table()), client, context)
     }
 
     fun rxQuery(
         condition: Condition,
         context: DatabaseContext
-    ): Single<io.vertx.reactivex.sqlclient.RowSet> {
+    ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
         return RxDaoHelper.query(getQuery(condition, table()), context)
     }
 
-    suspend fun query(query: Query, context: DatabaseContext): RowSet {
+    suspend fun query(query: Query, context: DatabaseContext): RowSet<Row> {
         return DaoHelper.query(query, context)
     }
 
-    suspend fun query(query: Query, client: SqlClient, context: DatabaseContext): RowSet {
+    suspend fun query(query: Query, client: SqlClient, context: DatabaseContext): RowSet<Row> {
         return DaoHelper.query(query, client.delegate, context)
     }
 
-    fun rxQuery(query: Query, context: DatabaseContext): Single<io.vertx.reactivex.sqlclient.RowSet> {
+    fun rxQuery(
+        query: Query,
+        context: DatabaseContext
+    ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
         return RxDaoHelper.query(query, context)
     }
 
@@ -121,7 +124,7 @@ protected constructor(
         query: Query,
         client: SqlClient,
         context: DatabaseContext
-    ): Single<io.vertx.reactivex.sqlclient.RowSet> {
+    ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
         return RxDaoHelper.query(query, client, context)
     }
 
@@ -154,11 +157,11 @@ protected constructor(
         return DaoHelper.queryOne(query, client.delegate, context)
     }
 
-    suspend fun query(query: Query): RowSet {
+    suspend fun query(query: Query): RowSet<Row> {
         return DaoHelper.query(query, context)
     }
 
-    suspend fun query(query: Query, client: SqlClient): RowSet {
+    suspend fun query(query: Query, client: SqlClient): RowSet<Row> {
         return DaoHelper.query(query, client.delegate, context)
     }
 
@@ -182,11 +185,14 @@ protected constructor(
         return RxDaoHelper.queryOne(query, client, context)
     }
 
-    fun rxQuery(query: Query): Single<io.vertx.reactivex.sqlclient.RowSet> {
+    fun rxQuery(query: Query): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
         return RxDaoHelper.query(query, context)
     }
 
-    fun rxQuery(query: Query, client: SqlClient): Single<io.vertx.reactivex.sqlclient.RowSet> {
+    fun rxQuery(
+        query: Query,
+        client: SqlClient
+    ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
         return RxDaoHelper.query(query, client, context)
     }
 
@@ -252,7 +258,7 @@ protected constructor(
             rxQuery(query.limit(pageSize))
         } else {
             rxQuery(baseQuery.limit(pageSize))
-        }.map { map(it.delegate) }
+        }.map { map(it.delegate as RowSet<Row>) }
     }
 
     /**
@@ -455,7 +461,7 @@ protected constructor(
         table: Table<RECORD>,
         page: PagingDTO?
     ): Single<List<DTO>> {
-        return RxDaoHelper.read(query, table, page, context).map { map(it.delegate, table) }
+        return RxDaoHelper.read(query, table, page, context).map { map(it.delegate as RowSet<Row>, table) }
     }
 
     fun rxRead(
@@ -464,7 +470,7 @@ protected constructor(
         page: PagingDTO?,
         client: SqlClient
     ): Single<List<DTO>> {
-        return RxDaoHelper.read(query, table, page, client, context).map { map(it.delegate, table) }
+        return RxDaoHelper.read(query, table, page, client, context).map { map(it.delegate as RowSet<Row>, table) }
     }
 
     suspend fun readOne(condition: Condition, table: Table<RECORD>): DTO {
@@ -629,8 +635,8 @@ protected constructor(
     abstract fun map(row: Row, table: Table<RECORD>, offset: Int = 0): DTO
     abstract fun map(row: Row, offset: Int = 0): DTO
 
-    abstract fun map(rs: RowSet, table: Table<RECORD>, offset: Int = 0): List<DTO>
-    abstract fun map(rs: RowSet, offset: Int = 0): List<DTO>
+    abstract fun map(rs: RowSet<Row>, table: Table<RECORD>, offset: Int = 0): List<DTO>
+    abstract fun map(rs: RowSet<Row>, offset: Int = 0): List<DTO>
 
     // ----------- CRUD helper methods
 
@@ -666,15 +672,15 @@ protected constructor(
         return JooqHelper.any(id, field)
     }
 
-    fun toStringList(res: RowSet): List<String> {
+    fun toStringList(res: RowSet<Row>): List<String> {
         return JooqHelper.toStringList(res)
     }
 
-    fun toUUIDList(res: RowSet): List<UUID> {
+    fun toUUIDList(res: RowSet<Row>): List<UUID> {
         return JooqHelper.toUUIDList(res)
     }
 
-    fun toIntegerList(res: RowSet): List<Int> {
+    fun toIntegerList(res: RowSet<Row>): List<Int> {
         return JooqHelper.toIntegerList(res)
     }
 

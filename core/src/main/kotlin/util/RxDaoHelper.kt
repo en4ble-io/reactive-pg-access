@@ -30,14 +30,14 @@ object RxDaoHelper {
     /**
      * Run a query using a connection from the pool.
      */
-    fun query(query: Query, context: DatabaseContext): Single<RowSet> {
+    fun query(query: Query, context: DatabaseContext): Single<RowSet<Row>> {
         return query(query, context.sqlClient, context)
     }
 
     /**
      * Run a query using a given connection.
      */
-    fun query(query: Query, client: SqlClient, context: DatabaseContext): Single<RowSet> {
+    fun query(query: Query, client: SqlClient, context: DatabaseContext): Single<RowSet<Row>> {
         return runQuery(query, client, context, false)
     }
 
@@ -97,11 +97,11 @@ object RxDaoHelper {
     ): Single<List<UUID>> {
         return if (page == null || query !is SelectLimitStep<*>) {
             query(query, client, context).map {
-                toUUIDList(it.delegate)
+                toUUIDList(it.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>)
             }
         } else {
             query(addLimit(query, page), client, context).map {
-                toUUIDList(it.delegate)
+                toUUIDList(it.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>)
             }
         }
     }
@@ -111,7 +111,7 @@ object RxDaoHelper {
         table: Table<RECORD>,
         page: PagingDTO?,
         context: DatabaseContext
-    ): Single<RowSet> {
+    ): Single<RowSet<Row>> {
         return read(query, table, page, context.sqlClient, context)
     }
 
@@ -121,7 +121,7 @@ object RxDaoHelper {
         page: PagingDTO?,
         client: SqlClient,
         context: DatabaseContext
-    ): Single<RowSet> {
+    ): Single<RowSet<Row>> {
         if (page != null) {
             val order = page.orderBy
             if (order != null && query is SelectOrderByStep<*>) {
@@ -132,7 +132,12 @@ object RxDaoHelper {
         return query(query, context)
     }
 
-    private fun runQuery(query: Query, client: SqlClient, context: DatabaseContext, update: Boolean): Single<RowSet> {
+    private fun runQuery(
+        query: Query,
+        client: SqlClient,
+        context: DatabaseContext,
+        update: Boolean
+    ): Single<RowSet<Row>> {
         val sql = DaoHelperCommon.getSql(query, context)
         val inTx = if (client is Transaction) {
             "[Tx]"

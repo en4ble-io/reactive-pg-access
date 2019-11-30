@@ -236,7 +236,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("}")
 
         out.tab(1)
-            .println("override fun map(rs:io.vertx.sqlclient.RowSet, table:org.jooq.Table<$tableRecord>, offset:Int): List<$dtoType>  {")
+            .println("override fun map(rs:io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row> , table:org.jooq.Table<$tableRecord>, offset:Int): List<$dtoType>  {")
         out.tab(2)
             .println("val mapper = ${dtoMapper(mapperPackage, mappers, dtoType)}(table)")
         out.tab(2).println("return mapper.toList(rs,offset)")
@@ -246,7 +246,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(2).println("return map(row, $fullJavaTableName,offset)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override fun map(rs:io.vertx.sqlclient.RowSet, offset:Int):List<$dtoType> {")
+            .println("override fun map(rs:io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row> , offset:Int):List<$dtoType> {")
         out.tab(2).println("return map(rs, $fullJavaTableName, offset)")
         out.tab(1).println("}")
 
@@ -396,7 +396,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 .println("fun rxUpdateReturning(dto:$dtoType, condition:org.jooq.Condition):io.reactivex.Single<List<$dtoType>> {")
             printMapper(out, mapperGetter)
             out.tab(2)
-                .println("return rxQuery(dsl.update($fullJavaTableName).set(map).where(condition).returning(*$fullJavaTableName.fields())).map{ map(it.delegate) }")
+                .println("return rxQuery(dsl.update($fullJavaTableName).set(map).where(condition).returning(*$fullJavaTableName.fields())).map{ map(it.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>) }")
             out.tab(1).println("}")
 
             out.tab(1)
@@ -1050,7 +1050,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(3).println("return instance.toDto(row)")
         out.tab(2).println("}")
 
-        out.tab(2).println("fun map(res:io.vertx.sqlclient.RowSet ):List<$pojoName>  {")
+        out.tab(2).println("fun map(res:io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>  ):List<$pojoName>  {")
         out.tab(3).println("return instance.toList(res)")
         out.tab(2).println("}")
         out.tab(1).println("}")

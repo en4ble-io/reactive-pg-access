@@ -32,14 +32,14 @@ object DaoHelper {
     /**
      * Run a query using a connection from the pool.
      */
-    suspend fun query(query: Query, context: DatabaseContext): RowSet {
+    suspend fun query(query: Query, context: DatabaseContext): RowSet<Row> {
         return query(query, context.sqlClient.delegate, context)
     }
 
     /**
      * Run a query using a given connection.
      */
-    suspend fun query(query: Query, client: SqlClient, context: DatabaseContext): RowSet {
+    suspend fun query(query: Query, client: SqlClient, context: DatabaseContext): RowSet<Row> {
         return runQuery(query, client, context, false)
     }
 
@@ -114,7 +114,7 @@ object DaoHelper {
         table: Table<RECORD>,
         page: PagingDTO?,
         context: DatabaseContext
-    ): RowSet {
+    ): RowSet<Row> {
         return read(query, table, page, context.sqlClient.delegate, context)
     }
 
@@ -124,7 +124,7 @@ object DaoHelper {
         page: PagingDTO?,
         client: SqlClient,
         context: DatabaseContext
-    ): RowSet {
+    ): RowSet<Row> {
         if (page != null) {
             val order = page.orderBy
             if (order != null && query is SelectOrderByStep<*>) {
@@ -135,7 +135,12 @@ object DaoHelper {
         return query(query, context)
     }
 
-    private suspend fun runQuery(query: Query, client: SqlClient, context: DatabaseContext, update: Boolean): RowSet {
+    private suspend fun runQuery(
+        query: Query,
+        client: SqlClient,
+        context: DatabaseContext,
+        update: Boolean
+    ): RowSet<Row> {
         val sql = getSql(query, context)
         val inTx = if (client is Transaction) {
             "[Tx]"
