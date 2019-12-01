@@ -12,7 +12,6 @@ import io.vertx.reactivex.sqlclient.Transaction
 import io.vertx.sqlclient.PoolOptions
 import org.jooq.Configuration
 import org.jooq.SQLDialect
-import org.jooq.Schema
 import org.jooq.impl.CatalogImpl
 import org.jooq.impl.DSL
 import org.jooq.impl.SchemaImpl
@@ -25,7 +24,6 @@ import javax.validation.Validator
 open class DatabaseContext(
     val vertx: Vertx?,
     val settings: DatabaseSettings,
-    val schema: Schema?,
     val validator: Validator? = null // optional validator, will be used before create
 ) {
     private val LOG by lazy { LoggerFactory.getLogger(DatabaseContext::class.java) }
@@ -33,13 +31,11 @@ open class DatabaseContext(
     val sqlClient: SqlClient
 
     constructor(vertx: Vertx, settings: DatabaseSettings) : this(vertx, settings, null)
-    constructor(settings: DatabaseSettings, schema: Schema) : this(null, settings, schema)
-    constructor(settings: DatabaseSettings) : this(null, settings, null)
+    constructor(settings: DatabaseSettings) : this(null, settings)
 
     constructor(databaseContext: DatabaseContext) : this(
         databaseContext.vertx,
         databaseContext.settings,
-        databaseContext.schema,
         databaseContext.validator
     )
 

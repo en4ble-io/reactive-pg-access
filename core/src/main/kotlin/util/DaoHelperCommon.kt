@@ -82,8 +82,8 @@ internal object DaoHelperCommon {
             }
         }
         var sql = sb.toString()
-        if (context?.schema != null) {
-            sql = sql.replace("_SCHEMA_", context.schema.name)
+        if (context?.settings?.schema != null) {
+            sql = sql.replace("_SCHEMA_", context.settings.schema)
         }
         return sql
     }
