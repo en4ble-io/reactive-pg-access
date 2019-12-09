@@ -63,6 +63,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("comment contains {{default=<string>}} - generates defaultValue=\"your value\" - Use this with TypedEnum columns to override the database default value.")
         println("comment contains {{readOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY")
         println("comment contains {{writeOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY")
+        println("comment contains {{generated}} - indicates that a field is generated (e.g. id, creation date, update date) and is therefore readOnly as well as not checked for null via the API (DB validation remains of course).")
         println("comment contains {{internal}} - generates @io.swagger.v3.oas.annotations.Hidden + @com.fasterxml.jackson.annotation.JsonIgnore - Use this to hide fields from the public API definitions.")
         println("column name starts with 'internal_' - same as {{internal}} but can be used e.g. in database views to clearly indicate which fields will not be included in the public API.")
     }
@@ -82,11 +83,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         var maxLength = getMaxLength(column)
         var defaultValue: String? = column.definedType.defaultValue
         var accessMode = "READ_WRITE"
+        var generated = false
         if (columnName.toLowerCase().contains("email")) {
             out.tab(1).println("@javax.validation.constraints.Email")
-        }
-        if (!column.definedType.isNullable) {
-            out.tab(1).println("@javax.validation.constraints.NotNull")
         }
         if (fullComment != null && fullComment.isNotEmpty()) {
             if (fullComment.contains("{{internal}}")) {
@@ -94,6 +93,11 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 isInternal = true
             } else {
                 comment = fullComment
+            }
+            if (comment.contains("{{generated}}")) {
+                generated = true
+                accessMode = "READ_ONLY"
+                comment = comment.replace("{{generated}}", "")
             }
             if (comment.contains("{{email}}")) {
                 out.tab(1).println("@javax.validation.constraints.Email")
@@ -143,6 +147,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("/**")
             printJavadocParagraph(out.tab(1), comment, "")
             out.tab(1).println(" */")
+        }
+        if (!generated && !column.definedType.isNullable) {
+            out.tab(1).println("@javax.validation.constraints.NotNull")
         }
 
         printLengthAnnotation(out, minLength, maxLength)
