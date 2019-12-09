@@ -161,6 +161,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 accessMode,
                 1
             )
+            if (accessMode.isNotBlank()) {
+                out.tab(1)
+                    .println("@com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.$accessMode)")
+            }
         }
     }
 
