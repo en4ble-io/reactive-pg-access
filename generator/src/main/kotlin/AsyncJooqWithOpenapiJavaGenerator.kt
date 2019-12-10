@@ -57,6 +57,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("Customized generator for JOOQ with support for OpenApi and JAXRS")
         println("You can use the following in your column definitions to control the code generation:")
         println("table comment contains {{view}} - The table is regarded as a view - no write/update methods will be generated.")
+        println("comment contains {{name=<string>}} - sets the json name of the property.")
         println("comment contains {{minLength=<int>}} - generates @org.hibernate.validator.constraints.Length(min=<int>)")
         println("comment contains {{maxLength=<int>}} - generates @org.hibernate.validator.constraints.Length(max=<int>) ")
         println("comment contains {{email}} or column name contains 'email' - generates @javax.validation.constraints.Email")
@@ -78,12 +79,14 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val fullComment = column.comment
         var comment: String? = null
         var isInternal = false
+        val propertyName = getStrategy().getJavaMemberName(column)
         val columnName = column.name
         var minLength = 0
         var maxLength = getMaxLength(column)
         var defaultValue: String? = column.definedType.defaultValue
         var accessMode = "READ_WRITE"
         var generated = false
+        var nameValue = propertyName
         if (columnName.toLowerCase().contains("email")) {
             out.tab(1).println("@javax.validation.constraints.Email")
         }
@@ -140,6 +143,12 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 defaultValue = comment.substring(defaultValueStart + 10, defaultValueEnd)
                 comment = comment.removeRange(defaultValueStart, defaultValueEnd + 2)
             }
+            val nameValueStart = comment.indexOf("{{name=")
+            if (nameValueStart > -1) {
+                val nameValueEnd = comment.indexOf("}}", nameValueStart)
+                nameValue = comment.substring(nameValueStart + 7, nameValueEnd)
+                comment = comment.removeRange(nameValueStart, nameValueEnd + 2)
+            }
 
             comment = comment.trim()
         }
@@ -156,23 +165,21 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         super.printColumnJPAAnnotation(out, column)
 
         // allow internal fields to also be specified using a prefix
-        if (isInternal || column.name.startsWith("internal_")) {
+        if (isInternal || columnName.startsWith("internal_")) {
             out.tab(1).println("@io.swagger.v3.oas.annotations.Hidden")
             out.tab(1).println("@com.fasterxml.jackson.annotation.JsonIgnore")
         } else {
             printSchemaAnnotation(
                 out,
-                getStrategy().getJavaMemberName(column),
+                propertyName,
                 comment,
                 defaultValue,
                 accessMode,
                 1
             )
-            if (accessMode.isNotBlank()) {
-                out.tab(1)
-                    .println("@com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.$accessMode)")
-            }
         }
+        out.tab(1)
+            .println("@com.fasterxml.jackson.annotation.JsonProperty(value=\"$nameValue\", access = com.fasterxml.jackson.annotation.JsonProperty.Access.$accessMode)")
     }
 
     private fun getMaxLength(column: ColumnDefinition): Int {
