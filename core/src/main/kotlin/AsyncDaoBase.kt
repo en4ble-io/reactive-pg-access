@@ -20,6 +20,7 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.Query
 import org.jooq.Record
+import org.jooq.SelectLimitAfterOffsetStep
 import org.jooq.SelectSeekStep2
 import org.jooq.Table
 import org.jooq.TableField
@@ -247,12 +248,13 @@ protected constructor(
     }
 
     fun <VALUE, ID> rxReadPage(
+        condition: Condition? = null,
         baseId: ID?,
         baseValue: VALUE?,
         order: OrderDTO,
         pageSize: Int
     ): Single<List<DTO>> {
-        val baseQuery = getReadPageQuery(order, baseValue, baseId)
+        val baseQuery = getReadPageQuery(condition, order, baseValue, baseId)
         return if (baseId != null && baseValue != null) {
             val query = baseQuery.seek(baseValue, baseId)
             rxQuery(query.limit(pageSize))
@@ -269,12 +271,13 @@ protected constructor(
      * @param pageSize The maximum number of results to return.
      */
     suspend fun <VALUE, ID> readPage(
+        condition: Condition? = null,
         baseId: ID?,
         baseValue: VALUE?,
         order: OrderDTO,
         pageSize: Int
     ): List<DTO> {
-        val baseQuery = getReadPageQuery(order, baseValue, baseId)
+        val baseQuery = getReadPageQuery(condition, order, baseValue, baseId)
         val res = if (baseId != null && baseValue != null) {
             val query = baseQuery.seek(baseValue, baseId)
             query(query.limit(pageSize))
@@ -285,14 +288,53 @@ protected constructor(
         return map(res)
     }
 
+    /**
+     * Reads a page using "offset pagination"
+     * @param order Information on how to sort the list.
+     * @param firstPage The first page to query.
+     * @param pageSize The maximum number of results to return.
+     */
+    suspend fun readPage(
+        condition: Condition,
+        order: OrderDTO,
+        firstPage: Int,
+        pageSize: Int
+    ): List<DTO> {
+        val offset = pageSize * firstPage
+        val readPageQuery = getReadPageQuery(condition, offset, order)
+        val res = query(readPageQuery.limit(pageSize))
+        return map(res)
+    }
+
+    private fun getReadPageQuery(
+        condition: Condition,
+        offset: Int,
+        order: OrderDTO
+    ): SelectLimitAfterOffsetStep<Record> {
+        val select = dsl.select().from(table()).where(condition)
+        val sortDirection = order.direction
+        val orderField = getDbField(order.field)
+        return if (sortDirection === SortDirection.ASC)
+            select.orderBy(orderField.asc()).offset(offset)
+        else
+            select.orderBy(orderField.desc()).offset(offset)
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun <ID, VALUE> getReadPageQuery(
+        condition: Condition?,
         order: OrderDTO,
         baseValue: VALUE?,
         baseId: ID?
     ): SelectSeekStep2<Record, VALUE, ID> {
-        val select = dsl.select().from(table())
-
+        val baseSelect = dsl.select().from(table())
+        // FIXME implement page query with condition
+        val select =
+            if (condition != null) {
+                baseSelect.where(condition)
+            } else {
+                baseSelect
+            }
         val sortDirection = order.direction
         val field = getDbField(order.field)
         if (baseValue != null && !field.type.isInstance(baseValue)) {

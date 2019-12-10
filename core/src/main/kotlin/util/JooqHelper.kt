@@ -63,21 +63,6 @@ object JooqHelper {
         )
     }
 
-    fun rxParams(query: Query): io.vertx.reactivex.sqlclient.Tuple {
-        val values = query.bindValues
-        if (values.isEmpty()) {
-            throw RuntimeException("query does not contain parameters")
-        }
-        val dbValues = getDbValues(query)
-        val tuple = io.vertx.reactivex.sqlclient.Tuple.of(values[0])
-        if (dbValues.size > 1) {
-            for (value in dbValues.subList(1, dbValues.size)) {
-                tuple.addValue(value)
-            }
-        }
-        return tuple
-    }
-
     private fun getDbValues(query: Query): MutableList<Any?> {
         val dbValues = mutableListOf<Any?>()
         query.params.forEach {
@@ -164,10 +149,14 @@ object JooqHelper {
         }
         val dbValues = getDbValues(query)
         return if (dbValues.size == 1) {
-            Tuple.of(values[0])
+            Tuple.of(dbValues[0])
         } else {
             return Tuple.of(dbValues[0], *dbValues.subList(1, dbValues.size).toTypedArray())
         }
+    }
+
+    fun rxParams(query: Query): io.vertx.reactivex.sqlclient.Tuple {
+        return io.vertx.reactivex.sqlclient.Tuple.newInstance(params(query))
     }
 
     fun toStringList(res: RowSet<Row>): List<String> {

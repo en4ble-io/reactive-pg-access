@@ -163,6 +163,9 @@ object RxDaoHelper {
                 )
             }
             client.rxPreparedQuery(sql, params)
+        }.doOnError {
+            LOG.error(it.message, it)
+            throw it
         }.map {
             if (LOG.isTraceEnabled) {
                 LOG.trace("{} query returned {} results", inTx, it.size())
