@@ -1172,56 +1172,60 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 out.tab(1).println("}")
             }
 
-            // skip array types for now
-            if (!colType.endsWith("[]")) {
-                // readBy[Column]([T]...)
-                // -----------------------
-                if (readonly && attrName == "id") {
-                    // readOne methods are generated for all unique columns, but in a view there are no constraints
-                    // so just generate it if the table has no keys and the current the column is named id
-                    generateReadOneByMethods(out, colClass, colType, pType, colIdentifier, fullJavaTableName)
-                }
+            if ("java.lang.Object" != colTypeFull) { // don't generate readBy methods for unknown types
+                // skip array types for now
+                if (!colType.endsWith("[]")) {
+                    // readBy[Column]([T]...)
+                    // -----------------------
+                    if (readonly && attrName == "id") {
+                        // readOne methods are generated for all unique columns, but in a view there are no constraints
+                        // so just generate it if the table has no keys and the current the column is named id
+                        generateReadOneByMethods(out, colClass, colType, pType, colIdentifier, fullJavaTableName)
+                    }
 
-                if (!printDeprecationIfUnknownType(out, colTypeFull))
-                    out.tab(1).javadoc("Fetch records that have <code>%s IN (values)</code>", colName)
-
-                out.tab(1).println("suspend fun readBy$colClass(vararg values:$colType):List<$pType> {")
-                out.tab(2).println("return read($colIdentifier.`in`(values.toList()),$fullJavaTableName)")
-                out.tab(1).println("}")
-                out.tab(1).println("fun rxReadBy$colClass(vararg values:$colType):io.reactivex.Single<List<$pType>> {")
-                out.tab(2).println("return rxRead($colIdentifier.`in`(values.toList()),$fullJavaTableName)")
-                out.tab(1).println("}")
-
-                out.tab(1)
-                    .println("suspend fun readBy$colClass(vararg values:$colType, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<$pType> {")
-                out.tab(2).println("return read($colIdentifier.`in`(values.toList()),$fullJavaTableName, orderBy)")
-                out.tab(1).println("}")
-                out.tab(1)
-                    .println("fun rxReadBy$colClass(vararg values:$colType, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<$pType>> {")
-                out.tab(2).println("return rxRead($colIdentifier.`in`(values.toList()),$fullJavaTableName, orderBy)")
-                out.tab(1).println("}")
-
-                out.tab(1)
-                    .println("suspend fun readBy$colClass(vararg values:$colType, page: io.en4ble.pgaccess.dto.PagingDTO):List<$pType> {")
-                out.tab(2).println("return read($colIdentifier.`in`(values.toList()),$fullJavaTableName, page)")
-                out.tab(1).println("}")
-                out.tab(1)
-                    .println("fun rxReadBy$colClass(vararg values:$colType, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<$pType>> {")
-                out.tab(2).println("return rxRead($colIdentifier.`in`(values.toList()),$fullJavaTableName, page)")
-                out.tab(1).println("}")
-            }
-            // readOneBy[Column]([T])
-            // -----------------------
-            ukLoop@ for (uk in column.uniqueKeys) {
-
-                // If column is part of a single-column unique key...
-                if (uk.keyColumns.size == 1 && uk.keyColumns[0] == column) {
                     if (!printDeprecationIfUnknownType(out, colTypeFull))
-                        out.tab(1).javadoc("Read a unique record that has <code>$colName = value</code>")
+                        out.tab(1).javadoc("Fetch records that have <code>%s IN (values)</code>", colName)
 
-                    generateReadOneByMethods(out, colClass, colType, pType, colIdentifier, fullJavaTableName)
+                    out.tab(1).println("suspend fun readBy$colClass(vararg values:$colType):List<$pType> {")
+                    out.tab(2).println("return read($colIdentifier.`in`(values.toList()),$fullJavaTableName)")
+                    out.tab(1).println("}")
+                    out.tab(1)
+                        .println("fun rxReadBy$colClass(vararg values:$colType):io.reactivex.Single<List<$pType>> {")
+                    out.tab(2).println("return rxRead($colIdentifier.`in`(values.toList()),$fullJavaTableName)")
+                    out.tab(1).println("}")
 
-                    break@ukLoop
+                    out.tab(1)
+                        .println("suspend fun readBy$colClass(vararg values:$colType, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<$pType> {")
+                    out.tab(2).println("return read($colIdentifier.`in`(values.toList()),$fullJavaTableName, orderBy)")
+                    out.tab(1).println("}")
+                    out.tab(1)
+                        .println("fun rxReadBy$colClass(vararg values:$colType, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<$pType>> {")
+                    out.tab(2)
+                        .println("return rxRead($colIdentifier.`in`(values.toList()),$fullJavaTableName, orderBy)")
+                    out.tab(1).println("}")
+
+                    out.tab(1)
+                        .println("suspend fun readBy$colClass(vararg values:$colType, page: io.en4ble.pgaccess.dto.PagingDTO):List<$pType> {")
+                    out.tab(2).println("return read($colIdentifier.`in`(values.toList()),$fullJavaTableName, page)")
+                    out.tab(1).println("}")
+                    out.tab(1)
+                        .println("fun rxReadBy$colClass(vararg values:$colType, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<$pType>> {")
+                    out.tab(2).println("return rxRead($colIdentifier.`in`(values.toList()),$fullJavaTableName, page)")
+                    out.tab(1).println("}")
+                }
+                // readOneBy[Column]([T])
+                // -----------------------
+                ukLoop@ for (uk in column.uniqueKeys) {
+
+                    // If column is part of a single-column unique key...
+                    if (uk.keyColumns.size == 1 && uk.keyColumns[0] == column) {
+                        if (!printDeprecationIfUnknownType(out, colTypeFull))
+                            out.tab(1).javadoc("Read a unique record that has <code>$colName = value</code>")
+
+                        generateReadOneByMethods(out, colClass, colType, pType, colIdentifier, fullJavaTableName)
+
+                        break@ukLoop
+                    }
                 }
             }
         }
