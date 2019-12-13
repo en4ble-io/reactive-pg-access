@@ -58,6 +58,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("You can use the following in your column definitions to control the code generation:")
         println("table comment contains {{view}} - The table is regarded as a view - no write/update methods will be generated.")
         println("comment contains {{name=<string>}} - sets the json name of the property.")
+        println("comment contains {{example=<string>}} - sets the example value of the property in the OpenApi @Schema annotation.")
         println("comment contains {{minLength=<int>}} - generates @org.hibernate.validator.constraints.Length(min=<int>)")
         println("comment contains {{maxLength=<int>}} - generates @org.hibernate.validator.constraints.Length(max=<int>) ")
         println("comment contains {{email}} or column name contains 'email' - generates @javax.validation.constraints.Email")
@@ -72,11 +73,12 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     override fun printTableJPAAnnotation(out: JavaWriter, table: TableDefinition) {
         super.printTableJPAAnnotation(out, table)
         val name = getStrategy().getJavaClassName(table, Mode.DEFAULT)
-        printSchemaAnnotation(out, name, table.comment, null, null, 0)
+        printSchemaAnnotation(out, name, table.comment, null, null, null, 0)
     }
 
     override fun printColumnJPAAnnotation(out: JavaWriter, column: ColumnDefinition) {
         val fullComment = column.comment
+        val userType = column.type.userType
         var comment: String? = null
         var isInternal = false
         val propertyName = getStrategy().getJavaMemberName(column)
@@ -87,6 +89,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         var accessMode = "READ_WRITE"
         var generated = false
         var nameValue = propertyName
+        var exampleValue: String? = null
+
         if (columnName.toLowerCase().contains("email")) {
             out.tab(1).println("@javax.validation.constraints.Email")
         }
@@ -149,6 +153,16 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 nameValue = comment.substring(nameValueStart + 7, nameValueEnd)
                 comment = comment.removeRange(nameValueStart, nameValueEnd + 2)
             }
+            val exampleValueStart = comment.indexOf("{{example=")
+            if (exampleValueStart > -1) {
+                val exampleValueEnd = comment.indexOf("}}", exampleValueStart)
+                if (exampleValueEnd == -1) {
+                    throw RuntimeException("could not get end of comment: $comment")
+                }
+                exampleValue = comment.substring(exampleValueStart + 10, exampleValueEnd)
+                comment = comment.removeRange(exampleValueStart, exampleValueEnd + 2)
+            }
+
 
             comment = comment.trim()
         }
@@ -160,8 +174,11 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         if (!generated && !column.definedType.isNullable) {
             out.tab(1).println("@javax.validation.constraints.NotNull")
         }
-
-        printLengthAnnotation(out, minLength, maxLength)
+        val isArray = userType.startsWith('_')
+        if (!isArray) {
+            // TODO: find a way to check for the length of elements of an array and use that annotation on string arrays
+            printLengthAnnotation(out, minLength, maxLength)
+        }
         super.printColumnJPAAnnotation(out, column)
 
         // allow internal fields to also be specified using a prefix
@@ -175,6 +192,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 comment,
                 defaultValue,
                 accessMode,
+                exampleValue,
                 1
             )
         }
@@ -204,6 +222,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         comment: String?,
         defaultValue: String? = null,
         accessMode: String?,
+        example: String?,
         tab: Int
     ) {
         val access =
@@ -212,10 +231,11 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             } else {
                 "accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.$accessMode, "
             }
-        if (comment != null || name != null) {
+        if (comment != null || name != null || example != null) {
             val attrs = mutableListOf<String>()
             if (name != null) attrs.add("name=\"$name\"")
             if (comment != null) attrs.add("title=\"$comment\"")
+            if (example != null) attrs.add("example=\"$example\"")
             var attrsString = attrs.joinToString(", ")
 
             if (!defaultValue.isNullOrBlank()) {
