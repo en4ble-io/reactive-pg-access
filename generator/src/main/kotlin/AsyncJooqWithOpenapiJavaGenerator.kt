@@ -1184,7 +1184,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             fieldMap[attrName] = colIdentifier!!
 
             // TODO: make name of update timestamp field  configurable
-            if (attrName == "updated") {
+            if (attrName == "updated" && !readonly) {
                 val updateTimestampField = "UPDATED"
                 out.tab(1)
                     .println("override fun getUpdatedField(): org.jooq.TableField<$tableRecord, LocalDateTime> {")
