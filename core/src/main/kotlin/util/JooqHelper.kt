@@ -263,6 +263,20 @@ object JooqHelper {
         return DSL.condition("{0} = ANY({1})", id, field)
     }
 
+    /**
+     * Creates a text search vector used for inserting text into a tsvector field.
+     */
+    fun tsVector(language: String, text: String): Field<Any> {
+        return DSL.field("to_tsvector({0},{1})", language, text)
+    }
+
+    /**
+     * Creates a text search query used for querying text from a tsvector field.
+     */
+    fun tsQuery(language: String, searchTerm: String): Condition {
+        return DSL.condition("j_title_ts @@ to_tsquery(?,?)", language, searchTerm)
+    }
+
     // these function currently rely on the location beeing stored as geography types
     // reactive-pg-client supports only the standard point etc. types
     // FIXME: update queries

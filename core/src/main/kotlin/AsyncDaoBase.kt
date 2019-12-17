@@ -44,6 +44,10 @@ protected constructor(
 
     protected val sqlClient: SqlClient = context.sqlClient
 
+    protected open fun <ID> primaryKeyField(): TableField<RECORD, ID>? {
+        return table().primaryKey.fields[0] as TableField<RECORD, ID>
+    }
+
     protected open fun table(): Table<RECORD> {
         return table
     }
@@ -327,8 +331,9 @@ protected constructor(
         baseValue: VALUE?,
         baseId: ID?
     ): SelectSeekStep2<Record, VALUE, ID> {
+        val idField = primaryKeyField<ID>()
+            ?: throw RuntimeException("The read page query requires a primary key field in the table/view " + table().name)
         val baseSelect = dsl.select().from(table())
-        // FIXME implement page query with condition
         val select =
             if (condition != null) {
                 baseSelect.where(condition)
@@ -341,10 +346,10 @@ protected constructor(
             throw ValidationException("Given base value does not match type of database field (${field.type}")
         }
 
-        val idField = table().primaryKey.fields[0] as TableField<RECORD, ID>
         if (baseId != null && !idField.type.isInstance(baseId)) {
             throw ValidationException("Given base id does not match type of database id (${idField.type}")
         }
+
         val orderField: Field<VALUE> = field as Field<VALUE>
         return if (sortDirection === SortDirection.ASC)
             select.orderBy(orderField.asc(), idField.asc())
@@ -681,6 +686,14 @@ protected constructor(
     abstract fun map(rs: RowSet<Row>, offset: Int = 0): List<DTO>
 
     // ----------- CRUD helper methods
+
+    fun tsVector(language: String, text: String): Field<Any>? {
+        return JooqHelper.tsVector(language, text)
+    }
+
+    fun tsQuery(language: String, searchTerm: String): Condition {
+        return JooqHelper.tsQuery(language, searchTerm)
+    }
 
     fun stWithin(left: Field<*>, right: Field<*>): Condition {
         return JooqHelper.stWithin(left, right)

@@ -57,6 +57,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("Customized generator for JOOQ with support for OpenApi and JAXRS")
         println("You can use the following in your column definitions to control the code generation:")
         println("table comment contains {{view}} - The table is regarded as a view - no write/update methods will be generated.")
+        println("(note: if you want to use readPage / seek queries only, you need to override the primaryKeyField() method in your DAO to return the ID column of the view)")
+//        println("comment contains {{viewId=<string>}} - The field to be used as primary key in views - optional, required for readPage / seek queries only.")
         println("comment contains {{name=<string>}} - sets the json name of the property.")
         println("comment contains {{example=<string>}} - sets the example value of the property in the OpenApi @Schema annotation.")
         println("comment contains {{minLength=<int>}} - generates @org.hibernate.validator.constraints.Length(min=<int>)")
@@ -85,10 +87,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val columnName = column.name
         var minLength = 0
         var maxLength = getMaxLength(column)
-        var defaultValue: String? = column.definedType.defaultValue
+        var defaultValue: String? = null
         var accessMode = "READ_WRITE"
         var generated = false
-        var nameValue = propertyName
+        var nameValue: String? = null
         var exampleValue: String? = null
 
         if (columnName.toLowerCase().contains("email")) {
@@ -122,49 +124,34 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 accessMode = "WRITE_ONLY"
                 comment = comment.replace("{{writeOnly}}", "")
             }
-            val maxLengthStart = comment.indexOf("{{maxLength=")
-            maxLength = if (maxLengthStart > -1) {
-                val maxLengthEnd = comment.indexOf("}}", maxLengthStart)
-                val length = comment.substring(maxLengthStart + 12, maxLengthEnd).toInt()
-                comment = comment.removeRange(maxLengthStart, maxLengthEnd + 2)
-                length
-            } else {
-                getMaxLength(column)
-            }
 
-            val minLengthStart = comment.indexOf("{{minLength=")
-            minLength = if (minLengthStart > -1) {
-                val minLengthEnd = comment.indexOf("}}", minLengthStart)
-                val length = comment.substring(minLengthStart + 12, minLengthEnd).toInt()
-                comment = comment.removeRange(minLengthStart, minLengthEnd + 2)
-                length
-            } else {
-                0
-            }
-            val defaultValueStart = comment.indexOf("{{default=")
-            if (defaultValueStart > -1) {
-                val defaultValueEnd = comment.indexOf("}}", defaultValueStart)
-                defaultValue = comment.substring(defaultValueStart + 10, defaultValueEnd)
-                comment = comment.removeRange(defaultValueStart, defaultValueEnd + 2)
-            }
-            val nameValueStart = comment.indexOf("{{name=")
-            if (nameValueStart > -1) {
-                val nameValueEnd = comment.indexOf("}}", nameValueStart)
-                nameValue = comment.substring(nameValueStart + 7, nameValueEnd)
-                comment = comment.removeRange(nameValueStart, nameValueEnd + 2)
-            }
-            val exampleValueStart = comment.indexOf("{{example=")
-            if (exampleValueStart > -1) {
-                val exampleValueEnd = comment.indexOf("}}", exampleValueStart)
-                if (exampleValueEnd == -1) {
-                    throw RuntimeException("could not get end of comment: $comment")
-                }
-                exampleValue = comment.substring(exampleValueStart + 10, exampleValueEnd)
-                comment = comment.removeRange(exampleValueStart, exampleValueEnd + 2)
-            }
+            val maxLengthPair = parseCommentWithValue("maxLength", comment)
+            comment = maxLengthPair.first
+            maxLength = maxLengthPair.second?.toInt() ?: getMaxLength(column)
 
+            val minLengthPair = parseCommentWithValue("minLength", comment)
+            comment = minLengthPair.first
+            minLength = minLengthPair.second?.toInt() ?: 0
+
+            val defaultValuePair = parseCommentWithValue("default", comment)
+            comment = defaultValuePair.first
+            defaultValue = defaultValuePair.second
+
+            val nameValuePair = parseCommentWithValue("name", comment)
+            comment = nameValuePair.first
+            nameValue = nameValuePair.second
+
+            val examplePair = parseCommentWithValue("example", comment)
+            comment = examplePair.first
+            exampleValue = examplePair.second
 
             comment = comment.trim()
+        }
+        if (nameValue == null) {
+            nameValue = propertyName
+        }
+        if (defaultValue == null) {
+            defaultValue = column.definedType.defaultValue
         }
         if (!comment.isNullOrBlank()) {
             out.tab(1).println("/**")
@@ -198,6 +185,24 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         }
         out.tab(1)
             .println("@com.fasterxml.jackson.annotation.JsonProperty(value=\"$nameValue\", access = com.fasterxml.jackson.annotation.JsonProperty.Access.$accessMode)")
+    }
+
+    private fun parseCommentWithValue(
+        name: String,
+        comment: String
+    ): Pair<String, String?> {
+        val valueStart = comment.indexOf("{{$name=")
+        var updatedComment: String = comment
+        var value: String? = null
+        if (valueStart > -1) {
+            val valueEnd = comment.indexOf("}}", valueStart)
+            if (valueEnd == -1) {
+                throw RuntimeException("could not get end of comment: $comment")
+            }
+            value = comment.substring(valueStart + name.length + 3, valueEnd)
+            updatedComment = comment.removeRange(valueStart, valueEnd + 2)
+        }
+        return Pair(updatedComment, value)
     }
 
     private fun getMaxLength(column: ColumnDefinition): Int {
@@ -261,11 +266,20 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val mapperPackage = getMapperPackage(table)
         // if the table is marked with a {{view}} comment it is regarded as a view and will be read only.
         val readonly = table.comment != null && table.comment.contains("{{view}}")
-
+        val viewIdName = if (table.comment != null && table.comment.contains("{{viewId}}")) {
+            val viewIdNamePair = parseCommentWithValue("viewId", table.comment)
+            viewIdNamePair.second
+        } else {
+            null
+        }
         val dtoType = out.ref(getStrategy().getFullJavaClassName(table, Mode.POJO))
 
         val fullJavaTableName = getFullJavaTableName(table)
         val tableRecord = out.ref(getStrategy().getFullJavaClassName(table, Mode.RECORD))
+
+        if (viewIdName != null) {
+            // TODO: override primaryKeyField function
+        }
 
         out.tab(1)
             .println("override fun map(row:io.vertx.sqlclient.Row, table:org.jooq.Table<$tableRecord>,offset:Int): $dtoType {")
