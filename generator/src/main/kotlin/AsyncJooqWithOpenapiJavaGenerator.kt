@@ -168,8 +168,11 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         }
         super.printColumnJPAAnnotation(out, column)
 
+        if (columnName.startsWith("internal_")) {
+            isInternal = true
+        }
         // allow internal fields to also be specified using a prefix
-        if (isInternal || columnName.startsWith("internal_")) {
+        if (isInternal) {
             out.tab(1).println("@io.swagger.v3.oas.annotations.Hidden")
             out.tab(1).println("@com.fasterxml.jackson.annotation.JsonIgnore")
         } else {
@@ -183,8 +186,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 1
             )
         }
-        out.tab(1)
-            .println("@com.fasterxml.jackson.annotation.JsonProperty(value=\"$nameValue\", access = com.fasterxml.jackson.annotation.JsonProperty.Access.$accessMode)")
+        if (!isInternal) {
+            out.tab(1)
+                .println("@com.fasterxml.jackson.annotation.JsonProperty(value=\"$nameValue\", access = com.fasterxml.jackson.annotation.JsonProperty.Access.$accessMode)")
+        }
     }
 
     private fun parseCommentWithValue(
