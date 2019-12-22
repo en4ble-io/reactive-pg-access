@@ -18,9 +18,5 @@ open class DatabaseSettings(
     constructor() : this("", "", 0, "", 0, "", "")
 
     val url: String
-        get() = if (ssl) {
-            "jdbc:postgresql://$host:$port/$database?sslmode=require&currentSchema=$schema"
-        } else {
-            "jdbc:postgresql://$host:$port/$database?currentSchema=$schema"
-        }
+        get() = "jdbc:postgresql://$host:$port/$database?currentSchema=$schema"
 }
