@@ -6,6 +6,7 @@ import io.reactivex.Single
 import io.vertx.kotlin.sqlclient.beginAwait
 import io.vertx.pgclient.PgConnectOptions
 import io.vertx.pgclient.PgPool
+import io.vertx.pgclient.SslMode
 import io.vertx.reactivex.core.Vertx
 import io.vertx.reactivex.sqlclient.SqlClient
 import io.vertx.reactivex.sqlclient.Transaction
@@ -62,6 +63,14 @@ open class DatabaseContext(
             .setDatabase(settings.database)
             .setUser(settings.username)
             .setPassword(settings.password)
+            .setSslMode(
+                if (settings.ssl) {
+                    SslMode.PREFER
+                } else {
+                    SslMode.ALLOW
+                }
+            )
+            .setTrustAll(true)
         val poolOptions = PoolOptions().setMaxSize(settings.maxPoolSize)
         return if (vertx != null) {
             io.vertx.reactivex.pgclient.PgPool.pool(vertx, connectOptions, poolOptions)
