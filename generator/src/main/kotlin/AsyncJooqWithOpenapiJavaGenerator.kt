@@ -25,6 +25,7 @@ import org.jooq.codegen.ExtendedJavaGenerator
 import org.jooq.codegen.GeneratorStrategy
 import org.jooq.codegen.GeneratorStrategy.Mode
 import org.jooq.codegen.JavaWriter
+import org.jooq.codegen.PojoType
 import org.jooq.meta.CatalogDefinition
 import org.jooq.meta.ColumnDefinition
 import org.jooq.meta.DataTypeDefinition
@@ -55,10 +56,12 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
 
     init {
         println("Customized generator for JOOQ with support for OpenApi and JAXRS")
-        println("You can use the following in your column definitions to control the code generation:")
-        println("table comment contains {{view}} - The table is regarded as a view - no write/update methods will be generated.")
-        println("(note: if you want to use readPage / seek queries only, you need to override the primaryKeyField() method in your DAO to return the ID column of the view)")
+        println("You can use the following annotations to control the code generation.")
+        println("In table + view definitions:")
+        println("  comment contains {{view}} - The table is regarded as a view - no write/update methods will be generated.")
+        println("  (note: if you want to use readPage / seek queries only, you need to override the primaryKeyField() method in your DAO to return the ID column of the view)")
 //        println("comment contains {{viewId=<string>}} - The field to be used as primary key in views - optional, required for readPage / seek queries only.")
+        println("In column definitions:")
         println("comment contains {{name=<string>}} - sets the json name of the property.")
         println("comment contains {{example=<string>}} - sets the example value of the property in the OpenApi @Schema annotation.")
         println("comment contains {{minLength=<int>}} - generates @org.hibernate.validator.constraints.Length(min=<int>)")
@@ -72,13 +75,18 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("column name starts with 'internal_' - same as {{internal}} but can be used e.g. in database views to clearly indicate which fields will not be included in the public API.")
     }
 
-    override fun printTableJPAAnnotation(out: JavaWriter, table: TableDefinition) {
-        super.printTableJPAAnnotation(out, table)
-        val name = getStrategy().getJavaClassName(table, Mode.DEFAULT)
-        printSchemaAnnotation(out, name, table.comment, null, null, null, 0)
+    override fun printTableJPAAnnotation(
+        out: JavaWriter,
+        table: TableDefinition,
+        pojoType: PojoType?
+    ) {
+        super.printTableJPAAnnotation(out, table, pojoType)
+        val name = getPojoName(table, pojoType ?: PojoType.DTO)
+        val comment = table.comment?.replace("{{view}}", "") ?: table.comment
+        printSchemaAnnotation(out, name, comment, null, null, null, 0, pojoType)
     }
 
-    override fun printColumnJPAAnnotation(out: JavaWriter, column: ColumnDefinition) {
+    override fun printColumnJPAAnnotation(out: JavaWriter, column: ColumnDefinition, pojoType: PojoType?) {
         val fullComment = column.comment
         val userType = column.type.userType
         var comment: String? = null
@@ -158,7 +166,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             printJavadocParagraph(out.tab(1), comment, "")
             out.tab(1).println(" */")
         }
-        if (!generated && !column.definedType.isNullable) {
+        if (!generated && !column.definedType.isNullable && pojoType == PojoType.FORM) {
             out.tab(1).println("@javax.validation.constraints.NotNull")
         }
         val isArray = userType.startsWith('_')
@@ -166,7 +174,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             // TODO: find a way to check for the length of elements of an array and use that annotation on string arrays
             printLengthAnnotation(out, minLength, maxLength)
         }
-        super.printColumnJPAAnnotation(out, column)
+        super.printColumnJPAAnnotation(out, column, pojoType)
 
         if (columnName.startsWith("internal_")) {
             isInternal = true
@@ -183,7 +191,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 defaultValue,
                 accessMode,
                 exampleValue,
-                1
+                1,
+                pojoType
             )
         }
         if (!isInternal) {
@@ -233,17 +242,26 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         defaultValue: String? = null,
         accessMode: String?,
         example: String?,
-        tab: Int
+        tab: Int,
+        pojoType: PojoType? = null
     ) {
+        val pojoAccessMode = if (pojoType == PojoType.VIEW) {
+            "READ_ONLY"
+        } else {
+            accessMode
+        }
+
         val access =
-            if (accessMode == null) {
+            if (pojoAccessMode == null) {
                 ""
             } else {
-                "accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.$accessMode, "
+                "accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.$pojoAccessMode, "
             }
         if (comment != null || name != null || example != null) {
             val attrs = mutableListOf<String>()
-            if (name != null) attrs.add("name=\"$name\"")
+            if (name != null) {
+                attrs.add("name=\"${getPojoName(name, pojoType)}\"")
+            }
             if (comment != null) attrs.add("title=\"$comment\"")
             if (example != null) attrs.add("example=\"$example\"")
             var attrsString = attrs.joinToString(", ")
@@ -265,19 +283,18 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         }
     }
 
-    override fun generateDaoClassFooter(table: TableDefinition, out: JavaWriter) {
-        super.generateDaoClassFooter(table, out)
+    override fun generateDaoClassFooter(table: TableDefinition, pojoType: PojoType, out: JavaWriter) {
+        super.generateDaoClassFooter(table, pojoType, out)
         val mappers = getMappersClassName(table.schema)
         val mapperPackage = getMapperPackage(table)
-        // if the table is marked with a {{view}} comment it is regarded as a view and will be read only.
-        val readonly = table.comment != null && table.comment.contains("{{view}}")
+        val readonly = isReadOnly(table)
         val viewIdName = if (table.comment != null && table.comment.contains("{{viewId}}")) {
             val viewIdNamePair = parseCommentWithValue("viewId", table.comment)
             viewIdNamePair.second
         } else {
             null
         }
-        val dtoType = out.ref(getStrategy().getFullJavaClassName(table, Mode.POJO))
+        val dtoType = out.ref(getPojoName(getStrategy().getFullJavaClassName(table, Mode.POJO), pojoType))
 
         val fullJavaTableName = getFullJavaTableName(table)
         val tableRecord = out.ref(getStrategy().getFullJavaClassName(table, Mode.RECORD))
@@ -532,6 +549,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         }
     }
 
+    // if the table is marked with a {{view}} comment it is regarded as a view and will be read only.
+    private fun isReadOnly(table: TableDefinition) =
+        table.comment != null && table.comment.contains("{{view}}")
+
     private fun printMapper(out: JavaWriter, mapperGetter: String, validate: Boolean = false) {
         if (validate) {
             out.tab(2).println("validate(dto)")
@@ -543,8 +564,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     private fun dtoMapper(mapperPackage: String, mappers: String, dtoType: String) =
         "$mapperPackage.$mappers.getMapper<$dtoType>"
 
-    private fun generateMapperImpl(table: TableDefinition, out: JavaWriter) {
-        val dtoType = out.ref(getStrategy().getFullJavaClassName(table, Mode.POJO))
+    private fun generateMapperImpl(table: TableDefinition, pojoType: PojoType, out: JavaWriter) {
+        val dtoType = out.ref(getPojoName(getStrategy().getFullJavaClassName(table, Mode.POJO), pojoType))
         generateToDto(out, dtoType, table)
         generateGetValueMap(out, dtoType, table)
     }
@@ -1033,7 +1054,13 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         LOG.info("Generating table mappers")
         for (table in schema.tables) {
             try {
-                generateMapper(table)
+                val comment = table.comment
+                if (comment != null && comment.contains("{{view}}")) {
+                    generateMapper(table, PojoType.VIEW)
+                } else {
+                    generateMapper(table, PojoType.DTO)
+                    generateMapper(table, PojoType.FORM)
+                }
             } catch (e: Exception) {
                 LOG.error("Error while generating mapper for $table", e)
             }
@@ -1054,10 +1081,30 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             .println("private val mappers = mutableMapOf<org.jooq.Table<*>, io.en4ble.pgaccess.mappers.JooqMapper<*>>()")
         out.tab(1).println("init {")
         for (table in schema.tables) {
-            val mapperName = getMapperName(table)
+            val comment = table.comment
             val mapperPackage = getMapperPackage(table)
             val fullJavaTableName = getFullJavaTableName(table)
-            out.tab(2).println("mappers[$fullJavaTableName] = $mapperPackage.$mapperName.instance()")
+            if (comment != null && comment.contains("{{view}}")) {
+                out.tab(2).println(
+                    "mappers[$fullJavaTableName] = $mapperPackage.${getMapperName(
+                        table,
+                        PojoType.VIEW
+                    )}.instance()"
+                )
+            } else {
+                out.tab(2).println(
+                    "mappers[$fullJavaTableName] = $mapperPackage.${getMapperName(
+                        table,
+                        PojoType.DTO
+                    )}.instance()"
+                )
+                out.tab(2).println(
+                    "mappers[$fullJavaTableName] = $mapperPackage.${getMapperName(
+                        table,
+                        PojoType.FORM
+                    )}.instance()"
+                )
+            }
         }
         out.tab(1).println("}")
 
@@ -1081,10 +1128,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     private fun getMappersClassName(schema: SchemaDefinition) =
         "${getStrategy().getJavaClassName(schema)}Mappers"
 
-    protected open fun generateMapper(table: TableDefinition) {
+    protected open fun generateMapper(table: TableDefinition, pojoType: PojoType) {
         val daoFile = getFile(table, Mode.DEFAULT)
-        val pojoName = getPojoName(table)
-        val mapperName = getMapperName(table)
+        val pojoName = getPojoName(table, pojoType)
+        val mapperName = getMapperName(table, pojoType)
         val file = File(File(daoFile.parent, "mappers"), "$mapperName.kt")
         val out = newJavaWriter(file)
         LOG.info("Generating Mapper for " + out.file().name)
@@ -1093,7 +1140,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val mapperPackage = getMapperPackage(table)
         out.println("package $mapperPackage")
 
-        out.println("import " + getStrategy().getFullJavaClassName(table, Mode.POJO))
+        out.println("import " + getPojoName(getStrategy().getFullJavaClassName(table, Mode.POJO), pojoType))
 
         out.println("@Suppress(\"PARAMETER_NAME_CHANGED_ON_OVERRIDE\", \"RemoveRedundantQualifierName\")")
         out.println("class $mapperName:io.en4ble.pgaccess.mappers.AbstractJooqMapper<$pojoName>() {")
@@ -1112,7 +1159,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(2).println("}")
         out.tab(1).println("}")
 
-        generateMapperImpl(table, out)
+        generateMapperImpl(table, pojoType, out)
         out.println("}")
         closeJavaWriter(out)
     }
@@ -1120,12 +1167,20 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     private fun getMapperPackage(table: TableDefinition) =
         getStrategy().getJavaPackageName(table) + ".mappers"
 
-    private fun getPojoName(table: TableDefinition): String {
-        return getStrategy().getJavaClassName(table, Mode.POJO)
+    private fun getPojoName(name: String, pojoType: PojoType?): String {
+        return if (pojoType != null && PojoType.DTO != pojoType) {
+            name.replace("Dto", pojoType.postfix)
+        } else {
+            name
+        }
     }
 
-    private fun getMapperName(table: TableDefinition): String {
-        return getPojoName(table) + "Mapper"
+    private fun getPojoName(table: TableDefinition, pojoType: PojoType): String {
+        return getPojoName(getStrategy().getJavaClassName(table, Mode.POJO), pojoType)
+    }
+
+    private fun getMapperName(table: TableDefinition, pojoType: PojoType): String {
+        return getPojoName(table, pojoType) + "Mapper"
     }
 
     override fun generatePojos(schema: SchemaDefinition) {
@@ -1133,18 +1188,17 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         return super.generatePojos(schema)
     }
 
-    override fun generateDao(table: TableDefinition, out: JavaWriter) {
-        val key = table.primaryKey
-        val readonly = key == null
+    override fun generateDao(table: TableDefinition, pojoType: PojoType, out: JavaWriter) {
+        val primaryKey = table.primaryKey
         val strategy = getStrategy()
         val className = strategy.getJavaClassName(table, Mode.DAO)
         val interfaces = out.ref(strategy.getJavaClassImplements(table, Mode.DAO))
         val tableRecord = out.ref(strategy.getFullJavaClassName(table, Mode.RECORD))
         val tableIdentifier = ref(strategy.getFullJavaIdentifier(table), 2)
 
-        val pType = out.ref(strategy.getFullJavaClassName(table, Mode.POJO))
+        val pType = out.ref(getPojoName(strategy.getFullJavaClassName(table, Mode.POJO), pojoType))
 
-        val keyColumns = key?.keyColumns
+        val keyColumns = primaryKey?.keyColumns
         var tType = if (keyColumns == null) {
             Record::class.java.name
         } else when {
@@ -1170,6 +1224,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         generateDaoClassJavadoc(table, out)
         printClassAnnotations(out, table.schema)
 
+        val readonly = primaryKey == null || isReadOnly(table)
         if (readonly) {
             out.println(
                 "abstract class $className(dbContext:io.en4ble.pgaccess.DatabaseContext) : $readonlyDaoBaseClassFqn<$tableRecord, $pType>(dbContext, $tableIdentifier, $pType::class.java),${interfaces.joinToString()} {"
@@ -1270,7 +1325,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         }
 
         generateDbFieldMethod(out, fieldMap)
-        generateDaoClassFooter(table, out)
+        generateDaoClassFooter(table, pojoType, out)
         out.println("}")
     }
 
