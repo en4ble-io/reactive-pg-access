@@ -9,6 +9,8 @@ import java.util.LinkedHashMap
 /**
  * Base converter class for storing Enums in the database.
  *
+ * NOTE: all enum converters must be named "{Enum name}EnumConverter" for the code generation to recognize the associated columns as enums.
+ *
  * @see TypedEnum
  *
  * @author Mark Hofmann (mark@en4ble.io)

@@ -83,7 +83,13 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         super.printTableJPAAnnotation(out, table, pojoType)
         val name = getPojoName(table, pojoType ?: PojoType.DTO)
         val comment = table.comment?.replace("{{view}}", "") ?: table.comment
-        printSchemaAnnotation(out, name, comment, null, null, null, 0, pojoType)
+        printSchemaAnnotation(
+            out,
+            name,
+            comment,
+            tab = 0,
+            pojoType = pojoType
+        )
     }
 
     override fun printColumnJPAAnnotation(out: JavaWriter, column: ColumnDefinition, pojoType: PojoType?) {
@@ -100,9 +106,12 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         var generated = false
         var nameValue: String? = null
         var exampleValue: String? = null
-
+        var format: String? = null
+        val isArray = userType.startsWith('_')
+        val isEnum = isEnum(column)
         if (columnName.toLowerCase().contains("email")) {
             out.tab(1).println("@javax.validation.constraints.Email")
+            format = "email"
         }
         if (fullComment != null && fullComment.isNotEmpty()) {
             if (fullComment.contains("{{internal}}")) {
@@ -169,9 +178,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         if (!generated && !column.definedType.isNullable && pojoType == PojoType.FORM) {
             out.tab(1).println("@javax.validation.constraints.NotNull")
         }
-        val isArray = userType.startsWith('_')
-        if (!isArray) {
-            // TODO: find a way to check for the length of elements of an array and use that annotation on string arrays
+        if (!isArray && !isEnum) {
+            // TODO: refacor DTO generation to use List instead of array, then we can specify validation per item
+            //  example: https://www.baeldung.com/bean-validation-container-elements
             printLengthAnnotation(out, minLength, maxLength)
         }
         super.printColumnJPAAnnotation(out, column, pojoType)
@@ -188,7 +197,14 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 out,
                 propertyName,
                 comment,
+                format,
+                isArray,
+                isEnum,
                 defaultValue,
+                minLength,
+                maxLength,
+                null, // TODO: add support for minimum + maximum
+                null,
                 accessMode,
                 exampleValue,
                 1,
@@ -239,9 +255,16 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out: JavaWriter,
         name: String?,
         comment: String?,
+        format: String? = null,
+        isArray: Boolean = false,
+        isEnum: Boolean = false,
         defaultValue: String? = null,
-        accessMode: String?,
-        example: String?,
+        minLength: Int? = null,
+        maxLength: Int? = null,
+        minimum: Int? = null,
+        maximum: Int? = null,
+        accessMode: String? = null,
+        example: String? = null,
         tab: Int,
         pojoType: PojoType? = null
     ) {
@@ -257,15 +280,25 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             } else {
                 "accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.$pojoAccessMode, "
             }
-        if (comment != null || name != null || example != null) {
+        if (comment != null || name != null || example != null || format != null || minimum != null || maximum != null || minLength != null || maxLength != null) {
             val attrs = mutableListOf<String>()
             if (name != null) {
                 attrs.add("name=\"${getPojoName(name, pojoType)}\"")
             }
             if (comment != null) attrs.add("title=\"$comment\"")
+            if (format != null) attrs.add("format=\"$format\"")
             if (example != null) attrs.add("example=\"$example\"")
+            if (!isEnum) {
+                if (minimum != null) attrs.add("minimum=\"$minimum\"")
+                if (maximum != null) attrs.add("maximum=\"$maximum\"")
+                if (minLength != null && minLength > 0) attrs.add("minLength=$minLength")
+                if (maxLength != null && maxLength > 0) attrs.add("maxLength=$maxLength")
+            }
             var attrsString = attrs.joinToString(", ")
 
+            if (isArray) {
+                out.tab(tab).println("@io.swagger.v3.oas.annotations.media.ArraySchema(schema = ")
+            }
             if (!defaultValue.isNullOrBlank()) {
                 LOG.debug("$name defaultValue: $defaultValue")
                 val s = if (defaultValue.contains('\'')) {
@@ -279,6 +312,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             } else {
                 out.tab(tab)
                     .println("@io.swagger.v3.oas.annotations.media.Schema($access$attrsString)")
+            }
+            if (isArray) {
+                out.tab(tab).println(")")
             }
         }
     }
@@ -567,7 +603,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     private fun generateMapperImpl(table: TableDefinition, pojoType: PojoType, out: JavaWriter) {
         val dtoType = out.ref(getPojoName(getStrategy().getFullJavaClassName(table, Mode.POJO), pojoType))
         generateToDto(out, dtoType, table)
-        generateGetValueMap(out, dtoType, table)
+        val valueMapPojoType = if (pojoType == PojoType.FORM) PojoType.DTO else pojoType
+        val valueMapDtoType =
+            out.ref(getPojoName(getStrategy().getFullJavaClassName(table, Mode.POJO), valueMapPojoType))
+        generateGetValueMap(out, valueMapDtoType, table)
     }
 
     private fun generateToDto(
@@ -789,11 +828,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         return en4bleGeneratorStrategy.getJsonKeyName(column)
     }
 
-    private fun isEnum(table: TableDefinition, column: TypedElementDefinition<*>): Boolean {
-        return table.database.getEnum(
-            table.schema,
-            column.type.userType
-        ) != null
+    private fun isEnum(column: ColumnDefinition): Boolean {
+        val converterName = column.type.converter
+        // NOTE: naming convention since we cannot get the type during code generation
+        return converterName != null && converterName.endsWith("EnumConverter")
     }
 
     private fun generateGetValueMap(
@@ -1141,6 +1179,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.println("package $mapperPackage")
 
         out.println("import " + getPojoName(getStrategy().getFullJavaClassName(table, Mode.POJO), pojoType))
+        // forms inherit from DTO and we need the DTO for getValueMap
+        if (pojoType == PojoType.FORM) {
+            out.println("import " + getPojoName(getStrategy().getFullJavaClassName(table, Mode.POJO), PojoType.DTO))
+        }
 
         out.println("@Suppress(\"PARAMETER_NAME_CHANGED_ON_OVERRIDE\", \"RemoveRedundantQualifierName\")")
         out.println("class $mapperName:io.en4ble.pgaccess.mappers.AbstractJooqMapper<$pojoName>() {")
