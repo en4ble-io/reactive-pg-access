@@ -109,10 +109,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         var format: String? = null
         val isArray = userType.startsWith('_')
         val isEnum = isEnum(column)
-        if (columnName.toLowerCase().contains("email")) {
-            out.tab(1).println("@javax.validation.constraints.Email")
-            format = "email"
-        }
+        var isRequired = false
+
         if (fullComment != null && fullComment.isNotEmpty()) {
             if (fullComment.contains("{{internal}}")) {
                 comment = fullComment.replace("{{internal}}", "")
@@ -175,9 +173,17 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             printJavadocParagraph(out.tab(1), comment, "")
             out.tab(1).println(" */")
         }
-        if (!generated && !column.definedType.isNullable && pojoType == PojoType.FORM) {
+        // if a default value has been specified the attribute is not required from the frontend
+        if (defaultValue == null && !generated && !column.definedType.isNullable && pojoType == PojoType.FORM) {
+            isRequired = true
             out.tab(1).println("@javax.validation.constraints.NotNull")
         }
+
+        if (columnName.toLowerCase().contains("email")) {
+            out.tab(1).println("@javax.validation.constraints.Email")
+            format = "email"
+        }
+
         if (!isArray && !isEnum) {
             // TODO: refacor DTO generation to use List instead of array, then we can specify validation per item
             //  example: https://www.baeldung.com/bean-validation-container-elements
@@ -200,6 +206,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 format,
                 isArray,
                 isEnum,
+                isRequired,
                 defaultValue,
                 minLength,
                 maxLength,
@@ -258,6 +265,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         format: String? = null,
         isArray: Boolean = false,
         isEnum: Boolean = false,
+        isRequired: Boolean? = null,
         defaultValue: String? = null,
         minLength: Int? = null,
         maxLength: Int? = null,
@@ -288,6 +296,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             if (comment != null) attrs.add("title=\"$comment\"")
             if (format != null) attrs.add("format=\"$format\"")
             if (example != null) attrs.add("example=\"$example\"")
+            if (isRequired != null && isRequired) attrs.add("required=true")
             if (!isEnum) {
                 if (minimum != null) attrs.add("minimum=\"$minimum\"")
                 if (maximum != null) attrs.add("maximum=\"$maximum\"")

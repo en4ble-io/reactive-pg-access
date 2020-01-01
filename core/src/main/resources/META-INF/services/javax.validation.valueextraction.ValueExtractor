@@ -1,1 +1,3 @@
-io.en4ble.pgaccess.converters.TypedEnumExtractor
+# TODO: not sure if we really need these extractors
+#io.en4ble.pgaccess.converters.IntEnumExtractor
+#io.en4ble.pgaccess.converters.StringEnumExtractor
