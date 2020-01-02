@@ -9,7 +9,6 @@ import io.en4ble.pgaccess.dto.PathDTO
 import io.en4ble.pgaccess.dto.PointDTO
 import io.en4ble.pgaccess.dto.PolygonDTO
 import io.vertx.core.buffer.Buffer
-import io.vertx.core.json.JsonObject
 import io.vertx.pgclient.data.Box
 import io.vertx.pgclient.data.Circle
 import io.vertx.pgclient.data.Interval
@@ -20,6 +19,7 @@ import io.vertx.pgclient.data.Point
 import io.vertx.pgclient.data.Polygon
 import io.vertx.sqlclient.data.Numeric
 import org.jooq.Constants
+import org.jooq.JSON
 import org.jooq.Record
 import org.jooq.codegen.ExtendedJavaGenerator
 import org.jooq.codegen.GeneratorStrategy
@@ -636,7 +636,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             val offset = getOffset(pos)
 //            out.tab(2).println("// converter: $column.type.converter")
             val setter = getStrategy().getJavaSetterName(column, Mode.INTERFACE)
-            val columnType = getJavaType(column.type)
+            val javaType = getJavaType(column.type)
             val columnName = getStrategy().getJavaIdentifier(column)
             val javaMemberName = getJsonKeyName(column)
             val converter = column.type.converter
@@ -644,11 +644,11 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
 //            val customJavaType = column.type.javaType
             val userType = column.type.userType
 //            println("$columnName::$columnType::$userType")
-            if (handleCustomDBTypeFromRow(table, column, setter, columnType, javaMemberName, pos, out)) {
+            if (handleCustomDBTypeFromRow(table, column, setter, javaType, javaMemberName, pos, out)) {
                 // handled by user
-            } else if (handleJsonFromRow(table, column, setter, columnType, javaMemberName, pos, out)) {
+            } else if (handleJsonFromRow(table, column, setter, javaType, javaMemberName, pos, out)) {
                 // handling of vertx json types
-            } else if (handleGeometricDBTypeFromRow(table, column, setter, columnType, javaMemberName, pos, out)) {
+            } else if (handleGeometricDBTypeFromRow(table, column, setter, javaType, javaMemberName, pos, out)) {
                 // custom geometric types (uses dto from api package instead of pg-client types)
             } else if (handleReactiveSqlClientTypeFromRow(column, setter, javaMemberName, pos, out)) {
                 // handle types of reactive-pg-client
@@ -656,14 +656,18 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 if (column.type.javaType != null && column.type.converter != null) {
                     // TODO: check if arrays of custom object are stored as json or _json
                     val isArray = userType.startsWith('_')
-                    val spread = if (isArray) "*" else ""
+                    val spread = if (javaType.endsWith("[]")) "*" else ""
                     if (userType == "json" || userType == "jsonb") {
-                        val type = JsonObject::class.java.name
+//                        val type = JsonObject::class.java.name
+                        // FIXME: the vertx client currently returns Object instead of JsonObject
+                        val type = JSON::class.java.name
                         out.tab(2)
                             .println("val ${column.name} = row.get($type::class.java,$offset)")
                     } else if (userType == "_json" || userType == "_jsonb") {
                         out.tab(2)
-                            .println("val ${column.name} = row.get(Array<io.vertx.core.json.JsonObject>::class.java,$offset)")
+                            .println("val ${column.name} = row.get(Array<org.jooq.JSON>::class.java,$offset)")
+//                        out.tab(2)
+//                            .println("val ${column.name} = row.get(Array<io.vertx.core.json.JsonObject>::class.java,$offset)")
                     } else {
                         val accessName = getSqlClientAccessName(column.definedType)
                         out.tab(2)
@@ -680,7 +684,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                     LOG.warn(
                         String.format(
                             "Omitting unrecognized type %s (%s) for column %s in table %s!",
-                            columnType,
+                            javaType,
                             column.type.userType,
                             column.name,
                             table.name
@@ -690,7 +694,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                         .println(
                             String.format(
                                 "// Omitting unrecognized type %s for column %s!",
-                                columnType,
+                                javaType,
                                 column.name
                             )
                         )
@@ -1050,11 +1054,11 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val userType = column.type.userType
         val offset = getOffset(pos)
         val s = when (userType) {
-            "json" -> "row.get(io.vertx.core.json.JsonObject::class.java,$offset)"
-            "_json" -> "row.getValues(Array<io.vertx.core.json.JsonObject>::class.java,$offset)"
+            "json" -> "row.get(org.jooq.JSON::class.java,$offset)"
+            "_json" -> "row.getValues(Array<org.jooq.JSON>::class.java,$offset)"
 
-            "jsonb" -> "row.get(io.vertx.core.json.JsonObject::class.java,$offset)"
-            "_jsonb" -> "row.getValues(Array<io.vertx.core.json.JsonObject>::class.java,$offset)"
+            "jsonb" -> "row.get(org.jooq.JSONB::class.java,$offset)"
+            "_jsonb" -> "row.getValues(Array<org.jooq.JSONB>::class.java,$offset)"
 
             else -> null
         }
