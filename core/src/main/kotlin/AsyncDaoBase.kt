@@ -21,7 +21,8 @@ import org.jooq.Field
 import org.jooq.Query
 import org.jooq.Record
 import org.jooq.SelectLimitAfterOffsetStep
-import org.jooq.SelectSeekStep2
+import org.jooq.SelectSeekStepN
+import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.TableField
 import java.time.LocalDate
@@ -255,10 +256,10 @@ protected constructor(
         condition: Condition? = null,
         baseId: ID?,
         baseValue: VALUE?,
-        order: OrderDTO,
+        orderBy: List<OrderDTO>,
         pageSize: Int
     ): Single<List<DTO>> {
-        val baseQuery = getReadPageQuery(condition, order, baseValue, baseId)
+        val baseQuery = getReadPageQuery(condition, orderBy, baseValue, baseId)
         return if (baseId != null && baseValue != null) {
             val query = baseQuery.seek(baseValue, baseId)
             rxQuery(query.limit(pageSize))
@@ -278,10 +279,10 @@ protected constructor(
         condition: Condition? = null,
         baseId: ID?,
         baseValue: VALUE?,
-        order: OrderDTO,
+        orderBy: List<OrderDTO>,
         pageSize: Int
     ): List<DTO> {
-        val baseQuery = getReadPageQuery(condition, order, baseValue, baseId)
+        val baseQuery = getReadPageQuery(condition, orderBy, baseValue, baseId)
         val res = if (baseId != null && baseValue != null) {
             val query = baseQuery.seek(baseValue, baseId)
             query(query.limit(pageSize))
@@ -300,12 +301,12 @@ protected constructor(
      */
     suspend fun readPage(
         condition: Condition,
-        order: OrderDTO,
+        orderBy: List<OrderDTO>,
         firstPage: Int,
         pageSize: Int
     ): List<DTO> {
         val offset = pageSize * firstPage
-        val readPageQuery = getReadPageQuery(condition, offset, order)
+        val readPageQuery = getReadPageQuery(condition, offset, orderBy)
         val res = query(readPageQuery.limit(pageSize))
         return map(res)
     }
@@ -313,24 +314,31 @@ protected constructor(
     private fun getReadPageQuery(
         condition: Condition,
         offset: Int,
-        order: OrderDTO
+        orderBy: List<OrderDTO>
     ): SelectLimitAfterOffsetStep<Record> {
         val select = dsl.select().from(table()).where(condition)
+        return select.orderBy(getOrderByList(orderBy)).offset(offset)
+    }
+
+    private fun getOrderByList(orderBy: List<OrderDTO>) =
+        orderBy.map { order -> getOrderBy(order) }.toMutableList()
+
+    private fun getOrderBy(order: OrderDTO): SortField<*> {
         val sortDirection = order.direction
         val orderField = getDbField(order.field)
         return if (sortDirection === SortDirection.ASC)
-            select.orderBy(orderField.asc()).offset(offset)
+            orderField.asc()
         else
-            select.orderBy(orderField.desc()).offset(offset)
+            orderField.desc()
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun <ID, VALUE> getReadPageQuery(
         condition: Condition?,
-        order: OrderDTO,
+        orderBy: List<OrderDTO>,
         baseValue: VALUE?,
         baseId: ID?
-    ): SelectSeekStep2<Record, VALUE, ID> {
+    ): SelectSeekStepN<Record> {
         val idField = primaryKeyField<ID>()
             ?: throw RuntimeException("The read page query requires a primary key field in the table/view " + table().name)
         val baseSelect = dsl.select().from(table())
@@ -340,21 +348,18 @@ protected constructor(
             } else {
                 baseSelect
             }
-        val sortDirection = order.direction
-        val field = getDbField(order.field)
-        if (baseValue != null && !field.type.isInstance(baseValue)) {
-            throw ValidationException("Given base value does not match type of database field (${field.type}")
-        }
 
         if (baseId != null && !idField.type.isInstance(baseId)) {
             throw ValidationException("Given base id does not match type of database id (${idField.type}")
         }
 
-        val orderField: Field<VALUE> = field as Field<VALUE>
-        return if (sortDirection === SortDirection.ASC)
-            select.orderBy(orderField.asc(), idField.asc())
-        else
-            select.orderBy(orderField.desc(), idField.desc())
+//        if (baseValue != null && !field.type.isInstance(baseValue)) {
+//            throw ValidationException("Given base value does not match type of database field (${field.type}")
+//        }
+
+        val orderByList = getOrderByList(orderBy)
+        orderByList.add(idField.desc())
+        return select.orderBy(*orderByList.toTypedArray())
     }
 
     /**
@@ -807,5 +812,21 @@ protected constructor(
                 throw ConstraintViolationException(validationErrors)
             }
         }
+    }
+
+    /**
+     * Adds the new condition the a given existing condition with AND.
+     * Will return the new condition if the existing condition was null.
+     */
+    fun getSearchConditionAnd(currentCondition: Condition?, newCondition: Condition): Condition {
+        return DaoHelperCommon.getSearchConditionAnd(currentCondition, newCondition)
+    }
+
+    /**
+     * Adds the new condition the a given existing condition with OR.
+     * Will return the new condition if the existing condition was null.
+     */
+    fun getSearchConditionOr(currentCondition: Condition?, newCondition: Condition): Condition {
+        return DaoHelperCommon.getSearchConditionOr(currentCondition, newCondition)
     }
 }

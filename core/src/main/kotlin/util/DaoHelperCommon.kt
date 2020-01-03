@@ -10,6 +10,7 @@ import io.en4ble.pgaccess.enumerations.TypedEnum
 import io.vertx.core.json.Json
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.Tuple
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.Query
 import org.jooq.Record
@@ -135,5 +136,29 @@ internal object DaoHelperCommon {
         return mapper.readValue<List<DTO>>(
             json, mapper.typeFactory.constructCollectionType(List::class.java, type)
         )
+    }
+
+    /**
+     * Adds the new condition the a given existing condition with AND.
+     * Will return the new condition if the existing condition was null.
+     */
+    fun getSearchConditionAnd(currentCondition: Condition?, newCondition: Condition): Condition {
+        return if (currentCondition != null) {
+            currentCondition.and(newCondition)
+        } else {
+            newCondition
+        }
+    }
+
+    /**
+     * Adds the new condition the a given existing condition with OR.
+     * Will return the new condition if the existing condition was null.
+     */
+    fun getSearchConditionOr(currentCondition: Condition?, newCondition: Condition): Condition {
+        return if (currentCondition != null) {
+            currentCondition.or(newCondition)
+        } else {
+            newCondition
+        }
     }
 }
