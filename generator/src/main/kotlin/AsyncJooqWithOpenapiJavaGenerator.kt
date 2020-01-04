@@ -373,7 +373,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return read(condition, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun read(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):List<$dtoType> {")
+            .println("override suspend fun read(condition:org.jooq.Condition,client:io.vertx.sqlclient.SqlClient):List<$dtoType> {")
         out.tab(1).println("return read(condition, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -389,7 +389,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return read(query, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun read(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):List<$dtoType> {")
+            .println("override suspend fun read(query:org.jooq.Query,client:io.vertx.sqlclient.SqlClient):List<$dtoType> {")
         out.tab(1).println("return read(query, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -405,7 +405,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return readOne(condition, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun readOne(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):$dtoType {")
+            .println("override suspend fun readOne(condition:org.jooq.Condition,client:io.vertx.sqlclient.SqlClient):$dtoType {")
         out.tab(1).println("return readOne(condition, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -421,7 +421,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return readOne(query, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun readOne(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):$dtoType {")
+            .println("override suspend fun readOne(query:org.jooq.Query,client:io.vertx.sqlclient.SqlClient):$dtoType {")
         out.tab(1).println("return readOne(query, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -438,7 +438,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return readOptional(condition, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun readOptional(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):java.util.Optional<$dtoType> {")
+            .println("override suspend fun readOptional(condition:org.jooq.Condition,client:io.vertx.sqlclient.SqlClient):java.util.Optional<$dtoType> {")
         out.tab(1).println("return readOptional(condition, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -455,7 +455,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("return readOptional(query, $fullJavaTableName)")
         out.tab(1).println("}")
         out.tab(1)
-            .println("override suspend fun readOptional(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):java.util.Optional<$dtoType> {")
+            .println("override suspend fun readOptional(query:org.jooq.Query,client:io.vertx.sqlclient.SqlClient):java.util.Optional<$dtoType> {")
         out.tab(1).println("return readOptional(query, $fullJavaTableName, client)")
         out.tab(1).println("}")
 
@@ -482,7 +482,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("suspend fun update(dto:$dtoType, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient):Int {")
+                .println("suspend fun update(dto:$dtoType, condition:org.jooq.Condition, client:io.vertx.sqlclient.SqlClient):Int {")
             printMapper(out, mapperGetter)
             out.tab(2)
                 .println("return query(dsl.update($fullJavaTableName).set(map).where(condition), client).rowCount()")
@@ -526,7 +526,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("suspend fun updateReturning(dto:$dtoType, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient):$dtoType {")
+                .println("suspend fun updateReturning(dto:$dtoType, condition:org.jooq.Condition, client:io.vertx.sqlclient.SqlClient):$dtoType {")
             printMapper(out, mapperGetter)
             out.tab(2)
                 .println("return map(queryOne(dsl.update($fullJavaTableName).set(map).where(condition).returning(*$fullJavaTableName.fields()), client))")
@@ -546,7 +546,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("suspend fun create(dto:$dtoType,client:io.vertx.reactivex.sqlclient.SqlClient):Int {")
+                .println("suspend fun create(dto:$dtoType,client:io.vertx.sqlclient.SqlClient):Int {")
             printMapper(out, mapperGetter, true)
             out.tab(2)
                 .println("return query(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values), client).rowCount()")
@@ -559,7 +559,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("}")
 
             out.tab(1)
-                .println("suspend fun createReturning(dto:$dtoType,client:io.vertx.reactivex.sqlclient.SqlClient):$dtoType {")
+                .println("suspend fun createReturning(dto:$dtoType,client:io.vertx.sqlclient.SqlClient):$dtoType {")
             printMapper(out, mapperGetter, true)
             out.tab(2)
                 .println("return map(queryOne(dsl.insertInto($fullJavaTableName).columns(map.keys).values(map.values).returning(*$fullJavaTableName.fields()), client))")

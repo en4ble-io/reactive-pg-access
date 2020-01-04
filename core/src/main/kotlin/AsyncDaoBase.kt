@@ -57,8 +57,8 @@ protected constructor(
         return DaoHelper.queryOptional(query, context)
     }
 
-    suspend fun queryOptional(query: Query, client: SqlClient): Optional<Row> {
-        return DaoHelper.queryOptional(query, client.delegate, context)
+    suspend fun queryOptional(query: Query, client: io.vertx.sqlclient.SqlClient): Optional<Row> {
+        return DaoHelper.queryOptional(query, client, context)
     }
 
     fun rxQueryOptional(query: Query): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
@@ -73,8 +73,12 @@ protected constructor(
         return DaoHelper.queryOptional(query, context)
     }
 
-    suspend fun queryOptional(query: Query, client: SqlClient, context: DatabaseContext): Optional<Row> {
-        return DaoHelper.queryOptional(query, client.delegate, context)
+    suspend fun queryOptional(
+        query: Query,
+        client: io.vertx.sqlclient.SqlClient,
+        context: DatabaseContext
+    ): Optional<Row> {
+        return DaoHelper.queryOptional(query, client, context)
     }
 
     fun rxQueryOptional(
@@ -94,8 +98,12 @@ protected constructor(
         return DaoHelper.query(getQuery(condition, table()), context)
     }
 
-    suspend fun query(condition: Condition, client: SqlClient, context: DatabaseContext): RowSet<Row> {
-        return DaoHelper.query(getQuery(condition, table()), client.delegate, context)
+    suspend fun query(
+        condition: Condition,
+        client: io.vertx.sqlclient.SqlClient,
+        context: DatabaseContext
+    ): RowSet<Row> {
+        return DaoHelper.query(getQuery(condition, table()), client, context)
     }
 
     fun rxQuery(
@@ -115,8 +123,8 @@ protected constructor(
         return DaoHelper.query(query, context)
     }
 
-    suspend fun query(query: Query, client: SqlClient, context: DatabaseContext): RowSet<Row> {
-        return DaoHelper.query(query, client.delegate, context)
+    suspend fun query(query: Query, client: io.vertx.sqlclient.SqlClient, context: DatabaseContext): RowSet<Row> {
+        return DaoHelper.query(query, client, context)
     }
 
     fun rxQuery(
@@ -138,8 +146,8 @@ protected constructor(
         return DaoHelper.queryOne(getQuery(condition, table()), context)
     }
 
-    suspend fun queryOne(condition: Condition, client: SqlClient, context: DatabaseContext): Row {
-        return DaoHelper.queryOne(getQuery(condition, table()), client.delegate, context)
+    suspend fun queryOne(condition: Condition, client: io.vertx.sqlclient.SqlClient, context: DatabaseContext): Row {
+        return DaoHelper.queryOne(getQuery(condition, table()), client, context)
     }
 
     fun rxQueryOne(
@@ -159,24 +167,24 @@ protected constructor(
         return DaoHelper.queryOne(query, context)
     }
 
-    suspend fun queryOne(query: Query, client: SqlClient, context: DatabaseContext): Row {
-        return DaoHelper.queryOne(query, client.delegate, context)
+    suspend fun queryOne(query: Query, client: io.vertx.sqlclient.SqlClient, context: DatabaseContext): Row {
+        return DaoHelper.queryOne(query, client, context)
     }
 
     suspend fun query(query: Query): RowSet<Row> {
         return DaoHelper.query(query, context)
     }
 
-    suspend fun query(query: Query, client: SqlClient): RowSet<Row> {
-        return DaoHelper.query(query, client.delegate, context)
+    suspend fun query(query: Query, client: io.vertx.sqlclient.SqlClient): RowSet<Row> {
+        return DaoHelper.query(query, client, context)
     }
 
     suspend fun queryOne(query: Query): Row {
         return DaoHelper.queryOne(query, context)
     }
 
-    suspend fun queryOne(query: Query, client: SqlClient): Row {
-        return DaoHelper.queryOne(query, client.delegate, context)
+    suspend fun queryOne(query: Query, client: io.vertx.sqlclient.SqlClient): Row {
+        return DaoHelper.queryOne(query, client, context)
     }
 
     fun rxQueryOne(query: Query, context: DatabaseContext): Single<io.vertx.reactivex.sqlclient.Row> {
@@ -213,14 +221,14 @@ protected constructor(
     suspend fun readUUIDs(
         idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null
     ): List<UUID> {
-        return readUUIDs(idField, condition, page, context.sqlClient)
+        return readUUIDs(idField, condition, page, context.sqlClient.delegate)
     }
 
     suspend fun readUUIDs(
-        idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null, client: SqlClient
+        idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null, client: io.vertx.sqlclient.SqlClient
     ): List<UUID> {
         val query = dsl.select(idField).from(idField.table).where(condition)
-        return DaoHelper.readUUIDs(query, page, client.delegate, context)
+        return DaoHelper.readUUIDs(query, page, client, context)
     }
 
     fun rxReadUUIDs(
@@ -377,11 +385,11 @@ protected constructor(
         return read(dsl.select().from(table), table)
     }
 
-    suspend fun readAll(client: SqlClient): List<DTO> {
+    suspend fun readAll(client: io.vertx.sqlclient.SqlClient): List<DTO> {
         return read(dsl.select().from(table), table, client)
     }
 
-    suspend fun readAll(table: Table<RECORD>, client: SqlClient): List<DTO> {
+    suspend fun readAll(table: Table<RECORD>, client: io.vertx.sqlclient.SqlClient): List<DTO> {
         return read(dsl.select().from(table), table, client)
     }
 
@@ -405,7 +413,7 @@ protected constructor(
         return read(getQuery(condition, table), table)
     }
 
-    suspend fun read(condition: Condition, table: Table<RECORD>, client: SqlClient): List<DTO> {
+    suspend fun read(condition: Condition, table: Table<RECORD>, client: io.vertx.sqlclient.SqlClient): List<DTO> {
         return read(getQuery(condition, table), table, client)
     }
 
@@ -421,7 +429,12 @@ protected constructor(
         return read(getQuery(condition, table), table, page)
     }
 
-    suspend fun read(condition: Condition, table: Table<RECORD>, page: PagingDTO?, client: SqlClient): List<DTO> {
+    suspend fun read(
+        condition: Condition,
+        table: Table<RECORD>,
+        page: PagingDTO?,
+        client: io.vertx.sqlclient.SqlClient
+    ): List<DTO> {
         return read(getQuery(condition, table), table, page, client)
     }
 
@@ -437,7 +450,7 @@ protected constructor(
         return read(condition, table(), PagingDTO(orderBy))
     }
 
-    suspend fun read(condition: Condition, orderBy: List<OrderDTO>, client: SqlClient): List<DTO> {
+    suspend fun read(condition: Condition, orderBy: List<OrderDTO>, client: io.vertx.sqlclient.SqlClient): List<DTO> {
         return read(condition, table(), PagingDTO(orderBy), client)
     }
 
@@ -457,7 +470,7 @@ protected constructor(
         condition: Condition,
         table: Table<RECORD>,
         orderBy: List<OrderDTO>,
-        client: SqlClient
+        client: io.vertx.sqlclient.SqlClient
     ): List<DTO> {
         return read(condition, table, PagingDTO(orderBy), client)
     }
@@ -479,7 +492,7 @@ protected constructor(
         return read(query, table, null)
     }
 
-    suspend fun read(query: Query, table: Table<RECORD>, client: SqlClient): List<DTO> {
+    suspend fun read(query: Query, table: Table<RECORD>, client: io.vertx.sqlclient.SqlClient): List<DTO> {
         return read(query, table, null, client)
     }
 
@@ -503,9 +516,9 @@ protected constructor(
         query: Query,
         table: Table<RECORD>,
         page: PagingDTO?,
-        client: SqlClient
+        client: io.vertx.sqlclient.SqlClient
     ): List<DTO> {
-        return DaoHelper.read(query, table, page, client.delegate, context).map { map(it, table) }
+        return DaoHelper.read(query, table, page, client, context).map { map(it, table) }
     }
 
     fun rxRead(
@@ -529,7 +542,7 @@ protected constructor(
         return readOne(getQuery(condition, table), table)
     }
 
-    suspend fun readOne(condition: Condition, table: Table<RECORD>, client: SqlClient): DTO {
+    suspend fun readOne(condition: Condition, table: Table<RECORD>, client: io.vertx.sqlclient.SqlClient): DTO {
         return readOne(getQuery(condition, table), table, client)
     }
 
@@ -545,7 +558,7 @@ protected constructor(
         return map(queryOne(query), table)
     }
 
-    suspend fun readOne(query: Query, table: Table<RECORD>, client: SqlClient): DTO {
+    suspend fun readOne(query: Query, table: Table<RECORD>, client: io.vertx.sqlclient.SqlClient): DTO {
         return map(queryOne(query, client), table)
     }
 
@@ -565,7 +578,11 @@ protected constructor(
         return readOptional(getQuery(condition, table), table)
     }
 
-    suspend fun readOptional(condition: Condition, table: Table<RECORD>, client: SqlClient): Optional<DTO> {
+    suspend fun readOptional(
+        condition: Condition,
+        table: Table<RECORD>,
+        client: io.vertx.sqlclient.SqlClient
+    ): Optional<DTO> {
         return readOptional(getQuery(condition, table), table, client)
     }
 
@@ -578,10 +595,10 @@ protected constructor(
     }
 
     suspend fun readOptional(query: Query, table: Table<RECORD>): Optional<DTO> {
-        return readOptional(query, table, context.sqlClient)
+        return readOptional(query, table, context.sqlClient.delegate)
     }
 
-    suspend fun readOptional(query: Query, table: Table<RECORD>, client: SqlClient): Optional<DTO> {
+    suspend fun readOptional(query: Query, table: Table<RECORD>, client: io.vertx.sqlclient.SqlClient): Optional<DTO> {
         val res = queryOptional(query, client)
         return if (res.isPresent) {
             Optional.of(map(res.get(), table))
@@ -608,7 +625,7 @@ protected constructor(
         return queryOne(countQuery).getInteger(0)
     }
 
-    suspend fun readCount(countQuery: Query, client: SqlClient): Int {
+    suspend fun readCount(countQuery: Query, client: io.vertx.sqlclient.SqlClient): Int {
         return queryOne(countQuery, client).getInteger(0)
     }
 
@@ -624,7 +641,7 @@ protected constructor(
         return readCount(getQuery(countCondition, table))
     }
 
-    suspend fun readCount(countCondition: Condition, client: SqlClient): Int {
+    suspend fun readCount(countCondition: Condition, client: io.vertx.sqlclient.SqlClient): Int {
         return readCount(getQuery(countCondition, table), client)
     }
 
@@ -640,7 +657,7 @@ protected constructor(
         return readCount(getQuery(countCondition, table))
     }
 
-    suspend fun readCount(countCondition: Condition, table: Table<*>, client: SqlClient): Int {
+    suspend fun readCount(countCondition: Condition, table: Table<*>, client: io.vertx.sqlclient.SqlClient): Int {
         return readCount(getQuery(countCondition, table), client)
     }
 
@@ -655,32 +672,32 @@ protected constructor(
     private fun getQuery(condition: Condition, table: Table<*>) = dsl.select().from(table).where(condition)
 
     abstract suspend fun read(query: Query): List<DTO>
-    abstract suspend fun read(query: Query, client: SqlClient): List<DTO>
+    abstract suspend fun read(query: Query, client: io.vertx.sqlclient.SqlClient): List<DTO>
     abstract fun rxRead(query: Query): Single<List<DTO>>
     abstract fun rxRead(query: Query, client: SqlClient): Single<List<DTO>>
 
     abstract suspend fun read(condition: Condition): List<DTO>
-    abstract suspend fun read(condition: Condition, client: SqlClient): List<DTO>
+    abstract suspend fun read(condition: Condition, client: io.vertx.sqlclient.SqlClient): List<DTO>
     abstract fun rxRead(condition: Condition): Single<List<DTO>>
     abstract fun rxRead(condition: Condition, client: SqlClient): Single<List<DTO>>
 
     abstract suspend fun readOne(condition: Condition): DTO
-    abstract suspend fun readOne(condition: Condition, client: SqlClient): DTO
+    abstract suspend fun readOne(condition: Condition, client: io.vertx.sqlclient.SqlClient): DTO
     abstract fun rxReadOne(condition: Condition): Single<DTO>
     abstract fun rxReadOne(condition: Condition, client: SqlClient): Single<DTO>
 
     abstract suspend fun readOne(query: Query): DTO
-    abstract suspend fun readOne(query: Query, client: SqlClient): DTO
+    abstract suspend fun readOne(query: Query, client: io.vertx.sqlclient.SqlClient): DTO
     abstract fun rxReadOne(query: Query): Single<DTO>
     abstract fun rxReadOne(query: Query, client: SqlClient): Single<DTO>
 
     abstract suspend fun readOptional(query: Query): Optional<DTO>
-    abstract suspend fun readOptional(query: Query, client: SqlClient): Optional<DTO>
+    abstract suspend fun readOptional(query: Query, client: io.vertx.sqlclient.SqlClient): Optional<DTO>
     abstract fun rxReadOptional(query: Query): Single<Optional<DTO>>
     abstract fun rxReadOptional(query: Query, client: SqlClient): Single<Optional<DTO>>
 
     abstract suspend fun readOptional(condition: Condition): Optional<DTO>
-    abstract suspend fun readOptional(condition: Condition, client: SqlClient): Optional<DTO>
+    abstract suspend fun readOptional(condition: Condition, client: io.vertx.sqlclient.SqlClient): Optional<DTO>
     abstract fun rxReadOptional(condition: Condition): Single<Optional<DTO>>
     abstract fun rxReadOptional(condition: Condition, client: SqlClient): Single<Optional<DTO>>
 

@@ -59,8 +59,8 @@ constructor(
         return DaoHelper.update(query, context)
     }
 
-    suspend fun update(query: Query, client: SqlClient, context: DatabaseContext): Int {
-        return DaoHelper.update(query, client.delegate, context)
+    suspend fun update(query: Query, client: io.vertx.sqlclient.SqlClient, context: DatabaseContext): Int {
+        return DaoHelper.update(query, client, context)
     }
 
     fun rxUpdate(query: Query, context: DatabaseContext): Single<Int> {
@@ -75,8 +75,8 @@ constructor(
         return DaoHelper.update(query, context)
     }
 
-    suspend fun update(query: Query, client: SqlClient): Int {
-        return DaoHelper.update(query, client.delegate, context)
+    suspend fun update(query: Query, client: io.vertx.sqlclient.SqlClient): Int {
+        return DaoHelper.update(query, client, context)
     }
 
     fun rxUpdate(query: Query): Single<Int> {
