@@ -260,20 +260,42 @@ protected constructor(
         return RxDaoHelper.readUUIDs(query, page, client, context)
     }
 
-    fun <VALUE, ID> rxReadPage(
+    fun <ID> rxReadPage(
         condition: Condition? = null,
         baseId: ID?,
-        baseValue: VALUE?,
+        baseValue: Any?,
         orderBy: List<OrderDTO>,
         pageSize: Int
     ): Single<List<DTO>> {
-        val baseQuery = getReadPageQuery(condition, orderBy, baseValue, baseId)
-        return if (baseId != null && baseValue != null) {
-            val query = baseQuery.seek(baseValue, baseId)
+        return rxReadPage(condition, baseId, arrayOf(baseValue), orderBy, pageSize)
+    }
+
+    fun <ID> rxReadPage(
+        condition: Condition? = null,
+        baseId: ID?,
+        baseValues: Array<Any?>,
+        orderBy: List<OrderDTO>,
+        pageSize: Int
+    ): Single<List<DTO>> {
+        checkValuesAndOrderBy(baseValues, orderBy)
+        val baseQuery = getReadPageQuery(condition, orderBy, baseId)
+        return if (baseId != null) {
+            val array = arrayOf(*baseValues, baseId)
+            val query = baseQuery.seek(*array)
             rxQuery(query.limit(pageSize))
         } else {
             rxQuery(baseQuery.limit(pageSize))
         }.map { map(it.delegate as RowSet<Row>) }
+    }
+
+    suspend fun <ID> readPage(
+        condition: Condition? = null,
+        baseId: ID?,
+        baseValue: Any?,
+        orderBy: List<OrderDTO>,
+        pageSize: Int
+    ): List<DTO> {
+        return readPage(condition, baseId, arrayOf(baseValue), orderBy, pageSize)
     }
 
     /**
@@ -283,22 +305,32 @@ protected constructor(
      * @param order Information on how to sort the list.
      * @param pageSize The maximum number of results to return.
      */
-    suspend fun <VALUE, ID> readPage(
+    suspend fun <ID> readPage(
         condition: Condition? = null,
         baseId: ID?,
-        baseValue: VALUE?,
+        baseValues: Array<Any?>,
         orderBy: List<OrderDTO>,
         pageSize: Int
     ): List<DTO> {
-        val baseQuery = getReadPageQuery(condition, orderBy, baseValue, baseId)
-        val res = if (baseId != null && baseValue != null) {
-            val query = baseQuery.seek(baseValue, baseId)
+        checkValuesAndOrderBy(baseValues, orderBy)
+        val baseQuery = getReadPageQuery(condition, orderBy, baseId)
+        val res = if (baseId != null) {
+            val array = arrayOf(*baseValues, baseId)
+            val query = baseQuery.seek(*array)
             query(query.limit(pageSize))
         } else {
             query(baseQuery.limit(pageSize))
         }
 
         return map(res)
+    }
+
+    private fun checkValuesAndOrderBy(baseValues: Array<Any?>, orderBy: List<OrderDTO>) {
+        val baseValuesSize = baseValues.size
+        val orderBySize = orderBy.size
+        if (baseValuesSize != orderBySize) {
+            throw ValidationException("baseValues size ($baseValuesSize) does not match orderBy size ($orderBySize)")
+        }
     }
 
     /**
@@ -341,10 +373,9 @@ protected constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <ID, VALUE> getReadPageQuery(
+    private fun <ID> getReadPageQuery(
         condition: Condition?,
         orderBy: List<OrderDTO>,
-        baseValue: VALUE?,
         baseId: ID?
     ): SelectSeekStepN<Record> {
         val idField = primaryKeyField<ID>()
@@ -360,10 +391,6 @@ protected constructor(
         if (baseId != null && !idField.type.isInstance(baseId)) {
             throw ValidationException("Given base id does not match type of database id (${idField.type}")
         }
-
-//        if (baseValue != null && !field.type.isInstance(baseValue)) {
-//            throw ValidationException("Given base value does not match type of database field (${field.type}")
-//        }
 
         val orderByList = getOrderByList(orderBy)
         orderByList.add(idField.desc())
