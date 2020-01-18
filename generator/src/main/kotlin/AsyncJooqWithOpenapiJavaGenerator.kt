@@ -67,6 +67,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("comment contains {{minLength=<int>}} - generates @org.hibernate.validator.constraints.Length(min=<int>)")
         println("comment contains {{maxLength=<int>}} - generates @org.hibernate.validator.constraints.Length(max=<int>) ")
         println("comment contains {{email}} or column name contains 'email' - generates @javax.validation.constraints.Email")
+        println("comment contains {{url}} or column name contains 'url' - generates @org.hibernate.validator.constraints.URL")
         println("comment contains {{default=<string>}} - generates defaultValue=\"your value\" - Use this with TypedEnum columns to override the database default value.")
         println("comment contains {{readOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY")
         println("comment contains {{writeOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY")
@@ -124,8 +125,13 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 comment = comment.replace("{{generated}}", "")
             }
             if (comment.contains("{{email}}")) {
-                out.tab(1).println("@javax.validation.constraints.Email")
                 comment = comment.replace("{{email}}", "")
+                format = "email"
+            }
+
+            if (comment.contains("{{url}}")) {
+                comment = comment.replace("{{url}}", "")
+                format = "url"
             }
 
             val primaryKey = column.primaryKey
@@ -179,10 +185,15 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             out.tab(1).println("@javax.validation.constraints.NotNull")
         }
 
-        if (columnName.toLowerCase().contains("email")) {
+        if (format == "email" || columnName.toLowerCase().contains("email")) {
             out.tab(1).println("@javax.validation.constraints.Email")
             format = "email"
         }
+        if (format == "url" || columnName.toLowerCase().endsWith("url")) {
+            out.tab(1).println("@org.hibernate.validator.constraints.URL")
+            format = "url"
+        }
+
 
         if (!isArray && !isEnum) {
             // TODO: refacor DTO generation to use List instead of array, then we can specify validation per item
