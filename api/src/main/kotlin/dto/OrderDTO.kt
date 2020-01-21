@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
  * @author Mark Hofmann (mark@en4ble.io)
  */
 @Suppress("unused")
-class OrderDTO constructor(
+open class OrderDTO constructor(
     @Schema(
         description = "The field to order the results by.",
         defaultValue = "created"

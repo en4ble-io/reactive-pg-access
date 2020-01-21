@@ -331,6 +331,15 @@ protected constructor(
         if (baseValuesSize != orderBySize) {
             throw ValidationException("baseValues size ($baseValuesSize) does not match orderBy size ($orderBySize)")
         }
+        // baseValue type must match type of orderBy field
+        for (i in baseValues.indices) {
+            val baseValue = baseValues[i]
+            val orderField = orderBy[i].field
+            val dbField = getDbField(orderField)
+            if (!dbField.type.isInstance(baseValue)) {
+                throw RuntimeException("order field has type ${orderField.javaClass} but must be ${dbField.type}")
+            }
+        }
     }
 
     /**
