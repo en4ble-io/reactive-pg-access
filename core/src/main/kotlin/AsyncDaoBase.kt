@@ -333,18 +333,18 @@ protected constructor(
         }
         // baseValue type must match type of orderBy field
         for (i in baseValues.indices) {
-            val baseValue = baseValues[i]
+            val baseValue = baseValues[i] ?: continue
             val orderField = orderBy[i].field
             val dbField = getDbField(orderField)
             if (!dbField.type.isInstance(baseValue)) {
-                throw RuntimeException("order field has type ${orderField.javaClass} but must be ${dbField.type}")
+                throw RuntimeException("order field has type ${baseValue.javaClass} but must be ${dbField.type}")
             }
         }
     }
 
     /**
      * Reads a page using "offset pagination"
-     * @param order Information on how to sort the list.
+     * @param orderBy Information on how to sort the list.
      * @param firstPage The first page to query.
      * @param pageSize The maximum number of results to return.
      */
