@@ -1,6 +1,7 @@
 package io.en4ble.pgaccess
 
 import io.en4ble.pgaccess.dto.OrderDTO
+import io.en4ble.pgaccess.dto.PageDTO
 import io.en4ble.pgaccess.dto.PagingDTO
 import io.en4ble.pgaccess.dto.PointDTO
 import io.en4ble.pgaccess.enumerations.SortDirection
@@ -12,6 +13,7 @@ import io.en4ble.pgaccess.util.RxDaoHelper
 import io.reactivex.Single
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
+import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.reactivex.sqlclient.SqlClient
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.RowSet
@@ -260,6 +262,30 @@ protected constructor(
         return RxDaoHelper.readUUIDs(query, page, client, context)
     }
 
+    fun <ID> rxReadPage(page: PageDTO<ID>): Single<List<DTO>> {
+        return rxReadPage(null, page)
+    }
+
+    fun <ID> rxReadPage(condition: Condition? = null, page: PageDTO<ID>): Single<List<DTO>> {
+        return rxReadPage(
+            condition,
+            page.baseId,
+            arrayOf(getBaseValue(page.baseValue, page.orderBy.field)),
+            listOf(page.orderBy),
+            page.size
+        )
+    }
+
+    fun <ID> rxReadPage(
+        condition: Condition? = null,
+        baseId: ID?,
+        baseValue: Any?,
+        orderBy: OrderDTO,
+        pageSize: Int
+    ): Single<List<DTO>> {
+        return rxReadPage(condition, baseId, arrayOf(baseValue), listOf(orderBy), pageSize)
+    }
+
     fun <ID> rxReadPage(
         condition: Condition? = null,
         baseId: ID?,
@@ -286,6 +312,30 @@ protected constructor(
         } else {
             rxQuery(baseQuery.limit(pageSize))
         }.map { map(it.delegate as RowSet<Row>) }
+    }
+
+    suspend fun <ID> readPage(page: PageDTO<ID>): List<DTO> {
+        return readPage(null, page)
+    }
+
+    suspend fun <ID> readPage(condition: Condition? = null, page: PageDTO<ID>): List<DTO> {
+        return readPage(
+            condition,
+            page.baseId,
+            arrayOf(getBaseValue(page.baseValue, page.orderBy.field)),
+            listOf(page.orderBy),
+            page.size
+        )
+    }
+
+    suspend fun <ID> readPage(
+        condition: Condition? = null,
+        baseId: ID?,
+        baseValue: Any?,
+        orderBy: OrderDTO,
+        pageSize: Int
+    ): List<DTO> {
+        return readPage(condition, baseId, arrayOf(baseValue), listOf(orderBy), pageSize)
     }
 
     suspend fun <ID> readPage(
@@ -856,6 +906,15 @@ protected constructor(
 
     protected fun <O> jsonArray(o: List<O>?): JsonArray? {
         return if (o == null) null else JsonArray(o)
+    }
+
+    fun getBaseValue(jsonStringBaseValue: String?, fieldName: String): Any? {
+        val baseValue = jsonStringBaseValue ?: return null
+        val dbField = getDbField(fieldName)
+        if (dbField.type.isInstance(baseValue)) {
+            return baseValue
+        }
+        return DatabindCodec.mapper().convertValue(baseValue, dbField.type)
     }
 
     protected fun validate(dto: Any?) {
