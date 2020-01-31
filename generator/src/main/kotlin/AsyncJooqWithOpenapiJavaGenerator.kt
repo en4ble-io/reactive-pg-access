@@ -69,6 +69,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("comment contains {{email}} or column name contains 'email' - generates @javax.validation.constraints.Email")
         println("comment contains {{url}} or column name contains 'url' - generates @org.hibernate.validator.constraints.URL")
         println("comment contains {{default=<string>}} - generates defaultValue=\"your value\" - Use this with TypedEnum columns to override the database default value.")
+        println("comment contains {{array=<boolean>}} - overrides array detectection, generates @io.swagger.v3.oas.annotations.media.ArraySchema if true")
         println("comment contains {{readOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY")
         println("comment contains {{writeOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY")
         println("comment contains {{generated}} - indicates that a field is generated (e.g. id, creation date, update date) and is therefore readOnly as well as not checked for null via the API (DB validation remains of course).")
@@ -108,7 +109,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         var nameValue: String? = null
         var exampleValue: String? = null
         var format: String? = null
-        val isArray = userType.startsWith('_')
+        var isArray = userType.startsWith('_')
         val isEnum = isEnum(column)
         var isRequired = false
 
@@ -165,6 +166,13 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             val examplePair = parseCommentWithValue("example", comment)
             comment = examplePair.first
             exampleValue = examplePair.second
+
+            val arrayPair = parseCommentWithValue("array", comment)
+            comment = arrayPair.first
+            val isArrayValue = arrayPair.second
+            if (isArrayValue != null) {
+                isArray = isArrayValue.toBoolean()
+            }
 
             comment = comment.trim()
         }
