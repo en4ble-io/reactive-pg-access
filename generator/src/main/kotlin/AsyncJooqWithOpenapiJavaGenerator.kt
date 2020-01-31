@@ -70,6 +70,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("comment contains {{url}} or column name contains 'url' - generates @org.hibernate.validator.constraints.URL")
         println("comment contains {{default=<string>}} - generates defaultValue=\"your value\" - Use this with TypedEnum columns to override the database default value.")
         println("comment contains {{array=<boolean>}} - overrides array detectection, generates @io.swagger.v3.oas.annotations.media.ArraySchema if true")
+        println("comment contains {{type=<string>}} - overrides the type by adding implementation =\"<type>.class\" to @Schema")
         println("comment contains {{readOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY")
         println("comment contains {{writeOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY")
         println("comment contains {{generated}} - indicates that a field is generated (e.g. id, creation date, update date) and is therefore readOnly as well as not checked for null via the API (DB validation remains of course).")
@@ -112,6 +113,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         var isArray = userType.startsWith('_')
         val isEnum = isEnum(column)
         var isRequired = false
+
+        var implementation:String? = null // FIXME: this should use the java type (based on the converter etc.)
 
         if (fullComment != null && fullComment.isNotEmpty()) {
             if (fullComment.contains("{{internal}}")) {
@@ -173,6 +176,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             if (isArrayValue != null) {
                 isArray = isArrayValue.toBoolean()
             }
+            val implementationPair = parseCommentWithValue("type", comment)
+            comment = implementationPair.first
+            implementation = implementationPair.second
 
             comment = comment.trim()
         }
@@ -233,6 +239,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 null,
                 accessMode,
                 exampleValue,
+                implementation,
                 1,
                 pojoType
             )
@@ -292,6 +299,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         maximum: Int? = null,
         accessMode: String? = null,
         example: String? = null,
+        implementation:String?=null,
         tab: Int,
         pojoType: PojoType? = null
     ) {
@@ -307,7 +315,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             } else {
                 "accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.$pojoAccessMode, "
             }
-        if (comment != null || name != null || example != null || format != null || minimum != null || maximum != null || minLength != null || maxLength != null) {
+        if (comment != null || name != null || example != null || format != null || minimum != null || maximum != null || minLength != null || maxLength != null || implementation != null) {
             val attrs = mutableListOf<String>()
             if (name != null) {
                 attrs.add("name=\"${getPojoName(name, pojoType)}\"")
@@ -315,6 +323,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             if (comment != null) attrs.add("title=\"$comment\"")
             if (format != null) attrs.add("format=\"$format\"")
             if (example != null) attrs.add("example=\"$example\"")
+            if (implementation != null) attrs.add("implementation=${implementation}.class")
             if (isRequired != null && isRequired) attrs.add("required=true")
             if (!isEnum) {
                 if (minimum != null) attrs.add("minimum=\"$minimum\"")
