@@ -789,9 +789,12 @@ protected constructor(
 
     abstract fun map(row: Row, table: Table<RECORD>, offset: Int = 0): DTO
     abstract fun map(row: Row, offset: Int = 0): DTO
+    abstract fun map(row: io.vertx.reactivex.sqlclient.Row, offset: Int = 0): DTO
 
     abstract fun map(rs: RowSet<Row>, table: Table<RECORD>, offset: Int = 0): List<DTO>
     abstract fun map(rs: RowSet<Row>, offset: Int = 0): List<DTO>
+    abstract fun map(rs: io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>, offset: Int = 0): List<DTO>
+
 
     // ----------- CRUD helper methods
 

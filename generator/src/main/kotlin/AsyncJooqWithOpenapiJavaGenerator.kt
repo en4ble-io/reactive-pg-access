@@ -392,10 +392,19 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("override fun map(row:io.vertx.sqlclient.Row, offset:Int):$dtoType {")
         out.tab(2).println("return map(row, $fullJavaTableName,offset)")
         out.tab(1).println("}")
+        out.tab(1).println("override fun map(row: io.vertx.reactivex.sqlclient.Row, offset:Int):$dtoType {")
+        out.tab(2).println("return map(row.delegate, $fullJavaTableName,offset)")
+        out.tab(1).println("}")
+
         out.tab(1)
             .println("override fun map(rs:io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row> , offset:Int):List<$dtoType> {")
         out.tab(2).println("return map(rs, $fullJavaTableName, offset)")
         out.tab(1).println("}")
+        out.tab(1)
+            .println("override fun map(rs: io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row> , offset:Int):List<$dtoType> {")
+        out.tab(2).println("return map(rs.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>, $fullJavaTableName, offset)")
+        out.tab(1).println("}")
+
 
         out.tab(1).println("override suspend fun read(condition:org.jooq.Condition):List<$dtoType> {")
         out.tab(1).println("return read(condition, $fullJavaTableName)")
