@@ -1,4 +1,5 @@
 rootProject.name = 'reactive-pg-access'
 include ':api',
+        ':config',
         ':generator',
         ':core'

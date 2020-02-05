@@ -2,6 +2,7 @@ description = 'async db access with jooq'
 
 dependencies {
     compile project(":api")
+    compile project(":config")
 
     compile "org.jooq:jooq:$jooqVersion"
 
