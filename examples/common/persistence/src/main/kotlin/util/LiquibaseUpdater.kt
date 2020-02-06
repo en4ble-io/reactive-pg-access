@@ -1,6 +1,6 @@
 package io.en4ble.examples.util
 
-import io.en4ble.pgaccess.DatabaseSettings
+import io.en4ble.pgaccess.DatabaseConfig
 import liquibase.Contexts
 import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
@@ -15,7 +15,7 @@ import java.util.Properties
  */
 object LiquibaseUpdater {
     private val LOG by lazy { LoggerFactory.getLogger(LiquibaseUpdater::class.java) }
-    fun updateDatabase(schema: Schema?, config: DatabaseSettings) {
+    fun updateDatabase(schema: Schema?, config: DatabaseConfig) {
         if (schema == null) {
             return
         }
@@ -51,7 +51,7 @@ object LiquibaseUpdater {
         LOG.info("Completed liquibase update for schema: {}", schemaName)
     }
 
-    private fun getJdbcUrl(config: DatabaseSettings, schema: Schema): String {
+    private fun getJdbcUrl(config: DatabaseConfig, schema: Schema): String {
         return ("jdbc:postgresql://"
             + config.host
             + ":"

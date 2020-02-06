@@ -10,7 +10,7 @@ class ExampleDaoTest {
     suspend fun test() {
 //        val db = PostgreSQLContainerProvider().newInstance()
 //        val context = DatabaseContext(
-//            DatabaseSettings(
+//            DatabaseConfig(
 //                db.getTestHostIpAddress(),
 //                db.getDatabaseName(),
 //                db.getFirstMappedPort(),

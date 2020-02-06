@@ -24,19 +24,19 @@ import javax.validation.Validator
 @Suppress("MemberVisibilityCanBePrivate")
 open class DatabaseContext(
     val vertx: Vertx?,
-    val settings: DatabaseSettings,
+    val config: DatabaseConfig,
     val validator: Validator? = null // optional validator, will be used before create
 ) {
     private val LOG by lazy { LoggerFactory.getLogger(DatabaseContext::class.java) }
     val dsl = DSL.using(SQLDialect.POSTGRES)!!
     val sqlClient: SqlClient
 
-    constructor(vertx: Vertx, settings: DatabaseSettings) : this(vertx, settings, null)
-    constructor(settings: DatabaseSettings) : this(null, settings)
+    constructor(vertx: Vertx, config: DatabaseConfig) : this(vertx, config, null)
+    constructor(config: DatabaseConfig) : this(null, config)
 
     constructor(databaseContext: DatabaseContext) : this(
         databaseContext.vertx,
-        databaseContext.settings,
+        databaseContext.config,
         databaseContext.validator
     )
 
@@ -58,20 +58,20 @@ open class DatabaseContext(
 
     private fun initSqlClient(): SqlClient {
         val connectOptions = PgConnectOptions()
-            .setHost(settings.host)
-            .setPort(settings.port)
-            .setDatabase(settings.database)
-            .setUser(settings.username)
-            .setPassword(settings.password)
+            .setHost(config.host)
+            .setPort(config.port)
+            .setDatabase(config.database)
+            .setUser(config.username)
+            .setPassword(config.password)
             .setSslMode(
-                if (settings.ssl) {
+                if (config.ssl) {
                     SslMode.PREFER
                 } else {
                     SslMode.ALLOW
                 }
             )
             .setTrustAll(true)
-        val poolOptions = PoolOptions().setMaxSize(settings.maxPoolSize)
+        val poolOptions = PoolOptions().setMaxSize(config.maxPoolSize)
         return if (vertx != null) {
             io.vertx.reactivex.pgclient.PgPool.pool(vertx, connectOptions, poolOptions)
         } else {

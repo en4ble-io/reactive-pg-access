@@ -9,7 +9,7 @@ import io.en4ble.examples.jooq.tables.Conference
 import io.en4ble.examples.services.ConferenceService
 import io.en4ble.examples.services.ExampleService
 import io.en4ble.examples.util.LiquibaseUpdater
-import io.en4ble.pgaccess.DatabaseSettings
+import io.en4ble.pgaccess.DatabaseConfig
 import io.en4ble.pgaccess.example.conf.ExampleContext
 import io.vertx.core.Vertx
 import io.vertx.core.json.Json
@@ -21,7 +21,7 @@ import javax.validation.Validation
 fun main() {
     LiquibaseUpdater.updateDatabase(
         Conference.CONFERENCE.schema,
-        DatabaseSettings(schema = "pgaccess")
+        DatabaseConfig(schema = "pgaccess")
     )
     Vertx.vertx().deployVerticle(Server())
 }

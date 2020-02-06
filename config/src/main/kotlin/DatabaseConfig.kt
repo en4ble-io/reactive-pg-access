@@ -3,7 +3,7 @@ package io.en4ble.pgaccess
 /** @author Mark Hofmann (mark@en4ble.io)
  */
 @Suppress("unused")
-open class DatabaseSettings(
+data class DatabaseConfig(
     var host: String = "localhost",
     var database: String = "postgres",
     var port: Int = 5432,
