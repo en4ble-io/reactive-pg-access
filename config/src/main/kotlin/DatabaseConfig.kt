@@ -15,8 +15,6 @@ data class DatabaseConfig(
     var password: String = "postgres",
     var ssl: Boolean = false
 ) {
-    constructor() : this("", "", 0, "", 0, "", "")
-
     val url: String
         get() = "jdbc:postgresql://$host:$port/$database?currentSchema=$schema"
 }
