@@ -20,5 +20,8 @@ data class DatabaseConfig(
     var ssl: Boolean = false
 ) {
     val url: String
-        get() = "jdbc:postgresql://$host:$port/$database?currentSchema=$schema"
+        get() = "jdbc:postgresql://$host:$port/$database"
+    // setting the current schema via the connection url uses SET search_path which is
+    // not supported by the PGbouncer connection pool (as used by the DigitalOcean database cluser)
+//     get() = "jdbc:postgresql://$host:$port/$database?currentSchema=$schema"
 }
