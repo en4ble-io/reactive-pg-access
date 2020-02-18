@@ -73,6 +73,10 @@ open class DatabaseContext(
                 }
             )
             .setTrustAll(true)
+        // Removes intervalStyle from default properties.
+        // Setting this property causes connection attempts with PGBouncer pool to fail with "unsupported startup parameter: intervalStyle"
+        // Since PgConnectOptions uses PostgreSQLs default value we can safely remove it.
+        connectOptions.properties.remove("intervalStyle")
         val poolOptions = PoolOptions().setMaxSize(config.maxPoolSize)
         return if (vertx != null) {
             io.vertx.reactivex.pgclient.PgPool.pool(vertx, connectOptions, poolOptions)
