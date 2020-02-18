@@ -5,6 +5,10 @@ package io.en4ble.pgaccess
 @Suppress("unused")
 data class DatabaseConfig(
     var host: String = "localhost",
+    /**
+     * In order to connect to the database via a backend pooled connection as on DigitalOcean,
+     * use the name of the pool instead of the database
+     */
     var database: String = "postgres",
     var port: Int = 5432,
     /** Please note that the schema is already hardcoded in the generated jOOQ classes. This property is used to pass

@@ -60,6 +60,8 @@ open class DatabaseContext(
         val connectOptions = PgConnectOptions()
             .setHost(config.host)
             .setPort(config.port)
+            // in order to connect to the database via a backend pooled connection as on DigitalOcean,
+            // use the name of the pool instead of the database
             .setDatabase(config.database)
             .setUser(config.username)
             .setPassword(config.password)
