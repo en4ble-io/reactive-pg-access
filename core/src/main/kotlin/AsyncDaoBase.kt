@@ -375,7 +375,7 @@ protected constructor(
         return map(res)
     }
 
-    private fun checkValuesAndOrderBy(baseValues: Array<Any?>, orderBy: List<OrderDTO>) {
+    protected fun checkValuesAndOrderBy(baseValues: Array<Any?>, orderBy: List<OrderDTO>) {
         val baseValuesSize = baseValues.size
         val orderBySize = orderBy.size
         if (baseValuesSize != orderBySize) {
@@ -432,7 +432,7 @@ protected constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <ID> getReadPageQuery(
+    protected fun <ID> getReadPageQuery(
         condition: Condition?,
         orderBy: List<OrderDTO>,
         baseId: ID?
@@ -793,8 +793,10 @@ protected constructor(
 
     abstract fun map(rs: RowSet<Row>, table: Table<RECORD>, offset: Int = 0): List<DTO>
     abstract fun map(rs: RowSet<Row>, offset: Int = 0): List<DTO>
-    abstract fun map(rs: io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>, offset: Int = 0): List<DTO>
-
+    abstract fun map(
+        rs: io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>,
+        offset: Int = 0
+    ): List<DTO>
 
     // ----------- CRUD helper methods
 
