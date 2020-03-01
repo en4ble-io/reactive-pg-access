@@ -1,0 +1,56 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/en4ble-build
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+    docker:
+      - image: circleci/openjdk:11.0.3-jdk-stretch
+    steps:
+      #    - add_ssh_keys:
+      #        fingerprints:
+      #        - "b1:3f:dd:8f:f3:da:36:c7:4c:64:d7:8d:25:b4:f8:02"
+      #        - "ec:19:6c:24:8c:66:fa:b8:ee:2e:66:03:fc:b3:1e:88"
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: ./gradlew install publish
+      # delete snapshot dependencies to make sure they are always updated
+      - run: find ~/.m2/repository/ -name "*-SNAPSHOT*" -exec rm -rf {} \; || true
+      - run: find ~/.gradle/caches/ -name "*-SNAPSHOT*" -exec rm -rf {} \; || true
+      - save_cache:
+          paths:
+            - ~/.m2
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+#  deploy-javadoc:
+#    docker:
+#      - image: en4ble/circle-java-8-k8s-1.9
+#    environment:
+#      # Customize the JVM maximum heap limit
+#      JVM_OPTS: -Xmx3200m
+#      TERM: dumb
+#    working_directory: ~/en4ble-build
+#    steps:
+#      - checkout
+#      - restore_cache:
+#          keys:
+#            - v1-dependencies-{{ checksum "build.gradle" }}
+#            # fallback to using the latest cache if no exact match is found
+#            - v1-dependencies-
+#      - run: ./deploy-javadoc.sh
+workflows:
+  version: 2
+  build-and-deploy-javadoc:
+    jobs:
+      - build:
+          context: en4ble
+#      - deploy-javadoc:
+#          context: en4ble
+#          requires:
+#            - build
