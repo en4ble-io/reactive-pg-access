@@ -8,12 +8,7 @@ jobs:
       TERM: dumb
     docker:
       - image: circleci/openjdk:8-jdk
-#             - image: circleci/openjdk:11.0.3-jdk-stretch
     steps:
-      #    - add_ssh_keys:
-      #        fingerprints:
-      #        - "b1:3f:dd:8f:f3:da:36:c7:4c:64:d7:8d:25:b4:f8:02"
-      #        - "ec:19:6c:24:8c:66:fa:b8:ee:2e:66:03:fc:b3:1e:88"
       - checkout
       - restore_cache:
           keys:
