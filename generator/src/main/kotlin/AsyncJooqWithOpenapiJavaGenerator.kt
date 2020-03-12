@@ -114,7 +114,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val isEnum = isEnum(column)
         var isRequired = false
 
-        var implementation:String? = null // FIXME: this should use the java type (based on the converter etc.)
+        var implementation: String? = null // FIXME: this should use the java type (based on the converter etc.)
 
         if (fullComment != null && fullComment.isNotEmpty()) {
             if (fullComment.contains("{{internal}}")) {
@@ -299,7 +299,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         maximum: Int? = null,
         accessMode: String? = null,
         example: String? = null,
-        implementation:String?=null,
+        implementation: String? = null,
         tab: Int,
         pojoType: PojoType? = null
     ) {
@@ -402,7 +402,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println("}")
         out.tab(1)
             .println("override fun map(rs: io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row> , offset:Int):List<$dtoType> {")
-        out.tab(2).println("return map(rs.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>, $fullJavaTableName, offset)")
+        out.tab(2)
+            .println("return map(rs.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>, $fullJavaTableName, offset)")
         out.tab(1).println("}")
 
 
@@ -718,23 +719,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                     out.tab(3).println("}")
                     out.tab(2).println("}")
                 } else {
-                    LOG.warn(
-                        String.format(
-                            "Omitting unrecognized type %s (%s) for column %s in table %s!",
-                            javaType,
-                            column.type.userType,
-                            column.name,
-                            table.name
-                        )
-                    )
-                    out.tab(2)
-                        .println(
-                            String.format(
-                                "// Omitting unrecognized type %s for column %s!",
-                                javaType,
-                                column.name
-                            )
-                        )
+                    val msg =
+                        "Omitting unrecognized type $javaType (${column.type.userType}) for column ${column.name} in table ${table.name}!"
+                    LOG.warn(msg)
+                    out.tab(2).println("// $msg")
                 }
             }
         }
@@ -922,6 +910,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val userType = column.type.userType
         val offset = getOffset(pos)
         val typeName = when (userType) {
+            "bpchar" -> "String"
+            "_bpchar" -> "StringArray"
             "varchar" -> "String"
             "_varchar" -> "StringArray"
             "text" -> "String"
