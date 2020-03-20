@@ -197,6 +197,10 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         if (defaultValue == null && !generated && !column.definedType.isNullable && pojoType == PojoType.FORM) {
             isRequired = true
             out.tab(1).println("@javax.validation.constraints.NotNull")
+        } else if (pojoType != PojoType.FORM) {
+            // if we specify a default value in the dto (which is used for updating) it will always be sent to
+            // the backend if not explicitly set to null by the frontend.
+            defaultValue = null
         }
 
         if (format == "email" || columnName.toLowerCase().contains("email")) {
