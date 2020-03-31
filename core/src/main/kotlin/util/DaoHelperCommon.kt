@@ -56,7 +56,13 @@ internal object DaoHelperCommon {
     }
 
     fun <RECORD : Record> getSortFields(table: Table<RECORD>, order: List<OrderDTO>): List<SortField<*>> {
-        return order.map {
+        return order.filter {
+            val exists = table.field(it.field) != null
+            if (!exists) {
+                LOG.warn("order field ${it.field} does not exist, skipping")
+            }
+            exists
+        }.map {
             val field = table.field(it.field)
             if (it.direction == SortDirection.DESC) field.desc() else field.asc()
         }
