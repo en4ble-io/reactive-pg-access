@@ -724,19 +724,19 @@ protected constructor(
     }
 
     suspend fun readCount(countCondition: Condition): Int {
-        return readCount(getQuery(countCondition, table))
+        return readCount(getCountQuery(countCondition, table))
     }
 
     suspend fun readCount(countCondition: Condition, client: io.vertx.sqlclient.SqlClient): Int {
-        return readCount(getQuery(countCondition, table), client)
+        return readCount(getCountQuery(countCondition, table), client)
     }
 
     fun rxReadCount(countCondition: Condition): Single<Int> {
-        return rxReadCount(getQuery(countCondition, table))
+        return rxReadCount(getCountQuery(countCondition, table))
     }
 
     fun rxReadCount(countCondition: Condition, client: SqlClient): Single<Int> {
-        return rxReadCount(getQuery(countCondition, table), client)
+        return rxReadCount(getCountQuery(countCondition, table), client)
     }
 
     suspend fun readCount(countCondition: Condition, table: Table<*>): Int {
@@ -744,18 +744,19 @@ protected constructor(
     }
 
     suspend fun readCount(countCondition: Condition, table: Table<*>, client: io.vertx.sqlclient.SqlClient): Int {
-        return readCount(getQuery(countCondition, table), client)
+        return readCount(getCountQuery(countCondition, table), client)
     }
 
     fun rxReadCount(countCondition: Condition, table: Table<*>): Single<Int> {
-        return rxReadCount(getQuery(countCondition, table))
+        return rxReadCount(getCountQuery(countCondition, table))
     }
 
     fun rxReadCount(countCondition: Condition, table: Table<*>, client: SqlClient): Single<Int> {
-        return rxReadCount(getQuery(countCondition, table), client)
+        return rxReadCount(getCountQuery(countCondition, table), client)
     }
 
     private fun getQuery(condition: Condition, table: Table<*>) = dsl.select().from(table).where(condition)
+    private fun getCountQuery(condition: Condition, table: Table<*>) = dsl.selectCount().from(table).where(condition)
 
     abstract suspend fun read(query: Query): List<DTO>
     abstract suspend fun read(query: Query, client: io.vertx.sqlclient.SqlClient): List<DTO>
