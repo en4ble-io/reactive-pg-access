@@ -4,10 +4,8 @@
 package io.en4ble.examples.jooq.tables.pojos;
 
 
-import io.en4ble.examples.dto.TestDTO;
 import io.en4ble.pgaccess.dto.BoxDTO;
 import io.en4ble.pgaccess.dto.CircleDTO;
-import io.en4ble.pgaccess.dto.IntervalDTO;
 import io.en4ble.pgaccess.dto.LineDTO;
 import io.en4ble.pgaccess.dto.LineSegmentDTO;
 import io.en4ble.pgaccess.dto.PathDTO;
@@ -27,10 +25,10 @@ import java.util.UUID;
 /**
  * An example table containing all datatypes that are supported by reactive-pg-access.
  */
-@io.swagger.v3.oas.annotations.media.Schema(name="Example", title="An example table containing all datatypes that are supported by reactive-pg-access.")
+@io.swagger.v3.oas.annotations.media.Schema(name="ExampleDto", title="An example table containing all datatypes that are supported by reactive-pg-access.")
 public class ExampleDto extends Object implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = -404530586;
+    private static final long serialVersionUID = -338338317;
 
     private UUID             uuid;
     private UUID[]           uuidArray;
@@ -60,8 +58,6 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     private LocalDateTime[]  dateTimeArray;
     private OffsetDateTime   dateTimetz;
     private OffsetDateTime[] dateTimetzArray;
-    private TestDTO          jsonb;
-    private TestDTO[]        jsonbArray;
     private PointDTO         point;
     private PointDTO[]       pointArray;
     private LineDTO          line;
@@ -78,8 +74,6 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     private CircleDTO[]      circleArray;
     private String           name;
     private String[]         nameArray;
-    private IntervalDTO      interval;
-    private IntervalDTO[]    intervalArray;
     private Short            shortSerial;
     private Integer          serial;
     private Long             longSerial;
@@ -116,8 +110,6 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         this.dateTimeArray = value.dateTimeArray;
         this.dateTimetz = value.dateTimetz;
         this.dateTimetzArray = value.dateTimetzArray;
-        this.jsonb = value.jsonb;
-        this.jsonbArray = value.jsonbArray;
         this.point = value.point;
         this.pointArray = value.pointArray;
         this.line = value.line;
@@ -134,8 +126,6 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         this.circleArray = value.circleArray;
         this.name = value.name;
         this.nameArray = value.nameArray;
-        this.interval = value.interval;
-        this.intervalArray = value.intervalArray;
         this.shortSerial = value.shortSerial;
         this.serial = value.serial;
         this.longSerial = value.longSerial;
@@ -171,8 +161,6 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         LocalDateTime[]  dateTimeArray,
         OffsetDateTime   dateTimetz,
         OffsetDateTime[] dateTimetzArray,
-        TestDTO          jsonb,
-        TestDTO[]        jsonbArray,
         PointDTO         point,
         PointDTO[]       pointArray,
         LineDTO          line,
@@ -189,8 +177,6 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         CircleDTO[]      circleArray,
         String           name,
         String[]         nameArray,
-        IntervalDTO      interval,
-        IntervalDTO[]    intervalArray,
         Short            shortSerial,
         Integer          serial,
         Long             longSerial,
@@ -224,8 +210,6 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         this.dateTimeArray = dateTimeArray;
         this.dateTimetz = dateTimetz;
         this.dateTimetzArray = dateTimetzArray;
-        this.jsonb = jsonb;
-        this.jsonbArray = jsonbArray;
         this.point = point;
         this.pointArray = pointArray;
         this.line = line;
@@ -242,8 +226,6 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         this.circleArray = circleArray;
         this.name = name;
         this.nameArray = nameArray;
-        this.interval = interval;
-        this.intervalArray = intervalArray;
         this.shortSerial = shortSerial;
         this.serial = serial;
         this.longSerial = longSerial;
@@ -251,6 +233,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="uuid")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="uuid", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public UUID getUuid() {
         return this.uuid;
     }
@@ -260,7 +243,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="uuidArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="uuidArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public UUID[] getUuidArray() {
         return this.uuidArray;
     }
@@ -271,7 +257,8 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @org.hibernate.validator.constraints.Length(min = 10, max = 200)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="text", title="")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="text", title="", minLength=10, maxLength=200)
+    @com.fasterxml.jackson.annotation.JsonProperty(value="text", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getText() {
         return this.text;
     }
@@ -281,7 +268,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="textArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="textArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String[] getTextArray() {
         return this.textArray;
     }
@@ -292,7 +282,8 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @org.hibernate.validator.constraints.Length(min = 4, max = 20)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="string", title="")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="string", title="", minLength=4, maxLength=20)
+    @com.fasterxml.jackson.annotation.JsonProperty(value="string", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getString() {
         return this.string;
     }
@@ -302,8 +293,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
-    @org.hibernate.validator.constraints.Length(max = 20)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="stringArray")
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="stringArray", maxLength=20)
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="stringArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String[] getStringArray() {
         return this.stringArray;
     }
@@ -314,6 +307,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="shortValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="shortValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Short getShortValue() {
         return this.shortValue;
     }
@@ -323,7 +317,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="shortArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="shortArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Short[] getShortArray() {
         return this.shortArray;
     }
@@ -334,6 +331,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="integerValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="integerValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Integer getIntegerValue() {
         return this.integerValue;
     }
@@ -343,7 +341,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="integerArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="integerArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Integer[] getIntegerArray() {
         return this.integerArray;
     }
@@ -354,6 +355,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="longValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="longValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Long getLongValue() {
         return this.longValue;
     }
@@ -363,7 +365,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="longArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="longArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Long[] getLongArray() {
         return this.longArray;
     }
@@ -374,6 +379,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="floatValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="floatValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Float getFloatValue() {
         return this.floatValue;
     }
@@ -383,7 +389,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="floatArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="floatArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Float[] getFloatArray() {
         return this.floatArray;
     }
@@ -394,6 +403,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="doubleValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="doubleValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Double getDoubleValue() {
         return this.doubleValue;
     }
@@ -403,7 +413,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="doubleArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="doubleArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Double[] getDoubleArray() {
         return this.doubleArray;
     }
@@ -414,6 +427,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="booleanValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="booleanValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Boolean getBooleanValue() {
         return this.booleanValue;
     }
@@ -423,7 +437,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="booleanArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="booleanArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Boolean[] getBooleanArray() {
         return this.booleanArray;
     }
@@ -434,6 +451,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="date")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="date", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDate getDate() {
         return this.date;
     }
@@ -443,7 +461,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="dateArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="dateArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDate[] getDateArray() {
         return this.dateArray;
     }
@@ -454,6 +475,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="time")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="time", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalTime getTime() {
         return this.time;
     }
@@ -463,7 +485,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="timeArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="timeArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalTime[] getTimeArray() {
         return this.timeArray;
     }
@@ -474,6 +499,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="timetz")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="timetz", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public OffsetTime getTimetz() {
         return this.timetz;
     }
@@ -483,7 +509,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="timetzArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="timetzArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public OffsetTime[] getTimetzArray() {
         return this.timetzArray;
     }
@@ -494,6 +523,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="dateTime")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="dateTime", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDateTime getDateTime() {
         return this.dateTime;
     }
@@ -503,7 +533,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="dateTimeArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="dateTimeArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDateTime[] getDateTimeArray() {
         return this.dateTimeArray;
     }
@@ -514,6 +547,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="dateTimetz")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="dateTimetz", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public OffsetDateTime getDateTimetz() {
         return this.dateTimetz;
     }
@@ -523,7 +557,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="dateTimetzArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="dateTimetzArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public OffsetDateTime[] getDateTimetzArray() {
         return this.dateTimetzArray;
     }
@@ -533,27 +570,8 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="jsonb")
-    public TestDTO getJsonb() {
-        return this.jsonb;
-    }
-
-    public ExampleDto setJsonb(TestDTO jsonb) {
-        this.jsonb = jsonb;
-        return this;
-    }
-
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="jsonbArray")
-    public TestDTO[] getJsonbArray() {
-        return this.jsonbArray;
-    }
-
-    public ExampleDto setJsonbArray(TestDTO... jsonbArray) {
-        this.jsonbArray = jsonbArray;
-        return this;
-    }
-
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="point")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="point", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PointDTO getPoint() {
         return this.point;
     }
@@ -563,7 +581,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="pointArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="pointArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PointDTO[] getPointArray() {
         return this.pointArray;
     }
@@ -574,6 +595,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="line")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="line", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LineDTO getLine() {
         return this.line;
     }
@@ -583,7 +605,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="lineArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="lineArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LineDTO[] getLineArray() {
         return this.lineArray;
     }
@@ -594,6 +619,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="lineSegment")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="lineSegment", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LineSegmentDTO getLineSegment() {
         return this.lineSegment;
     }
@@ -603,7 +629,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="lineSegmentArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="lineSegmentArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LineSegmentDTO[] getLineSegmentArray() {
         return this.lineSegmentArray;
     }
@@ -614,6 +643,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="box")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="box", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public BoxDTO getBox() {
         return this.box;
     }
@@ -623,7 +653,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="boxArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="boxArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public BoxDTO[] getBoxArray() {
         return this.boxArray;
     }
@@ -634,6 +667,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="path")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="path", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PathDTO getPath() {
         return this.path;
     }
@@ -643,7 +677,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="pathArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="pathArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PathDTO[] getPathArray() {
         return this.pathArray;
     }
@@ -654,6 +691,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="polygon")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="polygon", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PolygonDTO getPolygon() {
         return this.polygon;
     }
@@ -663,7 +701,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="polygonArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="polygonArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PolygonDTO[] getPolygonArray() {
         return this.polygonArray;
     }
@@ -674,6 +715,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="circle")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="circle", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public CircleDTO getCircle() {
         return this.circle;
     }
@@ -683,7 +725,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="circleArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="circleArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public CircleDTO[] getCircleArray() {
         return this.circleArray;
     }
@@ -694,6 +739,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="name", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getName() {
         return this.name;
     }
@@ -703,7 +749,10 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="nameArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="nameArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String[] getNameArray() {
         return this.nameArray;
     }
@@ -713,27 +762,8 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="interval")
-    public IntervalDTO getInterval() {
-        return this.interval;
-    }
-
-    public ExampleDto setInterval(IntervalDTO interval) {
-        this.interval = interval;
-        return this;
-    }
-
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="intervalArray")
-    public IntervalDTO[] getIntervalArray() {
-        return this.intervalArray;
-    }
-
-    public ExampleDto setIntervalArray(IntervalDTO... intervalArray) {
-        this.intervalArray = intervalArray;
-        return this;
-    }
-
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="shortSerial", defaultValue="extval(")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="shortSerial")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="shortSerial", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Short getShortSerial() {
         return this.shortSerial;
     }
@@ -743,7 +773,8 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="serial", defaultValue="extval(")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="serial")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="serial", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Integer getSerial() {
         return this.serial;
     }
@@ -753,7 +784,8 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="longSerial", defaultValue="extval(")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="longSerial")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="longSerial", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Long getLongSerial() {
         return this.longSerial;
     }
@@ -764,7 +796,8 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
     }
 
     @org.hibernate.validator.constraints.Length(max = 3)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="state", defaultValue="new")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="state", maxLength=3)
+    @com.fasterxml.jackson.annotation.JsonProperty(value="state", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getState() {
         return this.state;
     }
@@ -806,8 +839,6 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         sb.append(", ").append(Arrays.toString(dateTimeArray));
         sb.append(", ").append(dateTimetz);
         sb.append(", ").append(Arrays.toString(dateTimetzArray));
-        sb.append(", ").append(jsonb);
-        sb.append(", ").append(Arrays.toString(jsonbArray));
         sb.append(", ").append(point);
         sb.append(", ").append(Arrays.toString(pointArray));
         sb.append(", ").append(line);
@@ -824,8 +855,6 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         sb.append(", ").append(Arrays.toString(circleArray));
         sb.append(", ").append(name);
         sb.append(", ").append(Arrays.toString(nameArray));
-        sb.append(", ").append(interval);
-        sb.append(", ").append(Arrays.toString(intervalArray));
         sb.append(", ").append(shortSerial);
         sb.append(", ").append(serial);
         sb.append(", ").append(longSerial);

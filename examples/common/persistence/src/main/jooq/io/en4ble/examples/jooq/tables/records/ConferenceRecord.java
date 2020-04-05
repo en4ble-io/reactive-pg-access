@@ -23,10 +23,10 @@ import org.jooq.impl.UpdatableRecordImpl;
 /**
  * A simple conference.
  */
-@io.swagger.v3.oas.annotations.media.Schema(name="Conference", title="A simple conference.")
+@io.swagger.v3.oas.annotations.media.Schema(name="ConferenceDto", title="A simple conference.")
 public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> implements Serializable, Cloneable, Record9<UUID, LocalDateTime, LocalDateTime, String, String, LocalDate, LocalDate, ConferenceState, PointDTO> {
 
-    private static final long serialVersionUID = -48211055;
+    private static final long serialVersionUID = -956988581;
 
     /**
      * Setter for <code>pgaccess.p_conference.c_id</code>.
@@ -40,6 +40,7 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
      * Getter for <code>pgaccess.p_conference.c_id</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="id")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="id", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public UUID getId() {
         return (UUID) get(0);
     }
@@ -93,7 +94,8 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
      * The name of the conference.
      */
     @org.hibernate.validator.constraints.Length(min = 5, max = 30)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name", title="The name of the conference.")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name", title="The name of the conference.", minLength=5, maxLength=30)
+    @com.fasterxml.jackson.annotation.JsonProperty(value="name", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getName() {
         return (String) get(3);
     }
@@ -113,7 +115,8 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
      * The description of the conference.
      */
     @org.hibernate.validator.constraints.Length(min = 20, max = 2000)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="about", title="The description of the conference.")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="about", title="The description of the conference.", minLength=20, maxLength=2000)
+    @com.fasterxml.jackson.annotation.JsonProperty(value="about", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getAbout() {
         return (String) get(4);
     }
@@ -130,6 +133,7 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
      * Getter for <code>pgaccess.p_conference.c_start_date</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="startDate")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="startDate", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDate getStartDate() {
         return (LocalDate) get(5);
     }
@@ -146,6 +150,7 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
      * Getter for <code>pgaccess.p_conference.c_end_date</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="endDate")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="endDate", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDate getEndDate() {
         return (LocalDate) get(6);
     }
@@ -161,8 +166,8 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
     /**
      * Getter for <code>pgaccess.p_conference.c_state</code>. {{default=NEW}}{{minLength=3}}{{maxLength=7}}{{readOnly}}
      */
-    @org.hibernate.validator.constraints.Length(min = 3, max = 7)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY, name="state", title="", defaultValue="NEW")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY, name="state", title="")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="state", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY)
     public ConferenceState getState() {
         return (ConferenceState) get(7);
     }
@@ -179,6 +184,7 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
      * Getter for <code>pgaccess.p_conference.c_location</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="location")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="location", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PointDTO getLocation() {
         return (PointDTO) get(8);
     }
@@ -187,9 +193,6 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
     // Primary key information
     // -------------------------------------------------------------------------
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Record1<UUID> key() {
         return (Record1) super.key();
@@ -199,322 +202,205 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
     // Record9 type implementation
     // -------------------------------------------------------------------------
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Row9<UUID, LocalDateTime, LocalDateTime, String, String, LocalDate, LocalDate, ConferenceState, PointDTO> fieldsRow() {
         return (Row9) super.fieldsRow();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Row9<UUID, LocalDateTime, LocalDateTime, String, String, LocalDate, LocalDate, ConferenceState, PointDTO> valuesRow() {
         return (Row9) super.valuesRow();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Field<UUID> field1() {
         return Conference.CONFERENCE.ID;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Field<LocalDateTime> field2() {
         return Conference.CONFERENCE.CREATED;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Field<LocalDateTime> field3() {
         return Conference.CONFERENCE.UPDATED;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Field<String> field4() {
         return Conference.CONFERENCE.NAME;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Field<String> field5() {
         return Conference.CONFERENCE.ABOUT;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Field<LocalDate> field6() {
         return Conference.CONFERENCE.START_DATE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Field<LocalDate> field7() {
         return Conference.CONFERENCE.END_DATE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Field<ConferenceState> field8() {
         return Conference.CONFERENCE.STATE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Field<PointDTO> field9() {
         return Conference.CONFERENCE.LOCATION;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public UUID component1() {
         return getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LocalDateTime component2() {
         return getCreated();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LocalDateTime component3() {
         return getUpdated();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String component4() {
         return getName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String component5() {
         return getAbout();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LocalDate component6() {
         return getStartDate();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LocalDate component7() {
         return getEndDate();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceState component8() {
         return getState();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public PointDTO component9() {
         return getLocation();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public UUID value1() {
         return getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LocalDateTime value2() {
         return getCreated();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LocalDateTime value3() {
         return getUpdated();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String value4() {
         return getName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String value5() {
         return getAbout();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LocalDate value6() {
         return getStartDate();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LocalDate value7() {
         return getEndDate();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceState value8() {
         return getState();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public PointDTO value9() {
         return getLocation();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceRecord value1(UUID value) {
         setId(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceRecord value2(LocalDateTime value) {
         setCreated(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceRecord value3(LocalDateTime value) {
         setUpdated(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceRecord value4(String value) {
         setName(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceRecord value5(String value) {
         setAbout(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceRecord value6(LocalDate value) {
         setStartDate(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceRecord value7(LocalDate value) {
         setEndDate(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceRecord value8(ConferenceState value) {
         setState(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceRecord value9(PointDTO value) {
         setLocation(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceRecord values(UUID value1, LocalDateTime value2, LocalDateTime value3, String value4, String value5, LocalDate value6, LocalDate value7, ConferenceState value8, PointDTO value9) {
         value1(value1);

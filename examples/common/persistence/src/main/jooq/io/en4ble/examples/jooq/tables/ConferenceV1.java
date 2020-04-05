@@ -30,7 +30,7 @@ import org.jooq.impl.TableImpl;
  */
 public class ConferenceV1 extends TableImpl<ConferenceV1Record> implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = 784594324;
+    private static final long serialVersionUID = 286944668;
 
     /**
      * The reference instance of <code>pgaccess.conference_v1</code>
@@ -49,43 +49,43 @@ public class ConferenceV1 extends TableImpl<ConferenceV1Record> implements Seria
      * The column <code>pgaccess.conference_v1.id</code>.
      */
 // ----- A uuid
-    public final TableField<ConferenceV1Record, UUID> ID = createField("id", org.jooq.impl.SQLDataType.UUID, this, "");
+    public final TableField<ConferenceV1Record, UUID> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.UUID, this, "");
 
     /**
      * The column <code>pgaccess.conference_v1.name</code>.
      */
 // ----- A varchar
-    public final TableField<ConferenceV1Record, String> NAME = createField("name", org.jooq.impl.SQLDataType.VARCHAR(30), this, "");
+    public final TableField<ConferenceV1Record, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR(30), this, "");
 
     /**
      * The column <code>pgaccess.conference_v1.about</code>.
      */
 // ----- A text
-    public final TableField<ConferenceV1Record, String> ABOUT = createField("about", org.jooq.impl.SQLDataType.CLOB, this, "");
+    public final TableField<ConferenceV1Record, String> ABOUT = createField(DSL.name("about"), org.jooq.impl.SQLDataType.CLOB, this, "");
 
     /**
      * The column <code>pgaccess.conference_v1.start_date</code>.
      */
 // ----- A date
-    public final TableField<ConferenceV1Record, LocalDate> START_DATE = createField("start_date", org.jooq.impl.SQLDataType.LOCALDATE, this, "");
+    public final TableField<ConferenceV1Record, LocalDate> START_DATE = createField(DSL.name("start_date"), org.jooq.impl.SQLDataType.LOCALDATE, this, "");
 
     /**
      * The column <code>pgaccess.conference_v1.end_date</code>.
      */
 // ----- A date
-    public final TableField<ConferenceV1Record, LocalDate> END_DATE = createField("end_date", org.jooq.impl.SQLDataType.LOCALDATE, this, "");
+    public final TableField<ConferenceV1Record, LocalDate> END_DATE = createField(DSL.name("end_date"), org.jooq.impl.SQLDataType.LOCALDATE, this, "");
 
     /**
      * The column <code>pgaccess.conference_v1.location</code>.
      */
 // ----- A point
-    public final TableField<ConferenceV1Record, PointDTO> LOCATION = createField("location", org.jooq.impl.CustomSQLDataType.POINT_DTO, this, "");
+    public final TableField<ConferenceV1Record, PointDTO> LOCATION = createField(DSL.name("location"), org.jooq.impl.CustomSQLDataType.POINT_DTO, this, "");
 
     /**
      * The column <code>pgaccess.conference_v1.state</code>.
      */
 // ----- A varchar
-    public final TableField<ConferenceV1Record, ConferenceState> STATE = createField("state", org.jooq.impl.SQLDataType.VARCHAR(2), this, "", new ConferenceStateEnumConverter());
+    public final TableField<ConferenceV1Record, ConferenceState> STATE = createField(DSL.name("state"), org.jooq.impl.SQLDataType.VARCHAR(2), this, "", new ConferenceStateEnumConverter());
 
     /**
      * Create a <code>pgaccess.conference_v1</code> table reference
@@ -120,25 +120,16 @@ public class ConferenceV1 extends TableImpl<ConferenceV1Record> implements Seria
         super(child, key, CONFERENCE_V1);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Schema getSchema() {
         return Pgaccess.PGACCESS;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceV1 as(String alias) {
         return new ConferenceV1(DSL.name(alias), this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConferenceV1 as(Name alias) {
         return new ConferenceV1(alias, this);

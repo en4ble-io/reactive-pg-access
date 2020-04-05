@@ -6,7 +6,6 @@ import io.en4ble.examples.dto.SearchForm
 import io.en4ble.examples.enums.ConferenceState
 import io.en4ble.examples.jooq.tables.pojos.ConferenceDto
 import io.en4ble.examples.jooq.tables.pojos.ConferenceV1Dto
-import io.en4ble.pgaccess.dto.OrderDTO
 import io.reactivex.Single
 import java.util.UUID
 
@@ -40,7 +39,7 @@ open class ConferenceService(
             conferenceV1Dao.findByStartAfter(form)
         } else {
             val page = form.page
-            return conferenceV1Dao.rxReadPage(page.id, page.startDate, OrderDTO("startDate", page.direction), page.size)
+            return conferenceV1Dao.rxReadPage(page)
         }
     }
 

@@ -99,12 +99,13 @@ databaseChangeLog:
               - column:
                   name: e_date_timetz_array
                   type: _TIMESTAMPTZ
-              - column:
-                  name: e_jsonb
-                  type: JSONB
-              - column:
-                  name: e_jsonb_array
-                  type: _JSONB
+# FIXME: support json
+#              - column:
+#                  name: e_jsonb
+#                  type: JSONB
+#              - column:
+#                  name: e_jsonb_array
+#                  type: _JSONB
               - column:
                   name: e_point
                   type: POINT
@@ -153,12 +154,13 @@ databaseChangeLog:
               - column:
                   name: e_name_array
                   type: _NAME
-              - column:
-                  name: e_interval
-                  type: INTERVAL
-              - column:
-                  name: e_interval_array
-                  type: _INTERVAL
+# FIXME: support interval
+#              - column:
+#                  name: e_interval
+#                  type: INTERVAL
+#              - column:
+#                  name: e_interval_array
+#                  type: _INTERVAL
               - column:
                   autoIncrement: true
                   constraints:

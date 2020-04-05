@@ -4,11 +4,9 @@
 package io.en4ble.examples.jooq.tables.records;
 
 
-import io.en4ble.examples.dto.TestDTO;
 import io.en4ble.examples.jooq.tables.Example;
 import io.en4ble.pgaccess.dto.BoxDTO;
 import io.en4ble.pgaccess.dto.CircleDTO;
-import io.en4ble.pgaccess.dto.IntervalDTO;
 import io.en4ble.pgaccess.dto.LineDTO;
 import io.en4ble.pgaccess.dto.LineSegmentDTO;
 import io.en4ble.pgaccess.dto.PathDTO;
@@ -30,10 +28,10 @@ import org.jooq.impl.UpdatableRecordImpl;
 /**
  * An example table containing all datatypes that are supported by reactive-pg-access.
  */
-@io.swagger.v3.oas.annotations.media.Schema(name="Example", title="An example table containing all datatypes that are supported by reactive-pg-access.")
+@io.swagger.v3.oas.annotations.media.Schema(name="ExampleDto", title="An example table containing all datatypes that are supported by reactive-pg-access.")
 public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = -436183453;
+    private static final long serialVersionUID = 575899227;
 
     /**
      * Setter for <code>pgaccess.p_example.e_uuid</code>.
@@ -47,6 +45,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_uuid</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="uuid")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="uuid", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public UUID getUuid() {
         return (UUID) get(0);
     }
@@ -62,7 +61,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_uuid_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="uuidArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="uuidArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public UUID[] getUuidArray() {
         return (UUID[]) get(1);
     }
@@ -79,7 +81,8 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_text</code>. {{minLength=10}}{{maxLength=200}}
      */
     @org.hibernate.validator.constraints.Length(min = 10, max = 200)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="text", title="")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="text", title="", minLength=10, maxLength=200)
+    @com.fasterxml.jackson.annotation.JsonProperty(value="text", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getText() {
         return (String) get(2);
     }
@@ -95,7 +98,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_text_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="textArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="textArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String[] getTextArray() {
         return (String[]) get(3);
     }
@@ -112,7 +118,8 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_string</code>. {{minLength=4}}
      */
     @org.hibernate.validator.constraints.Length(min = 4, max = 20)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="string", title="")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="string", title="", minLength=4, maxLength=20)
+    @com.fasterxml.jackson.annotation.JsonProperty(value="string", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getString() {
         return (String) get(4);
     }
@@ -128,8 +135,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_string_array</code>.
      */
-    @org.hibernate.validator.constraints.Length(max = 20)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="stringArray")
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="stringArray", maxLength=20)
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="stringArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String[] getStringArray() {
         return (String[]) get(5);
     }
@@ -146,6 +155,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_short_value</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="shortValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="shortValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Short getShortValue() {
         return (Short) get(6);
     }
@@ -161,7 +171,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_short_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="shortArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="shortArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Short[] getShortArray() {
         return (Short[]) get(7);
     }
@@ -178,6 +191,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_integer_value</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="integerValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="integerValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Integer getIntegerValue() {
         return (Integer) get(8);
     }
@@ -193,7 +207,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_integer_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="integerArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="integerArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Integer[] getIntegerArray() {
         return (Integer[]) get(9);
     }
@@ -210,6 +227,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_long_value</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="longValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="longValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Long getLongValue() {
         return (Long) get(10);
     }
@@ -225,7 +243,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_long_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="longArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="longArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Long[] getLongArray() {
         return (Long[]) get(11);
     }
@@ -242,6 +263,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_float_value</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="floatValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="floatValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Float getFloatValue() {
         return (Float) get(12);
     }
@@ -257,7 +279,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_float_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="floatArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="floatArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Float[] getFloatArray() {
         return (Float[]) get(13);
     }
@@ -274,6 +299,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_double_value</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="doubleValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="doubleValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Double getDoubleValue() {
         return (Double) get(14);
     }
@@ -289,7 +315,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_double_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="doubleArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="doubleArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Double[] getDoubleArray() {
         return (Double[]) get(15);
     }
@@ -306,6 +335,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_boolean_value</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="booleanValue")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="booleanValue", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Boolean getBooleanValue() {
         return (Boolean) get(16);
     }
@@ -321,7 +351,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_boolean_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="booleanArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="booleanArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Boolean[] getBooleanArray() {
         return (Boolean[]) get(17);
     }
@@ -338,6 +371,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_date</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="date")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="date", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDate getDate() {
         return (LocalDate) get(18);
     }
@@ -353,7 +387,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_date_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="dateArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="dateArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDate[] getDateArray() {
         return (LocalDate[]) get(19);
     }
@@ -370,6 +407,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_time</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="time")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="time", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalTime getTime() {
         return (LocalTime) get(20);
     }
@@ -385,7 +423,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_time_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="timeArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="timeArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalTime[] getTimeArray() {
         return (LocalTime[]) get(21);
     }
@@ -402,6 +443,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_timetz</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="timetz")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="timetz", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public OffsetTime getTimetz() {
         return (OffsetTime) get(22);
     }
@@ -417,7 +459,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_timetz_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="timetzArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="timetzArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public OffsetTime[] getTimetzArray() {
         return (OffsetTime[]) get(23);
     }
@@ -434,6 +479,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_date_time</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="dateTime")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="dateTime", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDateTime getDateTime() {
         return (LocalDateTime) get(24);
     }
@@ -449,7 +495,10 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_date_time_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="dateTimeArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="dateTimeArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDateTime[] getDateTimeArray() {
         return (LocalDateTime[]) get(25);
     }
@@ -466,6 +515,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_date_timetz</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="dateTimetz")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="dateTimetz", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public OffsetDateTime getDateTimetz() {
         return (OffsetDateTime) get(26);
     }
@@ -481,48 +531,19 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Getter for <code>pgaccess.p_example.e_date_timetz_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="dateTimetzArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="dateTimetzArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public OffsetDateTime[] getDateTimetzArray() {
         return (OffsetDateTime[]) get(27);
-    }
-
-    /**
-     * Setter for <code>pgaccess.p_example.e_jsonb</code>.
-     */
-    public ExampleRecord setJsonb(TestDTO value) {
-        set(28, value);
-        return this;
-    }
-
-    /**
-     * Getter for <code>pgaccess.p_example.e_jsonb</code>.
-     */
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="jsonb")
-    public TestDTO getJsonb() {
-        return (TestDTO) get(28);
-    }
-
-    /**
-     * Setter for <code>pgaccess.p_example.e_jsonb_array</code>.
-     */
-    public ExampleRecord setJsonbArray(TestDTO... value) {
-        set(29, value);
-        return this;
-    }
-
-    /**
-     * Getter for <code>pgaccess.p_example.e_jsonb_array</code>.
-     */
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="jsonbArray")
-    public TestDTO[] getJsonbArray() {
-        return (TestDTO[]) get(29);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_point</code>.
      */
     public ExampleRecord setPoint(PointDTO value) {
-        set(30, value);
+        set(28, value);
         return this;
     }
 
@@ -530,31 +551,35 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_point</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="point")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="point", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PointDTO getPoint() {
-        return (PointDTO) get(30);
+        return (PointDTO) get(28);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_point_array</code>.
      */
     public ExampleRecord setPointArray(PointDTO... value) {
-        set(31, value);
+        set(29, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_point_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="pointArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="pointArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PointDTO[] getPointArray() {
-        return (PointDTO[]) get(31);
+        return (PointDTO[]) get(29);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_line</code>.
      */
     public ExampleRecord setLine(LineDTO value) {
-        set(32, value);
+        set(30, value);
         return this;
     }
 
@@ -562,31 +587,35 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_line</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="line")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="line", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LineDTO getLine() {
-        return (LineDTO) get(32);
+        return (LineDTO) get(30);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_line_array</code>.
      */
     public ExampleRecord setLineArray(LineDTO... value) {
-        set(33, value);
+        set(31, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_line_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="lineArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="lineArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LineDTO[] getLineArray() {
-        return (LineDTO[]) get(33);
+        return (LineDTO[]) get(31);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_line_segment</code>.
      */
     public ExampleRecord setLineSegment(LineSegmentDTO value) {
-        set(34, value);
+        set(32, value);
         return this;
     }
 
@@ -594,31 +623,35 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_line_segment</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="lineSegment")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="lineSegment", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LineSegmentDTO getLineSegment() {
-        return (LineSegmentDTO) get(34);
+        return (LineSegmentDTO) get(32);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_line_segment_array</code>.
      */
     public ExampleRecord setLineSegmentArray(LineSegmentDTO... value) {
-        set(35, value);
+        set(33, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_line_segment_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="lineSegmentArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="lineSegmentArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LineSegmentDTO[] getLineSegmentArray() {
-        return (LineSegmentDTO[]) get(35);
+        return (LineSegmentDTO[]) get(33);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_box</code>.
      */
     public ExampleRecord setBox(BoxDTO value) {
-        set(36, value);
+        set(34, value);
         return this;
     }
 
@@ -626,31 +659,35 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_box</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="box")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="box", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public BoxDTO getBox() {
-        return (BoxDTO) get(36);
+        return (BoxDTO) get(34);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_box_array</code>.
      */
     public ExampleRecord setBoxArray(BoxDTO... value) {
-        set(37, value);
+        set(35, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_box_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="boxArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="boxArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public BoxDTO[] getBoxArray() {
-        return (BoxDTO[]) get(37);
+        return (BoxDTO[]) get(35);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_path</code>.
      */
     public ExampleRecord setPath(PathDTO value) {
-        set(38, value);
+        set(36, value);
         return this;
     }
 
@@ -658,31 +695,35 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_path</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="path")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="path", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PathDTO getPath() {
-        return (PathDTO) get(38);
+        return (PathDTO) get(36);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_path_array</code>.
      */
     public ExampleRecord setPathArray(PathDTO... value) {
-        set(39, value);
+        set(37, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_path_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="pathArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="pathArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PathDTO[] getPathArray() {
-        return (PathDTO[]) get(39);
+        return (PathDTO[]) get(37);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_polygon</code>.
      */
     public ExampleRecord setPolygon(PolygonDTO value) {
-        set(40, value);
+        set(38, value);
         return this;
     }
 
@@ -690,31 +731,35 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_polygon</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="polygon")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="polygon", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PolygonDTO getPolygon() {
-        return (PolygonDTO) get(40);
+        return (PolygonDTO) get(38);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_polygon_array</code>.
      */
     public ExampleRecord setPolygonArray(PolygonDTO... value) {
-        set(41, value);
+        set(39, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_polygon_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="polygonArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="polygonArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PolygonDTO[] getPolygonArray() {
-        return (PolygonDTO[]) get(41);
+        return (PolygonDTO[]) get(39);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_circle</code>.
      */
     public ExampleRecord setCircle(CircleDTO value) {
-        set(42, value);
+        set(40, value);
         return this;
     }
 
@@ -722,31 +767,35 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_circle</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="circle")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="circle", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public CircleDTO getCircle() {
-        return (CircleDTO) get(42);
+        return (CircleDTO) get(40);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_circle_array</code>.
      */
     public ExampleRecord setCircleArray(CircleDTO... value) {
-        set(43, value);
+        set(41, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_circle_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="circleArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="circleArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public CircleDTO[] getCircleArray() {
-        return (CircleDTO[]) get(43);
+        return (CircleDTO[]) get(41);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_name</code>.
      */
     public ExampleRecord setName(String value) {
-        set(44, value);
+        set(42, value);
         return this;
     }
 
@@ -754,111 +803,86 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_name</code>.
      */
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="name", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getName() {
-        return (String) get(44);
+        return (String) get(42);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_name_array</code>.
      */
     public ExampleRecord setNameArray(String... value) {
-        set(45, value);
+        set(43, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_name_array</code>.
      */
+    @io.swagger.v3.oas.annotations.media.ArraySchema(schema = 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="nameArray")
+    )
+    @com.fasterxml.jackson.annotation.JsonProperty(value="nameArray", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String[] getNameArray() {
-        return (String[]) get(45);
-    }
-
-    /**
-     * Setter for <code>pgaccess.p_example.e_interval</code>.
-     */
-    public ExampleRecord setInterval(IntervalDTO value) {
-        set(46, value);
-        return this;
-    }
-
-    /**
-     * Getter for <code>pgaccess.p_example.e_interval</code>.
-     */
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="interval")
-    public IntervalDTO getInterval() {
-        return (IntervalDTO) get(46);
-    }
-
-    /**
-     * Setter for <code>pgaccess.p_example.e_interval_array</code>.
-     */
-    public ExampleRecord setIntervalArray(IntervalDTO... value) {
-        set(47, value);
-        return this;
-    }
-
-    /**
-     * Getter for <code>pgaccess.p_example.e_interval_array</code>.
-     */
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="intervalArray")
-    public IntervalDTO[] getIntervalArray() {
-        return (IntervalDTO[]) get(47);
+        return (String[]) get(43);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_short_serial</code>.
      */
     public ExampleRecord setShortSerial(Short value) {
-        set(48, value);
+        set(44, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_short_serial</code>.
      */
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="shortSerial", defaultValue="extval(")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="shortSerial")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="shortSerial", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Short getShortSerial() {
-        return (Short) get(48);
+        return (Short) get(44);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_serial</code>.
      */
     public ExampleRecord setSerial(Integer value) {
-        set(49, value);
+        set(45, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_serial</code>.
      */
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="serial", defaultValue="extval(")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="serial")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="serial", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Integer getSerial() {
-        return (Integer) get(49);
+        return (Integer) get(45);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_long_serial</code>.
      */
     public ExampleRecord setLongSerial(Long value) {
-        set(50, value);
+        set(46, value);
         return this;
     }
 
     /**
      * Getter for <code>pgaccess.p_example.e_long_serial</code>.
      */
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="longSerial", defaultValue="extval(")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="longSerial")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="longSerial", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public Long getLongSerial() {
-        return (Long) get(50);
+        return (Long) get(46);
     }
 
     /**
      * Setter for <code>pgaccess.p_example.e_state</code>.
      */
     public ExampleRecord setState(String value) {
-        set(51, value);
+        set(47, value);
         return this;
     }
 
@@ -866,18 +890,16 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
      * Getter for <code>pgaccess.p_example.e_state</code>.
      */
     @org.hibernate.validator.constraints.Length(max = 3)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="state", defaultValue="new")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="state", maxLength=3)
+    @com.fasterxml.jackson.annotation.JsonProperty(value="state", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getState() {
-        return (String) get(51);
+        return (String) get(47);
     }
 
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Record1<UUID> key() {
         return (Record1) super.key();
@@ -897,7 +919,7 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
     /**
      * Create a detached, initialised ExampleRecord
      */
-    public ExampleRecord(UUID uuid, UUID[] uuidArray, String text, String[] textArray, String string, String[] stringArray, Short shortValue, Short[] shortArray, Integer integerValue, Integer[] integerArray, Long longValue, Long[] longArray, Float floatValue, Float[] floatArray, Double doubleValue, Double[] doubleArray, Boolean booleanValue, Boolean[] booleanArray, LocalDate date, LocalDate[] dateArray, LocalTime time, LocalTime[] timeArray, OffsetTime timetz, OffsetTime[] timetzArray, LocalDateTime dateTime, LocalDateTime[] dateTimeArray, OffsetDateTime dateTimetz, OffsetDateTime[] dateTimetzArray, TestDTO jsonb, TestDTO[] jsonbArray, PointDTO point, PointDTO[] pointArray, LineDTO line, LineDTO[] lineArray, LineSegmentDTO lineSegment, LineSegmentDTO[] lineSegmentArray, BoxDTO box, BoxDTO[] boxArray, PathDTO path, PathDTO[] pathArray, PolygonDTO polygon, PolygonDTO[] polygonArray, CircleDTO circle, CircleDTO[] circleArray, String name, String[] nameArray, IntervalDTO interval, IntervalDTO[] intervalArray, Short shortSerial, Integer serial, Long longSerial, String state) {
+    public ExampleRecord(UUID uuid, UUID[] uuidArray, String text, String[] textArray, String string, String[] stringArray, Short shortValue, Short[] shortArray, Integer integerValue, Integer[] integerArray, Long longValue, Long[] longArray, Float floatValue, Float[] floatArray, Double doubleValue, Double[] doubleArray, Boolean booleanValue, Boolean[] booleanArray, LocalDate date, LocalDate[] dateArray, LocalTime time, LocalTime[] timeArray, OffsetTime timetz, OffsetTime[] timetzArray, LocalDateTime dateTime, LocalDateTime[] dateTimeArray, OffsetDateTime dateTimetz, OffsetDateTime[] dateTimetzArray, PointDTO point, PointDTO[] pointArray, LineDTO line, LineDTO[] lineArray, LineSegmentDTO lineSegment, LineSegmentDTO[] lineSegmentArray, BoxDTO box, BoxDTO[] boxArray, PathDTO path, PathDTO[] pathArray, PolygonDTO polygon, PolygonDTO[] polygonArray, CircleDTO circle, CircleDTO[] circleArray, String name, String[] nameArray, Short shortSerial, Integer serial, Long longSerial, String state) {
         super(Example.EXAMPLE);
 
         set(0, uuid);
@@ -928,29 +950,25 @@ public class ExampleRecord extends UpdatableRecordImpl<ExampleRecord> implements
         set(25, dateTimeArray);
         set(26, dateTimetz);
         set(27, dateTimetzArray);
-        set(28, jsonb);
-        set(29, jsonbArray);
-        set(30, point);
-        set(31, pointArray);
-        set(32, line);
-        set(33, lineArray);
-        set(34, lineSegment);
-        set(35, lineSegmentArray);
-        set(36, box);
-        set(37, boxArray);
-        set(38, path);
-        set(39, pathArray);
-        set(40, polygon);
-        set(41, polygonArray);
-        set(42, circle);
-        set(43, circleArray);
-        set(44, name);
-        set(45, nameArray);
-        set(46, interval);
-        set(47, intervalArray);
-        set(48, shortSerial);
-        set(49, serial);
-        set(50, longSerial);
-        set(51, state);
+        set(28, point);
+        set(29, pointArray);
+        set(30, line);
+        set(31, lineArray);
+        set(32, lineSegment);
+        set(33, lineSegmentArray);
+        set(34, box);
+        set(35, boxArray);
+        set(36, path);
+        set(37, pathArray);
+        set(38, polygon);
+        set(39, polygonArray);
+        set(40, circle);
+        set(41, circleArray);
+        set(42, name);
+        set(43, nameArray);
+        set(44, shortSerial);
+        set(45, serial);
+        set(46, longSerial);
+        set(47, state);
     }
 }

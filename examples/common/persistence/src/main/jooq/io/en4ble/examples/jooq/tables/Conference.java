@@ -37,7 +37,7 @@ import org.jooq.impl.TableImpl;
  */
 public class Conference extends TableImpl<ConferenceRecord> implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = 418082372;
+    private static final long serialVersionUID = 737773616;
 
     /**
      * The reference instance of <code>pgaccess.p_conference</code>
@@ -56,55 +56,55 @@ public class Conference extends TableImpl<ConferenceRecord> implements Serializa
      * The column <code>pgaccess.p_conference.c_id</code>.
      */
 // ----- A uuid
-    public final TableField<ConferenceRecord, UUID> ID = createField("c_id", org.jooq.impl.SQLDataType.UUID.nullable(false), this, "");
+    public final TableField<ConferenceRecord, UUID> ID = createField(DSL.name("c_id"), org.jooq.impl.SQLDataType.UUID.nullable(false), this, "");
 
     /**
      * The column <code>pgaccess.p_conference.c_created</code>. {{internal}}
      */
 // ----- A timestamp
-    public final TableField<ConferenceRecord, LocalDateTime> CREATED = createField("c_created", org.jooq.impl.SQLDataType.LOCALDATETIME.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "{{internal}}");
+    public final TableField<ConferenceRecord, LocalDateTime> CREATED = createField(DSL.name("c_created"), org.jooq.impl.SQLDataType.LOCALDATETIME.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "{{internal}}");
 
     /**
      * The column <code>pgaccess.p_conference.c_updated</code>. {{internal}}
      */
 // ----- A timestamp
-    public final TableField<ConferenceRecord, LocalDateTime> UPDATED = createField("c_updated", org.jooq.impl.SQLDataType.LOCALDATETIME.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "{{internal}}");
+    public final TableField<ConferenceRecord, LocalDateTime> UPDATED = createField(DSL.name("c_updated"), org.jooq.impl.SQLDataType.LOCALDATETIME.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "{{internal}}");
 
     /**
      * The column <code>pgaccess.p_conference.c_name</code>. The name of the conference. {{minLength=5}}{{maxLength=30}}
      */
 // ----- A varchar
-    public final TableField<ConferenceRecord, String> NAME = createField("c_name", org.jooq.impl.SQLDataType.VARCHAR(30).nullable(false), this, "The name of the conference. {{minLength=5}}{{maxLength=30}}");
+    public final TableField<ConferenceRecord, String> NAME = createField(DSL.name("c_name"), org.jooq.impl.SQLDataType.VARCHAR(30).nullable(false), this, "The name of the conference. {{minLength=5}}{{maxLength=30}}");
 
     /**
      * The column <code>pgaccess.p_conference.c_about</code>. The description of the conference. {{minLength=20}}{{maxLength=2000}}
      */
 // ----- A text
-    public final TableField<ConferenceRecord, String> ABOUT = createField("c_about", org.jooq.impl.SQLDataType.CLOB, this, "The description of the conference. {{minLength=20}}{{maxLength=2000}}");
+    public final TableField<ConferenceRecord, String> ABOUT = createField(DSL.name("c_about"), org.jooq.impl.SQLDataType.CLOB, this, "The description of the conference. {{minLength=20}}{{maxLength=2000}}");
 
     /**
      * The column <code>pgaccess.p_conference.c_start_date</code>.
      */
 // ----- A date
-    public final TableField<ConferenceRecord, LocalDate> START_DATE = createField("c_start_date", org.jooq.impl.SQLDataType.LOCALDATE, this, "");
+    public final TableField<ConferenceRecord, LocalDate> START_DATE = createField(DSL.name("c_start_date"), org.jooq.impl.SQLDataType.LOCALDATE, this, "");
 
     /**
      * The column <code>pgaccess.p_conference.c_end_date</code>.
      */
 // ----- A date
-    public final TableField<ConferenceRecord, LocalDate> END_DATE = createField("c_end_date", org.jooq.impl.SQLDataType.LOCALDATE, this, "");
+    public final TableField<ConferenceRecord, LocalDate> END_DATE = createField(DSL.name("c_end_date"), org.jooq.impl.SQLDataType.LOCALDATE, this, "");
 
     /**
      * The column <code>pgaccess.p_conference.c_state</code>. {{default=NEW}}{{minLength=3}}{{maxLength=7}}{{readOnly}}
      */
 // ----- A varchar
-    public final TableField<ConferenceRecord, ConferenceState> STATE = createField("c_state", org.jooq.impl.SQLDataType.VARCHAR(2).defaultValue(org.jooq.impl.DSL.field("'N'::character varying", org.jooq.impl.SQLDataType.VARCHAR)), this, "{{default=NEW}}{{minLength=3}}{{maxLength=7}}{{readOnly}}", new ConferenceStateEnumConverter());
+    public final TableField<ConferenceRecord, ConferenceState> STATE = createField(DSL.name("c_state"), org.jooq.impl.SQLDataType.VARCHAR(2).defaultValue(org.jooq.impl.DSL.field("'N'::character varying", org.jooq.impl.SQLDataType.VARCHAR)), this, "{{default=NEW}}{{minLength=3}}{{maxLength=7}}{{readOnly}}", new ConferenceStateEnumConverter());
 
     /**
      * The column <code>pgaccess.p_conference.c_location</code>.
      */
 // ----- A point
-    public final TableField<ConferenceRecord, PointDTO> LOCATION = createField("c_location", org.jooq.impl.CustomSQLDataType.POINT_DTO, this, "");
+    public final TableField<ConferenceRecord, PointDTO> LOCATION = createField(DSL.name("c_location"), org.jooq.impl.CustomSQLDataType.POINT_DTO, this, "");
 
     /**
      * Create a <code>pgaccess.p_conference</code> table reference
@@ -139,57 +139,36 @@ public class Conference extends TableImpl<ConferenceRecord> implements Serializa
         super(child, key, CONFERENCE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Schema getSchema() {
         return Pgaccess.PGACCESS;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<Index> getIndexes() {
         return Arrays.<Index>asList(Indexes.CONFERENCE_PK);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public UniqueKey<ConferenceRecord> getPrimaryKey() {
         return Keys.CONFERENCE_PK;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<UniqueKey<ConferenceRecord>> getKeys() {
         return Arrays.<UniqueKey<ConferenceRecord>>asList(Keys.CONFERENCE_PK);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public TableField<ConferenceRecord, LocalDateTime> getRecordTimestamp() {
         return UPDATED;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Conference as(String alias) {
         return new Conference(DSL.name(alias), this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Conference as(Name alias) {
         return new Conference(alias, this);

@@ -203,20 +203,26 @@ abstract class ConferenceV1DaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext)
     override fun map(row:io.vertx.sqlclient.Row, table:org.jooq.Table<ConferenceV1Record>,offset:Int): ConferenceV1Dto {
         return io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(table).toDto(row, offset)
     }
-    override fun map(rs:io.vertx.sqlclient.RowSet, table:org.jooq.Table<ConferenceV1Record>, offset:Int): List<ConferenceV1Dto>  {
+    override fun map(rs:io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row> , table:org.jooq.Table<ConferenceV1Record>, offset:Int): List<ConferenceV1Dto>  {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(table)
         return mapper.toList(rs,offset)
     }
     override fun map(row:io.vertx.sqlclient.Row, offset:Int):ConferenceV1Dto {
         return map(row, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1,offset)
     }
-    override fun map(rs:io.vertx.sqlclient.RowSet, offset:Int):List<ConferenceV1Dto> {
+    override fun map(row: io.vertx.reactivex.sqlclient.Row, offset:Int):ConferenceV1Dto {
+        return map(row.delegate, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1,offset)
+    }
+    override fun map(rs:io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row> , offset:Int):List<ConferenceV1Dto> {
         return map(rs, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, offset)
+    }
+    override fun map(rs: io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row> , offset:Int):List<ConferenceV1Dto> {
+        return map(rs.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, offset)
     }
     override suspend fun read(condition:org.jooq.Condition):List<ConferenceV1Dto> {
     return read(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun read(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):List<ConferenceV1Dto> {
+    override suspend fun read(condition:org.jooq.Condition,client:io.vertx.sqlclient.SqlClient):List<ConferenceV1Dto> {
     return read(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxRead(condition:org.jooq.Condition):io.reactivex.Single<List<ConferenceV1Dto>> {
@@ -228,7 +234,7 @@ abstract class ConferenceV1DaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext)
     override suspend fun read(query:org.jooq.Query):List<ConferenceV1Dto> {
     return read(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun read(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):List<ConferenceV1Dto> {
+    override suspend fun read(query:org.jooq.Query,client:io.vertx.sqlclient.SqlClient):List<ConferenceV1Dto> {
     return read(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxRead(query:org.jooq.Query):io.reactivex.Single<List<ConferenceV1Dto>> {
@@ -240,7 +246,7 @@ abstract class ConferenceV1DaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext)
     override suspend fun readOne(condition:org.jooq.Condition):ConferenceV1Dto {
     return readOne(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun readOne(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):ConferenceV1Dto {
+    override suspend fun readOne(condition:org.jooq.Condition,client:io.vertx.sqlclient.SqlClient):ConferenceV1Dto {
     return readOne(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxReadOne(condition:org.jooq.Condition):io.reactivex.Single<ConferenceV1Dto> {
@@ -252,7 +258,7 @@ abstract class ConferenceV1DaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext)
     override suspend fun readOne(query:org.jooq.Query):ConferenceV1Dto {
     return readOne(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun readOne(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):ConferenceV1Dto {
+    override suspend fun readOne(query:org.jooq.Query,client:io.vertx.sqlclient.SqlClient):ConferenceV1Dto {
     return readOne(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxReadOne(query:org.jooq.Query):io.reactivex.Single<ConferenceV1Dto> {
@@ -264,7 +270,7 @@ abstract class ConferenceV1DaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext)
     override suspend fun readOptional(condition:org.jooq.Condition):java.util.Optional<ConferenceV1Dto> {
     return readOptional(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun readOptional(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):java.util.Optional<ConferenceV1Dto> {
+    override suspend fun readOptional(condition:org.jooq.Condition,client:io.vertx.sqlclient.SqlClient):java.util.Optional<ConferenceV1Dto> {
     return readOptional(condition, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxReadOptional(condition:org.jooq.Condition):io.reactivex.Single<java.util.Optional<ConferenceV1Dto>> {
@@ -276,7 +282,7 @@ abstract class ConferenceV1DaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext)
     override suspend fun readOptional(query:org.jooq.Query):java.util.Optional<ConferenceV1Dto> {
     return readOptional(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
     }
-    override suspend fun readOptional(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):java.util.Optional<ConferenceV1Dto> {
+    override suspend fun readOptional(query:org.jooq.Query,client:io.vertx.sqlclient.SqlClient):java.util.Optional<ConferenceV1Dto> {
     return readOptional(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
     }
     override fun rxReadOptional(query:org.jooq.Query):io.reactivex.Single<java.util.Optional<ConferenceV1Dto>> {
@@ -284,5 +290,103 @@ abstract class ConferenceV1DaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext)
     }
     override fun rxReadOptional(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<java.util.Optional<ConferenceV1Dto>> {
     return rxReadOptional(query, io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1, client)
+    }
+    suspend fun update(dto:ConferenceV1Dto, condition:org.jooq.Condition):Int {
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return query(dsl.update(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).set(map).where(condition)).rowCount()
+    }
+    fun rxUpdate(dto:ConferenceV1Dto, condition:org.jooq.Condition):io.reactivex.Single<Int> {
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return rxQuery(dsl.update(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).set(map).where(condition)).map{ it.delegate.rowCount() }
+    }
+    suspend fun update(dto:ConferenceV1Dto, condition:org.jooq.Condition, client:io.vertx.sqlclient.SqlClient):Int {
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return query(dsl.update(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).set(map).where(condition), client).rowCount()
+    }
+    fun rxUpdate(dto:ConferenceV1Dto, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<Int> {
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return rxQuery(dsl.update(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).set(map).where(condition),client).map{ it.delegate.rowCount() }
+    }
+    suspend fun updateReturning(dto:ConferenceV1Dto, condition:org.jooq.Condition):List<ConferenceV1Dto> {
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return map(query(dsl.update(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.fields())))
+    }
+    suspend fun updateReturningOne(dto:ConferenceV1Dto, condition:org.jooq.Condition):ConferenceV1Dto {
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return map(queryOne(dsl.update(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.fields())))
+    }
+    fun rxUpdateReturning(dto:ConferenceV1Dto, condition:org.jooq.Condition):io.reactivex.Single<List<ConferenceV1Dto>> {
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return rxQuery(dsl.update(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.fields())).map{ map(it.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>) }
+    }
+    fun rxUpdateReturningOne(dto:ConferenceV1Dto, condition:org.jooq.Condition):io.reactivex.Single<ConferenceV1Dto> {
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return rxQueryOne(dsl.update(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.fields())).map{ map(it.delegate) }
+    }
+    suspend fun updateReturning(dto:ConferenceV1Dto, condition:org.jooq.Condition, client:io.vertx.sqlclient.SqlClient):ConferenceV1Dto {
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return map(queryOne(dsl.update(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.fields()), client))
+    }
+    fun rxUpdateReturning(dto:ConferenceV1Dto, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<ConferenceV1Dto> {
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return rxQueryOne(dsl.update(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.fields()),client).map{ map(it.delegate) }
+    }
+    suspend fun create(dto:ConferenceV1Dto):Int {
+        validate(dto)
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return query(dsl.insertInto(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).columns(map.keys).values(map.values)).rowCount()
+    }
+    suspend fun create(dto:ConferenceV1Dto,client:io.vertx.sqlclient.SqlClient):Int {
+        validate(dto)
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return query(dsl.insertInto(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).columns(map.keys).values(map.values), client).rowCount()
+    }
+    suspend fun createReturning(dto:ConferenceV1Dto):ConferenceV1Dto {
+        validate(dto)
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return map(queryOne(dsl.insertInto(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).columns(map.keys).values(map.values).returning(*io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.fields())))
+    }
+    suspend fun createReturning(dto:ConferenceV1Dto,client:io.vertx.sqlclient.SqlClient):ConferenceV1Dto {
+        validate(dto)
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return map(queryOne(dsl.insertInto(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).columns(map.keys).values(map.values).returning(*io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.fields()), client))
+    }
+    fun rxCreate(dto:ConferenceV1Dto):io.reactivex.Single<Int> {
+        validate(dto)
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return rxQuery(dsl.insertInto(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).columns(map.keys).values(map.values)).map{ it.delegate.rowCount() }
+    }
+    fun rxCreate(dto:ConferenceV1Dto,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<Int> {
+        validate(dto)
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return rxQuery(dsl.insertInto(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).columns(map.keys).values(map.values), client).map{ it.delegate.rowCount() }
+    }
+    fun rxCreateReturning(dto:ConferenceV1Dto):io.reactivex.Single<ConferenceV1Dto> {
+        validate(dto)
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return rxQueryOne(dsl.insertInto(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).columns(map.keys).values(map.values).returning(*io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.fields())).map{ map(it.delegate) }
+    }
+    fun rxCreateReturning(dto:ConferenceV1Dto,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<ConferenceV1Dto> {
+        validate(dto)
+        val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceV1Dto>(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1)
+        val map = mapper.getValueMap(dto)
+        return rxQueryOne(dsl.insertInto(io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1).columns(map.keys).values(map.values).returning(*io.en4ble.examples.jooq.tables.ConferenceV1.CONFERENCE_V1.fields()), client).map{ map(it.delegate) }
     }
 }

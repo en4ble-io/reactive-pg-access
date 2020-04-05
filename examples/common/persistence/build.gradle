@@ -78,22 +78,22 @@ task jooqGenerate {
                                 forcedType {
                                     userType('io.en4ble.examples.enums.ConferenceState')
                                     converter('io.en4ble.examples.converters.ConferenceStateEnumConverter')
-                                    expression('.*\\.p_conference\\.c_state')
+                                    includeExpression('.*\\.p_conference\\.c_state')
                                 }
                                 forcedType {
                                     userType('io.en4ble.examples.enums.ConferenceState')
                                     converter('io.en4ble.examples.converters.ConferenceStateEnumConverter')
-                                    expression('.*\\.conference_v1\\.state')
+                                    includeExpression('.*\\.conference_v1\\.state')
                                 }
                                 forcedType {
                                     userType('io.en4ble.examples.dto.TestDTO')
                                     converter('io.en4ble.examples.converters.TestDTOConverter')
-                                    expression('.*\\.p_example\\.e_jsonb')
+                                    includeExpression('.*\\.p_example\\.e_jsonb')
                                 }
                                 forcedType {
                                     userType('io.en4ble.examples.dto.TestDTO[]')
                                     converter('io.en4ble.examples.converters.TestDTOArrayConverter')
-                                    expression('.*\\.p_example\\.e_jsonb_array')
+                                    includeExpression('.*\\.p_example\\.e_jsonb_array')
                                 }
                             }
                         }

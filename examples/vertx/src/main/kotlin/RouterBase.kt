@@ -3,6 +3,7 @@ package io.en4ble.pgaccess.example
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.vertx.core.json.Json
+import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.kotlin.coroutines.dispatcher
 import io.vertx.reactivex.ext.web.Route
 import io.vertx.reactivex.ext.web.Router
@@ -48,7 +49,7 @@ open class RouterBase(
                 LOG.debug("json does not contain data, returning empty instance.")
                 type.newInstance()
             } else {
-                Json.mapper.readValue(jsonString, type)
+                DatabindCodec.mapper().readValue(jsonString, type)
             }
         } catch (e: IOException) {
             LOG.warn("could not convert json: '{}' to type: {}", jsonString, type.name, e)

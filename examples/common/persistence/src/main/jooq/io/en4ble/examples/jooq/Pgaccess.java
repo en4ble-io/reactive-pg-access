@@ -24,7 +24,7 @@ import org.jooq.impl.SchemaImpl;
  */
 public class Pgaccess extends SchemaImpl implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = -1840081993;
+    private static final long serialVersionUID = -1286796858;
 
     /**
      * The reference instance of <code>pgaccess</code>
@@ -54,9 +54,6 @@ public class Pgaccess extends SchemaImpl implements Serializable, Cloneable {
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Catalog getCatalog() {
         return DefaultCatalog.DEFAULT_CATALOG;

@@ -6,7 +6,6 @@ import io.en4ble.examples.jooq.tables.Example.EXAMPLE
 import io.en4ble.examples.jooq.tables.pojos.ExampleDto
 import io.en4ble.pgaccess.dto.BoxDTO
 import io.en4ble.pgaccess.dto.CircleDTO
-import io.en4ble.pgaccess.dto.IntervalDTO
 import io.en4ble.pgaccess.dto.LineDTO
 import io.en4ble.pgaccess.dto.LineSegmentDTO
 import io.en4ble.pgaccess.dto.PathDTO
@@ -56,11 +55,13 @@ open class ExampleService(protected val exampleDao: ExampleDao) {
         form.integerValue = Random.nextInt(100)
         form.setIntegerArray(Random.nextInt(100), Random.nextInt(100), Random.nextInt(100))
 
-        form.interval = IntervalDTO(2)
-        form.setIntervalArray(IntervalDTO(2), IntervalDTO(0, 2))
+// FIXME: support interval
+//        form.interval = IntervalDTO(2)
+//        form.setIntervalArray(IntervalDTO(2), IntervalDTO(0, 2))
 
-        form.jsonb = randomTestDTO()
-        form.setJsonbArray(randomTestDTO(), randomTestDTO())
+// FIXME: fix json data types
+//        form.jsonb = randomTestDTO()
+//        form.setJsonbArray(randomTestDTO(), randomTestDTO())
 
         form.line = randomLine()
         form.setLineArray(randomLine(), randomLine())

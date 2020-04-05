@@ -16,10 +16,10 @@ import java.util.UUID;
 /**
  * A simple conference.
  */
-@io.swagger.v3.oas.annotations.media.Schema(name="Conference", title="A simple conference.")
+@io.swagger.v3.oas.annotations.media.Schema(name="ConferenceDto", title="A simple conference.")
 public class ConferenceDto extends Object implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = -1163512992;
+    private static final long serialVersionUID = 1846485534;
 
     private UUID            id;
     private LocalDateTime   created;
@@ -68,6 +68,7 @@ public class ConferenceDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="id")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="id", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public UUID getId() {
         return this.id;
     }
@@ -103,7 +104,8 @@ public class ConferenceDto extends Object implements Serializable, Cloneable {
      * The name of the conference.
      */
     @org.hibernate.validator.constraints.Length(min = 5, max = 30)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name", title="The name of the conference.")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name", title="The name of the conference.", minLength=5, maxLength=30)
+    @com.fasterxml.jackson.annotation.JsonProperty(value="name", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getName() {
         return this.name;
     }
@@ -117,7 +119,8 @@ public class ConferenceDto extends Object implements Serializable, Cloneable {
      * The description of the conference.
      */
     @org.hibernate.validator.constraints.Length(min = 20, max = 2000)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="about", title="The description of the conference.")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="about", title="The description of the conference.", minLength=20, maxLength=2000)
+    @com.fasterxml.jackson.annotation.JsonProperty(value="about", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getAbout() {
         return this.about;
     }
@@ -128,6 +131,7 @@ public class ConferenceDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="startDate")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="startDate", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDate getStartDate() {
         return this.startDate;
     }
@@ -138,6 +142,7 @@ public class ConferenceDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="endDate")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="endDate", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public LocalDate getEndDate() {
         return this.endDate;
     }
@@ -147,8 +152,8 @@ public class ConferenceDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
-    @org.hibernate.validator.constraints.Length(min = 3, max = 7)
-    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY, name="state", title="", defaultValue="NEW")
+    @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY, name="state", title="")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="state", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY)
     public ConferenceState getState() {
         return this.state;
     }
@@ -159,6 +164,7 @@ public class ConferenceDto extends Object implements Serializable, Cloneable {
     }
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="location")
+    @com.fasterxml.jackson.annotation.JsonProperty(value="location", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public PointDTO getLocation() {
         return this.location;
     }
