@@ -4,7 +4,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
     // validation
-    compile "org.hibernate.validator:hibernate-validator-cdi:$hibernateValidatorVersion"
+    compile "org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion"
     compile "org.glassfish:jakarta.el:$glassfishElVersion"
 
     // openapi documentation
