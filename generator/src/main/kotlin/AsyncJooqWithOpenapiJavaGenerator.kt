@@ -646,6 +646,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         }
         out.tab(2).println("val mapper = $mapperGetter")
         out.tab(2).println("val map = mapper.getValueMap(dto)")
+        out.tab(2).println("if (map.entries.isEmpty()) {")
+        out.tab(3).println("throw javax.validation.ValidationException(\"Nothing to update\")")
+        out.tab(2).println("}")
     }
 
     private fun dtoMapper(mapperPackage: String, mappers: String, dtoType: String) =
