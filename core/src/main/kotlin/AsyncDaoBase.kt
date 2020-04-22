@@ -27,6 +27,7 @@ import org.jooq.SelectSeekStepN
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.TableField
+import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
@@ -43,6 +44,8 @@ protected constructor(
     protected val table: Table<RECORD>,
     private val dtoType: Class<DTO>
 ) {
+    protected val LOG by lazy { LoggerFactory.getLogger(AsyncDaoBase::class.java) }
+
     protected val dsl: DSLContext = context.dsl
 
     protected val sqlClient: SqlClient = context.sqlClient
