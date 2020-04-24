@@ -64,8 +64,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("In column definitions:")
         println("comment contains {{name=<string>}} - sets the json name of the property.")
         println("comment contains {{example=<string>}} - sets the example value of the property in the OpenApi @Schema annotation.")
-        println("comment contains {{minLength=<int>}} - generates @org.hibernate.validator.constraints.Length(min=<int>)")
-        println("comment contains {{maxLength=<int>}} - generates @org.hibernate.validator.constraints.Length(max=<int>) ")
+        println("comment contains {{minLength=<int>}} - generates @javax.validation.constraints.Size(min=<int>)")
+        println("comment contains {{maxLength=<int>}} - generates @javax.validation.constraints.Size(max=<int>) ")
         println("comment contains {{email}} or column name contains 'email' - generates @javax.validation.constraints.Email")
         println("comment contains {{url}} or column name contains 'url' - generates @org.hibernate.validator.constraints.URL")
         println("comment contains {{default=<string>}} - generates defaultValue=\"your value\" - Use this with TypedEnum columns to override the database default value.")
@@ -279,12 +279,12 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
     private fun printLengthAnnotation(out: JavaWriter, minLength: Int, maxLength: Int) {
         if (maxLength > 0) {
             if (minLength > 0) {
-                out.tab(1).println("@org.hibernate.validator.constraints.Length(min = $minLength, max = $maxLength)")
+                out.tab(1).println("@javax.validation.constraints.Size(min = $minLength, max = $maxLength)")
             } else {
-                out.tab(1).println("@org.hibernate.validator.constraints.Length(max = $maxLength)")
+                out.tab(1).println("@javax.validation.constraints.Size(max = $maxLength)")
             }
         } else if (minLength > 0) {
-            out.tab(1).println("@org.hibernate.validator.constraints.Length(min = $minLength)")
+            out.tab(1).println("@javax.validation.constraints.Size(min = $minLength)")
         }
     }
 

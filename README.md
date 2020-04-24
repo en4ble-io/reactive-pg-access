@@ -23,8 +23,8 @@ For full code examples with **Vert.x**, **Spring** and **Micronaut** please have
 
 You can add comments to database columns (tables and views) to get openapi and validation annotations in the generated DTO.
 
-* comment contains {{minlength=<int>}} - generates ``@org.hibernate.validator.constraints.Length(min=<int>)``
-* comment contains {{maxlength=<int>}} - generates ``@org.hibernate.validator.constraints.Length(max=<int>)`` 
+* comment contains {{minlength=<int>}} - generates ``@javax.validation.constraints.Size(min=<int>)``
+* comment contains {{maxlength=<int>}} - generates ``@javax.validation.constraints.Size(max=<int>)`` 
 * comment contains {{email}} - generates ``@javax.validation.constraints.Email``
 * comment contains {{default=<string>}} - generates ``defaultValue="your value"`` - Use this with TypedEnum columns to override the database default value.
 * comment contains {{readOnly}} - generates ``accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY``
