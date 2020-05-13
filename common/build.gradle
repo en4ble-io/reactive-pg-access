@@ -1,14 +1,11 @@
 description = 'async db access with jooq'
 
 dependencies {
-    compile project(":common")
+    compile project(":api")
+    compile project(":config")
 
     compile "org.jooq:jooq:$jooqVersion"
 
-    compile "io.vertx:vertx-rx-java2:$vertxVersion"
-    compile "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
-
-    compile "io.vertx:vertx-pg-client:$vertxVersion"
     compile "io.vertx:vertx-lang-kotlin:$vertxVersion"
     compile "io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion"
 

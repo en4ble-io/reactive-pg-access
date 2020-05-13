@@ -665,7 +665,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 }
             } else {
                 out.tab(3)
-                    .println("throw io.en4ble.pgaccess.exceptions.NoValuesException(\"Provided dto is empty: \${dto.javaClass}\")")
+                    .println("throw NoValuesException(\"Provided dto is empty: \${dto.javaClass}\")")
             }
         } else if (returningList) {
             if (update) {

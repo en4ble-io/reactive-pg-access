@@ -65,7 +65,7 @@ Creates a new row in the database table that associated with the current DAO.
 Read data from the database table or view that associated with the current DAO.
 
 * ``read``: Return a list of entries  
-* ``readOne``: Return one entry or throw io.en4ble.pgaccess.exceptions.NoResultsException if no matching entry was found.
+* ``readOne``: Return one entry or throw NoResultsException if no matching entry was found.
 * ``readOptional``: Return an Optional containing either one or none entry.
 * ``readBy``: Convenience methods for single parameter queries
 
@@ -111,9 +111,9 @@ To use this mechanism, all you need to do is let your enum extend one of these i
 
 And then implement a converter for your enum that extends one of these abstract classes:
 
-* ``io.en4ble.pgaccess.converters.TypedEnumConverter``
-* ``io.en4ble.pgaccess.converters.StringEnumConverter``
-* ``io.en4ble.pgaccess.converters.IntEnumConverter``
+* ``TypedEnumConverter``
+* ``StringEnumConverter``
+* ``IntEnumConverter``
 
 The converter must then be mapped to the respective column of your database. 
 For details on this please see the excellent jOOQ documentation.
