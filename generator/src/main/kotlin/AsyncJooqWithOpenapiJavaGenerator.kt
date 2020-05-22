@@ -139,11 +139,11 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
 
             val minPair = parseCommentWithValue("min", comment)
             comment = minPair.first
-            min = minLengthPair.second?.toInt()
+            min = minPair.second?.toInt()
 
             val maxPair = parseCommentWithValue("max", comment)
             comment = maxPair.first
-            max = maxLengthPair.second?.toInt()
+            max = maxPair.second?.toInt()
 
             val defaultValuePair = parseCommentWithValue("default", comment)
             comment = defaultValuePair.first
@@ -207,7 +207,6 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         }
 
         printMinMaxAnnotations(min, max, out)
-        printLengthAnnotation(out, minLength, maxLength)
         super.printColumnJPAAnnotation(out, column, pojoType)
 
         if (columnName.startsWith("internal_")) {
