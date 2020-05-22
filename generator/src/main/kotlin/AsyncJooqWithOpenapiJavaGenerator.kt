@@ -1,22 +1,8 @@
 package io.en4ble.pgaccess.generator
 
-import io.en4ble.pgaccess.dto.BoxDTO
-import io.en4ble.pgaccess.dto.CircleDTO
-import io.en4ble.pgaccess.dto.IntervalDTO
-import io.en4ble.pgaccess.dto.LineDTO
-import io.en4ble.pgaccess.dto.LineSegmentDTO
-import io.en4ble.pgaccess.dto.PathDTO
-import io.en4ble.pgaccess.dto.PointDTO
-import io.en4ble.pgaccess.dto.PolygonDTO
+import io.en4ble.pgaccess.dto.*
 import io.vertx.core.buffer.Buffer
-import io.vertx.pgclient.data.Box
-import io.vertx.pgclient.data.Circle
-import io.vertx.pgclient.data.Interval
-import io.vertx.pgclient.data.Line
-import io.vertx.pgclient.data.LineSegment
-import io.vertx.pgclient.data.Path
-import io.vertx.pgclient.data.Point
-import io.vertx.pgclient.data.Polygon
+import io.vertx.pgclient.data.*
 import io.vertx.sqlclient.data.Numeric
 import org.jooq.Constants
 import org.jooq.JSON
@@ -26,23 +12,12 @@ import org.jooq.codegen.GeneratorStrategy
 import org.jooq.codegen.GeneratorStrategy.Mode
 import org.jooq.codegen.JavaWriter
 import org.jooq.codegen.PojoType
-import org.jooq.meta.CatalogDefinition
-import org.jooq.meta.ColumnDefinition
-import org.jooq.meta.DataTypeDefinition
-import org.jooq.meta.Definition
-import org.jooq.meta.SchemaDefinition
-import org.jooq.meta.TableDefinition
-import org.jooq.meta.TypedElementDefinition
-import org.jooq.meta.UDTDefinition
+import org.jooq.meta.*
 import org.jooq.tools.JooqLogger
 import java.io.File
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.OffsetTime
+import java.time.*
+import java.util.*
 import java.util.Collections.emptyList
-import java.util.UUID
 import kotlin.math.absoluteValue
 
 /** @author Mark Hofmann (mark@en4ble.io)
@@ -64,6 +39,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("In column definitions:")
         println("comment contains {{name=<string>}} - sets the json name of the property.")
         println("comment contains {{example=<string>}} - sets the example value of the property in the OpenApi @Schema annotation.")
+        println("comment contains {{min=<int>}} - generates @javax.validation.constraints.Min(<int>) and  @Schema(minimum = \"<int>\")")
+        println("comment contains {{max=<int>}} - generates @javax.validation.constraints.Max(<int>) and  @Schema(maximum = \"<int>\")")
         println("comment contains {{minLength=<int>}} - generates @javax.validation.constraints.Size(min=<int>)")
         println("comment contains {{maxLength=<int>}} - generates @javax.validation.constraints.Size(max=<int>) ")
         println("comment contains {{email}} or column name contains 'email' - generates @javax.validation.constraints.Email")
@@ -102,6 +79,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         var isInternal = false
         val propertyName = getStrategy().getJavaMemberName(column)
         val columnName = column.name
+        var min: Int? = null
+        var max: Int? = null
         var minLength = 0
         var maxLength = getMaxLength(column)
         var defaultValue: String? = null
@@ -157,6 +136,14 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             val minLengthPair = parseCommentWithValue("minLength", comment)
             comment = minLengthPair.first
             minLength = minLengthPair.second?.toInt() ?: 0
+
+            val minPair = parseCommentWithValue("min", comment)
+            comment = minPair.first
+            min = minLengthPair.second?.toInt()
+
+            val maxPair = parseCommentWithValue("max", comment)
+            comment = maxPair.first
+            max = maxLengthPair.second?.toInt()
 
             val defaultValuePair = parseCommentWithValue("default", comment)
             comment = defaultValuePair.first
@@ -218,6 +205,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             //  example: https://www.baeldung.com/bean-validation-container-elements
             printLengthAnnotation(out, minLength, maxLength)
         }
+
+        printMinMaxAnnotations(min, max, out)
+        printLengthAnnotation(out, minLength, maxLength)
         super.printColumnJPAAnnotation(out, column, pojoType)
 
         if (columnName.startsWith("internal_")) {
@@ -239,8 +229,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 defaultValue,
                 minLength,
                 maxLength,
-                null, // TODO: add support for minimum + maximum
-                null,
+                min,
+                max,
                 accessMode,
                 exampleValue,
                 implementation,
@@ -251,6 +241,15 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         if (!isInternal) {
             out.tab(1)
                 .println("@com.fasterxml.jackson.annotation.JsonProperty(value=\"$nameValue\", access = com.fasterxml.jackson.annotation.JsonProperty.Access.$accessMode)")
+        }
+    }
+
+    private fun printMinMaxAnnotations(min: Int?, max: Int?, out: JavaWriter) {
+        if (min != null) {
+            out.tab(1).println("@javax.validation.constraints.Min($min)")
+        }
+        if (max != null) {
+            out.tab(1).println("@javax.validation.constraints.Max($max)")
         }
     }
 
