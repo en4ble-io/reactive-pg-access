@@ -675,9 +675,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             }
         } else {
             if (reactive) {
-                out.tab(3).println("return io.reactivex.Single.just(0)")
+                out.tab(3).println("return io.reactivex.Single.just(io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT)")
             } else {
-                out.tab(3).println("return 0")
+                out.tab(3).println("return io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT")
             }
         }
         out.tab(2).println("}")
