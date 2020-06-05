@@ -45,7 +45,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("comment contains {{maxLength=<int>}} - generates @javax.validation.constraints.Size(max=<int>) ")
         println("comment contains {{email}} or column name contains 'email' - generates @javax.validation.constraints.Email")
         println("comment contains {{url}} or column name contains 'url' - generates @org.hibernate.validator.constraints.URL")
-        println("comment contains {{default=<string>}} - generates defaultValue=\"your value\" - Use this with TypedEnum columns to override the database default value.")
+        println("comment contains {{default=<string>}} - generates defaultValue=\"your value\" - Use this to specify a default value for the openapi spec.")
         println("comment contains {{array=<boolean>}} - overrides array detectection, generates @io.swagger.v3.oas.annotations.media.ArraySchema if true")
         println("comment contains {{type=<string>}} - overrides the type by adding implementation =\"<type>.class\" to @Schema")
         println("comment contains {{readOnly}} - generates accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY")
@@ -172,9 +172,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         if (nameValue == null) {
             nameValue = propertyName
         }
-        if (defaultValue == null) {
-            defaultValue = column.definedType.defaultValue
-        }
+
         if (!comment.isNullOrBlank()) {
             out.tab(1).println("/**")
             printJavadocParagraph(out.tab(1), comment, "")
