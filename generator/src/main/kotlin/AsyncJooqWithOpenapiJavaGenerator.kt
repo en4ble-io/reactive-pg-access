@@ -406,6 +406,14 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             .println("return map(rs.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>, $fullJavaTableName, offset)")
         out.tab(1).println("}")
 
+        out.tab(1).println("override fun rxReadCount():io.reactivex.Single<Int> {")
+        out.tab(1).println("return rxReadCount(dsl.selectCount().from($fullJavaTableName))")
+        out.tab(1).println("}")
+
+        out.tab(1).println("override suspend fun readCount():Int {")
+        out.tab(1).println("return readCount(dsl.selectCount().from($fullJavaTableName))")
+        out.tab(1).println("}")
+
 
         out.tab(1).println("override suspend fun read(condition:org.jooq.Condition):List<$dtoType> {")
         out.tab(1).println("return read(condition, $fullJavaTableName)")

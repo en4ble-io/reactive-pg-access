@@ -17,21 +17,11 @@ import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.reactivex.sqlclient.SqlClient
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.RowSet
-import org.jooq.Condition
-import org.jooq.DSLContext
-import org.jooq.Field
-import org.jooq.Query
-import org.jooq.Record
-import org.jooq.SelectLimitAfterOffsetStep
-import org.jooq.SelectSeekStepN
-import org.jooq.SortField
-import org.jooq.Table
-import org.jooq.TableField
+import org.jooq.*
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 import javax.validation.ConstraintViolationException
 import javax.validation.ValidationException
 
@@ -765,6 +755,9 @@ protected constructor(
     abstract suspend fun read(query: Query, client: io.vertx.sqlclient.SqlClient): List<DTO>
     abstract fun rxRead(query: Query): Single<List<DTO>>
     abstract fun rxRead(query: Query, client: SqlClient): Single<List<DTO>>
+
+    abstract fun rxReadCount(): Single<Int>
+    abstract suspend fun readCount(): Int
 
     abstract suspend fun read(condition: Condition): List<DTO>
     abstract suspend fun read(condition: Condition, client: io.vertx.sqlclient.SqlClient): List<DTO>
