@@ -1,19 +1,19 @@
 description = "Common classes for external API definitions"
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
     // validation
-    compile "org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion"
-    compile "org.glassfish:jakarta.el:$glassfishElVersion"
+    api "org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion"
+    api "org.glassfish:jakarta.el:$glassfishElVersion"
 
     // openapi documentation
-    compile "javax.ws.rs:javax.ws.rs-api:$jaxrsVersion"
-    compile "io.swagger.core.v3:swagger-annotations:$swaggerVersion"
+    api "javax.ws.rs:javax.ws.rs-api:$jaxrsVersion"
+    api "io.swagger.core.v3:swagger-annotations:$swaggerVersion"
 
-    compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
 
-    testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testImplementation"org.junit.jupiter:junit-jupiter-api:$junitVersion"
 }
 
 publishing {

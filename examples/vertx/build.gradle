@@ -49,25 +49,25 @@ repositories {
 
 dependencies {
     compile("io.en4ble.examples:persistence:$version")
-    compile "io.vertx:vertx-web:$vertxVersion"
+    api "io.vertx:vertx-web:$vertxVersion"
 
-    compile "io.vertx:vertx-rx-java2:$vertxVersion"
-    compile "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+    api "io.vertx:vertx-rx-java2:$vertxVersion"
+    api "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
 
-    compile "io.vertx:vertx-lang-kotlin:$vertxVersion"
-    compile "io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion"
+    api "io.vertx:vertx-lang-kotlin:$vertxVersion"
+    api "io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion"
 
     // required for bugfixing (breakpoints in intellij) only
-    compile "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
+    api "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
 
-//    compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
-//    compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+//    api "org.apache.logging.log4j:log4j-core:$log4jVersion"
+//    api "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
 
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:" + jacksonVersion
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:" + jacksonVersion
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.4.2"
-//    testCompile "org.testcontainers:postgresql:$postgresqlTCVersion"
+//    testImplementation"org.testcontainers:postgresql:$postgresqlTCVersion"
 }
 
 idea {

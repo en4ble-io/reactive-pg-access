@@ -1,23 +1,23 @@
 description = 'async db access with jooq'
 
 dependencies {
-    compile project(":common")
+    api project(":common")
 
-    compile "org.jooq:jooq:$jooqVersion"
+    api "org.jooq:jooq:$jooqVersion"
 
-    compile "io.vertx:vertx-rx-java2:$vertxVersion"
-    compile "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+    api "io.vertx:vertx-rx-java2:$vertxVersion"
+    api "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
 
-    compile "io.vertx:vertx-pg-client:$vertxVersion"
-    compile "io.vertx:vertx-lang-kotlin:$vertxVersion"
-    compile "io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion"
+    api "io.vertx:vertx-pg-client:$vertxVersion"
+    api "io.vertx:vertx-lang-kotlin:$vertxVersion"
+    api "io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion"
 
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$kotlinxVersion"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxVersion"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$kotlinxVersion"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxVersion"
 
-    compile "org.slf4j:slf4j-api:$slf4jVersion"
+    api "org.slf4j:slf4j-api:$slf4jVersion"
 
-    testCompile "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    testImplementation"org.apache.logging.log4j:log4j-core:$log4jVersion"
 }
 
 publishing {

@@ -48,26 +48,26 @@ dependencies {
 
     compile("io.en4ble.examples:persistence:$version")
 
-    compile "org.postgresql:postgresql:$postgresqlVersion"
-//    compile 'io.micronaut.configuration:micronaut-liquibase'
+    api "org.postgresql:postgresql:$postgresqlVersion"
+//    api 'io.micronaut.configuration:micronaut-liquibase'
     compile('org.liquibase:liquibase-core:' + liquibaseVersion)
-    compile "io.swagger.core.v3:swagger-annotations"
-    compile 'io.micronaut.configuration:micronaut-hibernate-validator'
+    api "io.swagger.core.v3:swagger-annotations"
+    api 'io.micronaut.configuration:micronaut-hibernate-validator'
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile "org.jetbrains.kotlin:kotlin-reflect"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinxVersion"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$kotlinxVersion"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    api "org.jetbrains.kotlin:kotlin-reflect"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinxVersion"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$kotlinxVersion"
 
-    compile "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
+    api "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
 
 
     liquibaseRuntime "org.liquibase:liquibase-core:$liquibaseVersion"
     liquibaseRuntime "org.postgresql:postgresql:$postgresqlVersion"
 
-    compile "io.micronaut:micronaut-http-client"
-    compile "io.micronaut:micronaut-http-server-netty"
-    compile "io.micronaut:micronaut-runtime"
+    api "io.micronaut:micronaut-http-client"
+    api "io.micronaut:micronaut-http-server-netty"
+    api "io.micronaut:micronaut-runtime"
     compileOnly "com.oracle.substratevm:svm"
     kapt "io.micronaut:micronaut-inject-java"
     kapt "io.micronaut:micronaut-validation"
@@ -75,9 +75,9 @@ dependencies {
     runtime "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8"
 
     kaptTest "io.micronaut:micronaut-inject-java"
-    testCompile "org.junit.jupiter:junit-jupiter-api"
-    testCompile "io.micronaut.test:micronaut-test-junit5"
-    testCompile "org.jetbrains.spek:spek-api:1.1.5"
+    testImplementation"org.junit.jupiter:junit-jupiter-api"
+    testImplementation"io.micronaut.test:micronaut-test-junit5"
+    testImplementation"org.jetbrains.spek:spek-api:1.1.5"
     testRuntime "org.junit.jupiter:junit-jupiter-engine"
     testRuntime "org.jetbrains.spek:spek-junit-platform-engine:1.1.5"
 }

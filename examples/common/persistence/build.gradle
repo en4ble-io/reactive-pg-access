@@ -16,16 +16,16 @@ plugins {
 }
 
 dependencies {
-    compile project(":api")
-    compile "io.en4ble.reactive-pg-access:reactive-pg-access-core:$reactivePgAccessVersion"
-    compile "org.postgresql:postgresql:$postgresqlVersion"
+    api project(":api")
+    api "io.en4ble.reactive-pg-access:reactive-pg-access-core:$reactivePgAccessVersion"
+    api "org.postgresql:postgresql:$postgresqlVersion"
 
     compile('org.liquibase:liquibase-core:' + liquibaseVersion)
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile "org.jetbrains.kotlin:kotlin-reflect"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    api "org.jetbrains.kotlin:kotlin-reflect"
 
-    compile "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
+    api "io.en4ble.reactive-pg-access:reactive-pg-access-generator:$reactivePgAccessVersion"
 
 
     liquibaseRuntime "org.liquibase:liquibase-core:$liquibaseVersion"

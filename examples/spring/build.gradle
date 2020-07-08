@@ -53,16 +53,16 @@ repositories {
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-webflux')
-    compile group: 'io.projectreactor.addons', name: 'reactor-adapter', version: '3.2.3.RELEASE'
+    api group: 'io.projectreactor.addons', name: 'reactor-adapter', version: '3.2.3.RELEASE'
 
     compile("io.en4ble.examples:persistence:$version")
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile "org.jetbrains.kotlin:kotlin-reflect"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${kotlinxVersion}"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${kotlinxVersion}"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    api "org.jetbrains.kotlin:kotlin-reflect"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${kotlinxVersion}"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${kotlinxVersion}"
 
-    compile "com.fasterxml.jackson.module:jackson-module-kotlin"
+    api "com.fasterxml.jackson.module:jackson-module-kotlin"
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('io.projectreactor:reactor-test')

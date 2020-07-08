@@ -9,7 +9,6 @@ allprojects {
     group = 'io.en4ble.reactive-pg-access'
     version = '0.1-SNAPSHOT'
 
-    apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'idea'
 
