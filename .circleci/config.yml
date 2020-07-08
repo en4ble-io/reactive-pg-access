@@ -15,7 +15,7 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run: ./gradlew install publish
+      - run: ./gradlew publish
       # delete snapshot dependencies to make sure they are always updated
       - run: find ~/.m2/repository/ -name "*-SNAPSHOT*" -exec rm -rf {} \; || true
       - run: find ~/.gradle/caches/ -name "*-SNAPSHOT*" -exec rm -rf {} \; || true
