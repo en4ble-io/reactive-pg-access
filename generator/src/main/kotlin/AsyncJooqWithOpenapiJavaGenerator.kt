@@ -736,7 +736,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             } else if (handleReactiveSqlClientTypeFromRow(column, setter, javaMemberName, pos, out)) {
                 // handle types of reactive-pg-client
             } else {
-                if (column.type.javaType != null && column.type.converter != null) {
+                if (column.type.javaType != null && column.type.converter != null || userType == "ltree") {
                     // TODO: check if arrays of custom object are stored as json or _json
                     val isArray = userType.startsWith('_')
                     val spread = if (javaType.endsWith("[]")) "*" else ""
@@ -751,6 +751,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                             .println("val ${column.name} = row.get(Array<org.jooq.JSON>::class.java,$offset)")
 //                        out.tab(2)
 //                            .println("val ${column.name} = row.get(Array<io.vertx.core.json.JsonObject>::class.java,$offset)")
+                    } else if (userType == "ltree") {
+                        out.tab(2)
+                            .println("val ${column.name} = row.get(Any::class.java,$offset)")
                     } else {
                         val accessName = getSqlClientAccessName(column.definedType)
                         out.tab(2)
@@ -765,7 +768,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                     out.tab(2).println("}")
                 } else {
                     val msg =
-                        "Omitting unrecognized type $javaType (${column.type.userType}) for column ${column.name} in table ${table.name}!"
+                        "Omitting unrecognized type $javaType ($userType) for column ${column.name} in table ${table.name}!"
                     LOG.warn(msg)
                     out.tab(2).println("// $msg")
                 }
