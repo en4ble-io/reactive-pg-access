@@ -14,14 +14,9 @@ import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.RowSet
 import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Transaction
-import org.jooq.Query
-import org.jooq.Record
-import org.jooq.SelectLimitStep
-import org.jooq.SelectOrderByStep
-import org.jooq.Table
+import org.jooq.*
 import org.slf4j.LoggerFactory
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 
 /** @author Mark Hofmann (mark@en4ble.io)
  */
@@ -60,7 +55,7 @@ object DaoHelper {
     suspend fun queryOne(query: Query, client: SqlClient, context: DatabaseContext): Row {
         val res = query(query, client, context)
         if (res.size() == 0) {
-            throw NoResultsException(getQueryForLogging(query))
+            throw NoResultsException(getQueryForLogging(query, context))
         }
         return res.first()
     }

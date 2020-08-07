@@ -12,14 +12,9 @@ import io.vertx.reactivex.sqlclient.Row
 import io.vertx.reactivex.sqlclient.RowSet
 import io.vertx.reactivex.sqlclient.SqlClient
 import io.vertx.reactivex.sqlclient.Transaction
-import org.jooq.Query
-import org.jooq.Record
-import org.jooq.SelectLimitStep
-import org.jooq.SelectOrderByStep
-import org.jooq.Table
+import org.jooq.*
 import org.slf4j.LoggerFactory
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 
 /** @author Mark Hofmann (mark@en4ble.io)
  */
@@ -51,7 +46,7 @@ object RxDaoHelper {
         return query(query, client, context)
             .map {
                 if (it.size() == 0) {
-                    throw NoResultsException(getQueryForLogging(query))
+                    throw NoResultsException(getQueryForLogging(query, context))
                 }
                 it.iterator().next()
             }

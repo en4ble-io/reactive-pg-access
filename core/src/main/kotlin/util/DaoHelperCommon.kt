@@ -10,16 +10,10 @@ import io.en4ble.pgaccess.enumerations.TypedEnum
 import io.vertx.core.json.Json
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.Tuple
-import org.jooq.Condition
-import org.jooq.Field
-import org.jooq.Query
-import org.jooq.Record
-import org.jooq.SelectForUpdateStep
-import org.jooq.SelectLimitStep
-import org.jooq.SortField
-import org.jooq.Table
+import org.jooq.*
 import org.slf4j.LoggerFactory
-import java.util.UUID
+import java.util.*
+import kotlin.collections.HashMap
 
 /** @author Mark Hofmann (mark@en4ble.io)
  */
@@ -28,8 +22,8 @@ internal object DaoHelperCommon {
     private val LOG by lazy { LoggerFactory.getLogger(DaoHelperCommon::class.java) }
     private val MAPPERS = HashMap<String, ObjectMapper>()
 
-    fun getQueryForLogging(query: Query): String {
-        return getQueryForLogging(query.sql, JooqHelper.params(query))
+    fun getQueryForLogging(query: Query, context: DatabaseContext?): String {
+        return getQueryForLogging(getSql(query, context), JooqHelper.params(query))
     }
 
     fun getQueryForLogging(sql: String, params: Tuple): String {
