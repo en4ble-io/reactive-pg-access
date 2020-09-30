@@ -41,7 +41,12 @@ protected constructor(
     protected val sqlClient: SqlClient = context.sqlClient
 
     protected open fun <ID> primaryKeyField(): TableField<RECORD, ID>? {
-        return table().primaryKey.fields[0] as TableField<RECORD, ID>
+        val primaryKeyFields = table().primaryKey?.fields
+        if (primaryKeyFields.isNullOrEmpty()) {
+            return null
+        }
+        val firstIdField = primaryKeyFields[0]
+        return if (firstIdField == null) null else firstIdField as TableField<RECORD, ID>
     }
 
     protected open fun table(): Table<RECORD> {
@@ -431,7 +436,12 @@ protected constructor(
         baseId: ID?
     ): SelectSeekStepN<Record> {
         val idField = primaryKeyField<ID>()
-            ?: throw RuntimeException("The read page query requires a primary key field in the table/view " + table().name)
+            ?: throw RuntimeException("The read page query requires a primary key field in the table/view ${table().name}.\n" +
+                " Either add a primary key to the table or override the function primaryKeyField() in ${this.javaClass.name} to return the desired primary key field of the view\n" +
+                " example:\n" +
+                "    override fun <ID> primaryKeyField(): TableField<ProfileListRecord, ID>? {\n" +
+                "        return ProfileList.PROFILE_LIST.ID as TableField<ProfileListRecord, ID>\n" +
+                "    }")
         val baseSelect = dsl.select().from(table())
         val select =
             if (condition != null) {
