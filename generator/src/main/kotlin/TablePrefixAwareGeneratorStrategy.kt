@@ -1,5 +1,6 @@
 package io.en4ble.pgaccess.generator
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.en4ble.pgaccess.generator.JooqGeneratorUtils.getColumnNameWithoutTablePrefix
 import org.jooq.codegen.GeneratorStrategy
 import org.jooq.meta.CatalogDefinition
@@ -7,12 +8,30 @@ import org.jooq.meta.Definition
 import org.jooq.meta.SchemaDefinition
 import org.jooq.meta.TypedElementDefinition
 import org.jooq.tools.StringUtils
+import java.io.File
 import java.io.Serializable
-import java.util.Arrays
 
 /** @author Mark Hofmann (mark@en4ble.io)
  */
 open class TablePrefixAwareGeneratorStrategy : VertxGeneratorStrategy() {
+
+    private val interfaceMappings by lazy {
+        val projectDir = System.getProperty("projectDir")
+        println("####### $projectDir")
+        val file = File("$projectDir/jooq/", "interfaces.json")
+        println("File: ${file.absolutePath}")
+        val jsonString = if (file.exists()) file.readText() else null
+//        val jsonString = javaClass.getResourceAsStream("/jooq/interfaces.json")?.bufferedReader().use { it?.readText() }
+        println("json: $jsonString")
+        if (jsonString != null) {
+            val mapper = ObjectMapper()
+            mapper.readValue(jsonString, Interfaces::class.java).list?.map { it.table to it.type }?.toMap()
+                ?: emptyMap()
+        } else {
+            emptyMap()
+        }
+    }
+
     /**
      * Override this to specifiy what identifiers in Java should look like. This will just take the
      * identifier as defined in the database.
@@ -66,21 +85,16 @@ open class TablePrefixAwareGeneratorStrategy : VertxGeneratorStrategy() {
      * TableRecords, UDTRecords, and POJOs. This example will name setters "set[NAME_IN_DATABASE]"
      */
     override fun getJavaSetterName(definition: Definition, mode: GeneratorStrategy.Mode): String {
-        var plvyOutputName = getCustomOutputName(definition)
-        //        plvyOutputName = Character.toUpperCase(plvyOutputName.charAt(0)) +
-        // plvyOutputName.substring(1);
-        plvyOutputName = StringUtils.toCamelCase(plvyOutputName)
-        return "set$plvyOutputName"
+        var outputName = getCustomOutputName(definition)
+        outputName = StringUtils.toCamelCase(outputName)
+        return "set$outputName"
     }
 
     /** Just like setters...  */
     override fun getJavaGetterName(definition: Definition, mode: GeneratorStrategy.Mode): String {
-
-        var plvyOutputName = getCustomOutputName(definition)
-        plvyOutputName = StringUtils.toCamelCase(plvyOutputName)
-        //        plvyOutputName = Character.toUpperCase(plvyOutputName.charAt(0)) +
-        // plvyOutputName.substring(1);
-        return "get$plvyOutputName"
+        var outputName = getCustomOutputName(definition)
+        outputName = StringUtils.toCamelCase(outputName)
+        return "get$outputName"
     }
 
     /**
@@ -104,11 +118,11 @@ open class TablePrefixAwareGeneratorStrategy : VertxGeneratorStrategy() {
 
     private fun getJavaClassName0(definition: Definition, mode: GeneratorStrategy.Mode): String {
         val result = StringBuilder()
-        val plvyOutputName = getCustomOutputName(definition)
+        val outputName = getCustomOutputName(definition)
         // [#4562] Some characters should be treated like underscore
         result.append(
             StringUtils.toCamelCase(
-                plvyOutputName.replace(' ', '_').replace('-', '_').replace('.', '_')
+                outputName.replace(' ', '_').replace('-', '_').replace('.', '_')
             )
         )
 
@@ -160,10 +174,19 @@ open class TablePrefixAwareGeneratorStrategy : VertxGeneratorStrategy() {
      */
     override fun getJavaClassImplements(definition: Definition, mode: GeneratorStrategy.Mode): List<String> {
         return if (mode == GeneratorStrategy.Mode.POJO) {
-            Arrays.asList(
+            val interfaceDef = interfaceMappings[definition.name]
+            println("############ ")
+            println(interfaceMappings.values)
+            println("## ${definition.name}")
+            println("############ ")
+            val interfaces = mutableListOf(
                 Serializable::class.java.name, Cloneable::class.java.name
             )
-        } else Arrays.asList(Serializable::class.java.name, Cloneable::class.java.name)
+            if (interfaceDef != null) {
+                interfaces.add(interfaceDef)
+            }
+            interfaces
+        } else listOf(Serializable::class.java.name, Cloneable::class.java.name)
     }
 
     /**
@@ -192,4 +215,7 @@ open class TablePrefixAwareGeneratorStrategy : VertxGeneratorStrategy() {
             null
         } // [#2089] Intercept default schema
     }
+
+    private data class Interfaces(val list: List<InterfaceMapping>? = null)
+    private data class InterfaceMapping(val table: String? = null, val type: String? = null)
 }

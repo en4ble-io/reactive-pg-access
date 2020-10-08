@@ -1036,6 +1036,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 out.tab(2).println("val $javaMemberName = row.get$typeName($offset)")
                 out.tab(2).println("if($javaMemberName != null) {")
                 out.tab(3).println("dto.$setter(*$javaMemberName)")
+//                out.tab(3).println("dto.$setter($javaMemberName)")
                 out.tab(2).println("}")
             } else {
                 out.tab(2).println("dto.$setter(row.get$typeName($offset))")
