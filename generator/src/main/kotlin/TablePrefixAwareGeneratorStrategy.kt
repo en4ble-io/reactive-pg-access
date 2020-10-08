@@ -175,10 +175,10 @@ open class TablePrefixAwareGeneratorStrategy : VertxGeneratorStrategy() {
     override fun getJavaClassImplements(definition: Definition, mode: GeneratorStrategy.Mode): List<String> {
         return if (mode == GeneratorStrategy.Mode.POJO) {
             val interfaceDef = interfaceMappings[definition.name]
-            println("############ ")
-            println(interfaceMappings.values)
-            println("## ${definition.name}")
-            println("############ ")
+//            println("############ ")
+//            println(interfaceMappings.values)
+//            println("## ${definition.name}")
+//            println("############ ")
             val interfaces = mutableListOf(
                 Serializable::class.java.name, Cloneable::class.java.name
             )
