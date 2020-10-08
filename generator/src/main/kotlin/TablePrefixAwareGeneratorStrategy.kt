@@ -17,12 +17,11 @@ open class TablePrefixAwareGeneratorStrategy : VertxGeneratorStrategy() {
 
     private val interfaceMappings by lazy {
         val projectDir = System.getProperty("projectDir")
-        println("####### $projectDir")
+//        println("####### $projectDir")
         val file = File("$projectDir/jooq/", "interfaces.json")
-        println("File: ${file.absolutePath}")
+//        println("File: ${file.absolutePath}")
         val jsonString = if (file.exists()) file.readText() else null
-//        val jsonString = javaClass.getResourceAsStream("/jooq/interfaces.json")?.bufferedReader().use { it?.readText() }
-        println("json: $jsonString")
+//        println("json: $jsonString")
         if (jsonString != null) {
             val mapper = ObjectMapper()
             mapper.readValue(jsonString, Interfaces::class.java).list?.map { it.table to it.type }?.toMap()
