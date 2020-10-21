@@ -190,7 +190,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             defaultValue = null
         }
 
-        if (format == "email" || columnName.toLowerCase().contains("email")) {
+        if (format == "email" || columnName.toLowerCase().endsWith("email")) {
             out.tab(1).println("@javax.validation.constraints.Email")
             format = "email"
         }
