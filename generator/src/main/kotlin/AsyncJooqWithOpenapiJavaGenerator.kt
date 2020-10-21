@@ -118,9 +118,11 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             }
 
             val primaryKey = column.primaryKey
-            if ((primaryKey != null && primaryKey.isPrimaryKey) // mark primary key fields as read only
-                || comment.contains("{{readOnly}}")
-            ) {
+//            if ((primaryKey != null && primaryKey.isPrimaryKey) // mark primary key fields as read only
+//                || comment.contains("{{readOnly}}")
+            // --> too restrictive, better use readonly or generated annotation on the primary keys
+            //     in some cases pk values are set by the frontend.
+            if (comment.contains("{{readOnly}}")) {
                 accessMode = "READ_ONLY"
                 comment = comment.replace("{{readOnly}}", "")
             }
@@ -1213,23 +1215,29 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             val fullJavaTableName = getFullJavaTableName(table)
             if (comment != null && comment.contains("{{view}}")) {
                 out.tab(2).println(
-                    "mappers[$fullJavaTableName] = $mapperPackage.${getMapperName(
-                        table,
-                        PojoType.VIEW
-                    )}.instance()"
+                    "mappers[$fullJavaTableName] = $mapperPackage.${
+                        getMapperName(
+                            table,
+                            PojoType.VIEW
+                        )
+                    }.instance()"
                 )
             } else {
                 out.tab(2).println(
-                    "mappers[$fullJavaTableName] = $mapperPackage.${getMapperName(
-                        table,
-                        PojoType.DTO
-                    )}.instance()"
+                    "mappers[$fullJavaTableName] = $mapperPackage.${
+                        getMapperName(
+                            table,
+                            PojoType.DTO
+                        )
+                    }.instance()"
                 )
                 out.tab(2).println(
-                    "mappers[$fullJavaTableName] = $mapperPackage.${getMapperName(
-                        table,
-                        PojoType.FORM
-                    )}.instance()"
+                    "mappers[$fullJavaTableName] = $mapperPackage.${
+                        getMapperName(
+                            table,
+                            PojoType.FORM
+                        )
+                    }.instance()"
                 )
             }
         }
