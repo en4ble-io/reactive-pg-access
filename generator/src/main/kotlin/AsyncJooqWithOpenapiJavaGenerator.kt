@@ -190,7 +190,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             defaultValue = null
         }
 
-        if (format == "email" || columnName.toLowerCase().contains("email")) {
+        if (format == "email" || columnName.toLowerCase().endsWith("email")) {
             out.tab(1).println("@javax.validation.constraints.Email")
             format = "email"
         }
@@ -1510,9 +1510,13 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         }
         out.tab(1).println(")")
 
+        out.tab(1).println("private fun getOrderFieldNames(): List<String> {")
+        out.tab(2).println("    return dbFieldMap.filterNot { it.value.name.startsWith(\"internal_\") || it.key==\"id\" }.map { it.key }")
+        out.tab(1).println("}")
+
         out.tab(1).println("override fun getDbField(dtoField: String): org.jooq.Field<*> {")
         out.tab(1)
-            .println("return dbFieldMap[dtoField] ?: throw javax.validation.ValidationException(\"Unknown field \$dtoField\")")
+            .println("return dbFieldMap[dtoField] ?: throw javax.validation.ValidationException(\"Order field '\$dtoField' does not exist, must be one of \"+getOrderFieldNames().joinToString(\",\"))")
         out.tab(1).println("}")
     }
 
