@@ -1516,7 +1516,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
 
         out.tab(1).println("override fun getDbField(dtoField: String): org.jooq.Field<*> {")
         out.tab(1)
-            .println("return dbFieldMap[dtoField] ?: throw javax.validation.ValidationException(\"Order field '\$dtoField' does not exist, must be one of \"+getOrderFieldNames().joinToString(\",\"))")
+            .println("return dbFieldMap[dtoField] ?: throw javax.validation.ValidationException(\"orderBy field '\$dtoField' does not exist, must be one of \"+getOrderFieldNames().joinToString(\",\"))")
         out.tab(1).println("}")
     }
 
