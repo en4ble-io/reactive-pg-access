@@ -61,10 +61,14 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         pojoType: PojoType?
     ) {
         super.printTableJPAAnnotation(out, table, pojoType)
-        var comment = table.comment?.replace("{{view}}", "") ?: table.comment ?: ""
-        val nameValuePair = parseCommentWithValue("name", comment)
-        comment = nameValuePair.first
-        val nameValue = nameValuePair.second
+        var comment = table.comment?.replace("{{view}}", "") ?: table.comment
+        val nameValue = if (comment.isNullOrBlank()) {
+            null
+        } else {
+            val nameValuePair = parseCommentWithValue("name", comment)
+            comment = nameValuePair.first
+            nameValuePair.second
+        }
         val name = if (nameValue.isNullOrBlank()) {
             getPojoName(table, pojoType ?: PojoType.DTO)
         } else {
