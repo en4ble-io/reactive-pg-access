@@ -37,7 +37,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         println("  (note: if you want to use readPage / seek queries only, you need to override the primaryKeyField() method in your DAO to return the ID column of the view)")
 //        println("comment contains {{viewId=<string>}} - The field to be used as primary key in views - optional, required for readPage / seek queries only.")
         println("In column definitions:")
-        println("comment contains {{name=<string>}} - sets the json name of the table or property.")
+        println("comment contains {{name=<string>}} - sets the name value the table or property in the OpenApi @Schema annotation.")
         println("comment contains {{example=<string>}} - sets the example value of the property in the OpenApi @Schema annotation.")
         println("comment contains {{min=<int>}} - generates @javax.validation.constraints.Min(<int>) and  @Schema(minimum = \"<int>\")")
         println("comment contains {{max=<int>}} - generates @javax.validation.constraints.Max(<int>) and  @Schema(maximum = \"<int>\")")
@@ -61,8 +61,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         pojoType: PojoType?
     ) {
         super.printTableJPAAnnotation(out, table, pojoType)
-
-        var comment = table.comment?.replace("{{view}}", "") ?: table.comment
+        var comment = table.comment?.replace("{{view}}", "") ?: table.comment ?: ""
         val nameValuePair = parseCommentWithValue("name", comment)
         comment = nameValuePair.first
         val nameValue = nameValuePair.second
