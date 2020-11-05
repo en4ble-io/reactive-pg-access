@@ -230,7 +230,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         } else {
             printSchemaAnnotation(
                 out,
-                propertyName,
+                nameValue,
                 comment,
                 format,
                 isArray,
