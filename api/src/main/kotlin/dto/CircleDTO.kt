@@ -8,4 +8,4 @@ import javax.validation.constraints.NotNull
  *
  * @author Mark Hofmann (mark@en4ble.io)
  */
-data class CircleDTO(@NotNull var centre: PointDTO? = null, @NotNull var radius: Double = 0.0) : Serializable
+data class CircleDTO(@get:NotNull var centre: PointDTO? = null, @get:NotNull var radius: String? = null) : Serializable

@@ -8,5 +8,5 @@ import javax.validation.constraints.NotNull
  *
  * @author Mark Hofmann (mark@en4ble.io)
  */
-data class BoxDTO(@NotNull var ne: PointDTO? = null, @NotNull var sw: PointDTO? = null) :
+data class BoxDTO(@get:NotNull var ne: PointDTO? = null, @get:NotNull var sw: PointDTO? = null) :
     Serializable

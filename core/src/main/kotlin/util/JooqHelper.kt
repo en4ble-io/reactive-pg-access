@@ -1,43 +1,19 @@
 package io.en4ble.pgaccess.util
 
-import io.en4ble.pgaccess.dto.BoxDTO
-import io.en4ble.pgaccess.dto.CircleDTO
-import io.en4ble.pgaccess.dto.IntervalDTO
-import io.en4ble.pgaccess.dto.LineDTO
-import io.en4ble.pgaccess.dto.LineSegmentDTO
-import io.en4ble.pgaccess.dto.PathDTO
-import io.en4ble.pgaccess.dto.PointDTO
-import io.en4ble.pgaccess.dto.PolygonDTO
+import io.en4ble.pgaccess.dto.*
 import io.en4ble.pgaccess.enumerations.TypedEnum
 import io.vertx.core.json.JsonArray
-import io.vertx.kotlin.pgclient.data.boxOf
-import io.vertx.kotlin.pgclient.data.circleOf
-import io.vertx.kotlin.pgclient.data.intervalOf
-import io.vertx.kotlin.pgclient.data.lineOf
-import io.vertx.kotlin.pgclient.data.lineSegmentOf
-import io.vertx.kotlin.pgclient.data.pathOf
-import io.vertx.kotlin.pgclient.data.polygonOf
-import io.vertx.pgclient.data.Box
-import io.vertx.pgclient.data.Circle
-import io.vertx.pgclient.data.Interval
-import io.vertx.pgclient.data.Line
-import io.vertx.pgclient.data.LineSegment
-import io.vertx.pgclient.data.Path
-import io.vertx.pgclient.data.Point
-import io.vertx.pgclient.data.Polygon
+import io.vertx.kotlin.pgclient.data.*
+import io.vertx.pgclient.data.*
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.RowSet
 import io.vertx.sqlclient.Tuple
-import org.jooq.Condition
-import org.jooq.Converter
-import org.jooq.Field
-import org.jooq.Param
-import org.jooq.Query
+import org.jooq.*
 import org.jooq.impl.DSL
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 /** @author Mark Hofmann (mark@en4ble.io)
  */
@@ -86,11 +62,11 @@ object JooqHelper {
         }
         return when (value) {
             is PointDTO -> getPoint(value)
-            is LineDTO -> lineOf(value.a, value.b, value.c)
+            is LineDTO -> lineOf(value.a?.toDouble(), value.b?.toDouble(), value.c?.toDouble())
             is LineSegmentDTO -> lineSegmentOf(getPoint(value.a), getPoint(value.b))
             is PolygonDTO -> polygonOf(value.points?.map { getPoint(it) })
             is PathDTO -> pathOf(value.isOpen, value.points?.map { getPoint(it) })
-            is CircleDTO -> circleOf(getPoint(value.centre), value.radius)
+            is CircleDTO -> circleOf(getPoint(value.centre), value.radius?.toDouble())
             is BoxDTO -> boxOf(getPoint(value.sw), getPoint(value.ne))
             is IntervalDTO -> intervalOf(
                 value.days,
@@ -182,7 +158,7 @@ object JooqHelper {
 
     fun getLineDTO(line: Line?): LineDTO? {
         if (line == null) return null
-        return LineDTO(line.a, line.b, line.c)
+        return LineDTO(line.a.toString(), line.b.toString(), line.c.toString())
     }
 
     fun getLineDTOs(lines: Array<Line>?): Array<LineDTO>? {
@@ -227,7 +203,7 @@ object JooqHelper {
 
     fun getCircleDTO(circle: Circle?): CircleDTO? {
         if (circle == null) return null
-        return CircleDTO(getPointDTO(circle.centerPoint), circle.radius)
+        return CircleDTO(getPointDTO(circle.centerPoint), circle.radius.toString())
     }
 
     fun getCircleDTOs(circles: Array<Circle>?): Array<CircleDTO>? {

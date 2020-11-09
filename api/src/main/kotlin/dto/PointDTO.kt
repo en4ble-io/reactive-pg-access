@@ -11,9 +11,7 @@ import javax.validation.constraints.NotEmpty
  * @author Mark Hofmann (mark@en4ble.io)
  */
 @Suppress("unused")
-data class PointDTO(@NotEmpty var x: String, @NotEmpty var y: String) : Serializable {
-
-    constructor() : this("0.0", "0.0")
+data class PointDTO(@get:NotEmpty var x: String = "0.0", @get:NotEmpty var y: String = "0.0") : Serializable {
 
     /**
      * Convenience method to get the x coordinate = longitude

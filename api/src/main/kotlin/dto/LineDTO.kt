@@ -7,4 +7,4 @@ import java.io.Serializable
  *
  * @author Mark Hofmann (mark@en4ble.io)
  */
-data class LineDTO(var a: Double = 0.0, var b: Double = 0.0, var c: Double = 0.0) : Serializable
+data class LineDTO(var a: String? = null, var b: String? = null, var c: String? = null) : Serializable

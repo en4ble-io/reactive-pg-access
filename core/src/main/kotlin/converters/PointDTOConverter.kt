@@ -18,11 +18,11 @@ class PointDTOConverter : Converter<Any, PointDTO> {
     }
 
     override fun to(position: PointDTO?): Any? {
-        if (position == null) {
+        if (position?.x == null || position.y == null) {
             return null
         }
 
-        return Point(position.x.toDouble(), position.y.toDouble())
+        return Point(position.x!!.toDouble(), position.y!!.toDouble())
     }
 
     override fun fromType(): Class<Any> {
