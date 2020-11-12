@@ -408,7 +408,7 @@ protected constructor(
         return map(res)
     }
 
-    private fun getReadPageQuery(
+    protected fun getReadPageQuery(
         condition: Condition,
         offset: Int,
         orderBy: List<OrderDTO>
@@ -417,10 +417,10 @@ protected constructor(
         return select.orderBy(getOrderByList(orderBy)).offset(offset)
     }
 
-    private fun getOrderByList(orderBy: List<OrderDTO>) =
+    protected fun getOrderByList(orderBy: List<OrderDTO>) =
         orderBy.map { order -> getOrderBy(order) }.toMutableList()
 
-    private fun getOrderBy(order: OrderDTO): SortField<*> {
+    protected fun getOrderBy(order: OrderDTO): SortField<*> {
         val sortDirection = order.direction
         val orderField = getDbField(order.field)
         return if (sortDirection === SortDirection.ASC)
