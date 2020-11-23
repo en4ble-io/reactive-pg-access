@@ -3,7 +3,6 @@ package io.en4ble.pgaccess.util
 import io.en4ble.pgaccess.dto.*
 import io.en4ble.pgaccess.enumerations.TypedEnum
 import io.vertx.core.json.JsonArray
-import io.vertx.kotlin.pgclient.data.*
 import io.vertx.pgclient.data.*
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.RowSet
@@ -62,13 +61,13 @@ object JooqHelper {
         }
         return when (value) {
             is PointDTO -> getPoint(value)
-            is LineDTO -> lineOf(value.a?.toDouble(), value.b?.toDouble(), value.c?.toDouble())
-            is LineSegmentDTO -> lineSegmentOf(getPoint(value.a), getPoint(value.b))
-            is PolygonDTO -> polygonOf(value.points?.map { getPoint(it) })
-            is PathDTO -> pathOf(value.isOpen, value.points?.map { getPoint(it) })
-            is CircleDTO -> circleOf(getPoint(value.centre), value.radius?.toDouble())
-            is BoxDTO -> boxOf(getPoint(value.sw), getPoint(value.ne))
-            is IntervalDTO -> intervalOf(
+            is LineDTO -> Line(value.a!!.toDouble(), value.b!!.toDouble(), value.c!!.toDouble())
+            is LineSegmentDTO -> LineSegment(getPoint(value.a), getPoint(value.b))
+            is PolygonDTO -> Polygon(value.points?.map { getPoint(it) })
+            is PathDTO -> Path(value.isOpen, value.points?.map { getPoint(it) })
+            is CircleDTO -> Circle(getPoint(value.centre), value.radius!!.toDouble())
+            is BoxDTO -> Box(getPoint(value.sw), getPoint(value.ne))
+            is IntervalDTO -> Interval(
                 value.days,
                 value.hours,
                 value.microseconds,

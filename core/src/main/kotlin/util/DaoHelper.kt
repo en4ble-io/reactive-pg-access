@@ -8,12 +8,10 @@ import io.en4ble.pgaccess.util.DaoHelperCommon.getQueryForLogging
 import io.en4ble.pgaccess.util.DaoHelperCommon.getSortFields
 import io.en4ble.pgaccess.util.DaoHelperCommon.getSql
 import io.en4ble.pgaccess.util.JooqHelper.toUUIDList
-import io.vertx.kotlin.sqlclient.preparedQueryAwait
-import io.vertx.kotlin.sqlclient.queryAwait
+import io.vertx.kotlin.coroutines.await
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.RowSet
 import io.vertx.sqlclient.SqlClient
-import io.vertx.sqlclient.Transaction
 import org.jooq.*
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -137,7 +135,7 @@ object DaoHelper {
         update: Boolean
     ): RowSet<Row> {
         val sql = getSql(query, context)
-        val inTx = if (client is Transaction) {
+        val inTx = if (context.inTransaction) {
             "[Tx]"
         } else {
             "[NoTx]"
@@ -149,7 +147,7 @@ object DaoHelper {
             if (LOG.isTraceEnabled) {
                 LOG.trace("{} about to run {}: {}", inTx, if (update) "update" else "query", sql)
             }
-            client.queryAwait(sql)
+            client.query(sql).execute().await()
         } else {
             val params = JooqHelper.params(query)
             if (LOG.isTraceEnabled) {
@@ -160,11 +158,12 @@ object DaoHelper {
                     getQueryForLogging(sql, params)
                 )
             }
-            client.preparedQueryAwait(sql, params)
+            client.preparedQuery(sql).execute(params).await()
         }
         if (LOG.isTraceEnabled) {
             LOG.trace("{} query returned {} results", inTx, result.size())
         }
         return result
     }
+
 }

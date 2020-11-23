@@ -8,12 +8,12 @@ import io.en4ble.pgaccess.dto.PagingDTO
 import io.en4ble.pgaccess.enumerations.SortDirection
 import io.en4ble.pgaccess.enumerations.TypedEnum
 import io.vertx.core.json.Json
+import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.Tuple
 import org.jooq.*
 import org.slf4j.LoggerFactory
 import java.util.*
-import kotlin.collections.HashMap
 
 /** @author Mark Hofmann (mark@en4ble.io)
  */
@@ -132,7 +132,7 @@ internal object DaoHelperCommon {
 
     fun <DTO> list(row: Row, i: Int, type: Class<DTO>): List<DTO>? {
         val json = row.getString(i) ?: return null
-        val mapper = Json.mapper
+        val mapper = DatabindCodec.mapper()
         return mapper.readValue<List<DTO>>(
             json, mapper.typeFactory.constructCollectionType(List::class.java, type)
         )

@@ -3,14 +3,14 @@
 package io.en4ble.pgaccess
 
 import io.reactivex.Single
-import io.vertx.kotlin.sqlclient.beginAwait
+import io.vertx.kotlin.coroutines.await
 import io.vertx.pgclient.PgConnectOptions
 import io.vertx.pgclient.PgPool
 import io.vertx.pgclient.SslMode
 import io.vertx.reactivex.core.Vertx
 import io.vertx.reactivex.sqlclient.SqlClient
-import io.vertx.reactivex.sqlclient.Transaction
 import io.vertx.sqlclient.PoolOptions
+import io.vertx.sqlclient.Transaction
 import org.jooq.Configuration
 import org.jooq.SQLDialect
 import org.jooq.impl.CatalogImpl
@@ -30,6 +30,8 @@ open class DatabaseContext(
     private val LOG by lazy { LoggerFactory.getLogger(DatabaseContext::class.java) }
     val dsl = DSL.using(SQLDialect.POSTGRES)!!
     val sqlClient: SqlClient
+    var inTransaction = false
+        private set
 
     constructor(vertx: Vertx, config: DatabaseConfig) : this(vertx, config, null)
     constructor(config: DatabaseConfig) : this(null, config)
@@ -85,12 +87,59 @@ open class DatabaseContext(
         }
     }
 
-    fun rxCreateTx(): Single<Transaction> {
-        return (sqlClient as io.vertx.reactivex.pgclient.PgPool).rxBegin()
+    fun rxBeginTx(): Single<io.vertx.reactivex.sqlclient.Transaction> {
+        checkForExistingTx()
+        inTransaction = true
+        return (sqlClient as io.vertx.reactivex.pgclient.PgPool).rxGetConnection().flatMap { it.rxBegin() }
     }
 
-    suspend fun createTx(): io.vertx.sqlclient.Transaction {
-        return (sqlClient.delegate as PgPool).beginAwait()
+    suspend fun beginTx(): Transaction {
+        checkForExistingTx()
+        logBeginTx()
+        inTransaction = true
+        return (sqlClient.delegate as PgPool).connection.await().begin().await()
+    }
+
+    suspend fun commitTx(transaction: Transaction) {
+        logCommitTx()
+        inTransaction = false
+        transaction.commit().await()
+    }
+
+    suspend fun rollbackTx(transaction: Transaction) {
+        logRollbackTx()
+        inTransaction = false
+        transaction.rollback().await()
+    }
+
+    fun rxCommitTx(transaction: io.vertx.reactivex.sqlclient.Transaction) {
+        logCommitTx()
+        inTransaction = false
+        transaction.commit()
+    }
+
+    fun rxRollbackTx(transaction: io.vertx.reactivex.sqlclient.Transaction) {
+        logRollbackTx()
+        inTransaction = false
+        transaction.rollback()
+    }
+
+    private fun checkForExistingTx() {
+        if (inTransaction) {
+            LOG.info("Context is already in a transaction, please make sure you call one of the commit/rollback functions before starting a new tx.")
+        }
+    }
+
+    private fun logBeginTx() {
+        LOG.debug("Beginning new transaction")
+    }
+
+    private fun logCommitTx() {
+        LOG.debug("Commiting transaction")
+    }
+    
+    private fun logRollbackTx() {
+        LOG.debug("Rolling back transaction")
     }
 
     // --------------------------------------------------------------------------------------------------------

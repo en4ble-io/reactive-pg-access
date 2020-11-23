@@ -146,7 +146,7 @@ object RxDaoHelper {
             if (LOG.isTraceEnabled) {
                 LOG.trace("{} about to run {}: {}", inTx, if (update) "update" else "query", sql)
             }
-            client.rxQuery(sql)
+            client.query(sql).rxExecute()
         } else {
             val params = JooqHelper.rxParams(query)
             if (LOG.isTraceEnabled) {
@@ -157,7 +157,7 @@ object RxDaoHelper {
                     getQueryForLogging(sql, params.delegate)
                 )
             }
-            client.rxPreparedQuery(sql, params)
+            client.preparedQuery(sql).rxExecute(params)
         }.doOnError {
             LOG.error(it.message, it)
             throw it
