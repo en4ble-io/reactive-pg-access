@@ -5,7 +5,7 @@ package io.en4ble.pgaccess.dto
  * @author Mark Hofmann (mark@en4ble.io)
  */
 @Suppress("unused")
-@Deprecated("use PageDTO - needs refactoring") // TODO refactor read queries for PageDTO
+// @Deprecated("use PageDTO - needs refactoring") // TODO refactor read queries for PageDTO
 class PagingDTO constructor(var offset: Int = 0, var orderBy: List<OrderDTO>? = null) {
     var numberOfRows: Int? = null
 

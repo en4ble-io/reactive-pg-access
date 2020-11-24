@@ -11,7 +11,7 @@ import io.reactivex.Single
 import io.vertx.reactivex.sqlclient.Row
 import io.vertx.reactivex.sqlclient.RowSet
 import io.vertx.reactivex.sqlclient.SqlClient
-import io.vertx.reactivex.sqlclient.Transaction
+import io.vertx.reactivex.sqlclient.SqlConnection
 import org.jooq.*
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -134,7 +134,8 @@ object RxDaoHelper {
         update: Boolean
     ): Single<RowSet<Row>> {
         val sql = DaoHelperCommon.getSql(query, context)
-        val inTx = if (client is Transaction) {
+        // TODO: this is not exactly true, in vert.x 3.x it used to be a check on Transaction but it's not a superclass of SqlClient anymore.
+        val inTx = if (client is SqlConnection) {
             "[Tx]"
         } else {
             "[NoTx]"

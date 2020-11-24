@@ -10,6 +10,7 @@ import io.vertx.pgclient.SslMode
 import io.vertx.reactivex.core.Vertx
 import io.vertx.reactivex.sqlclient.SqlClient
 import io.vertx.sqlclient.PoolOptions
+import io.vertx.sqlclient.SqlConnection
 import io.vertx.sqlclient.Transaction
 import org.jooq.Configuration
 import org.jooq.SQLDialect
@@ -30,8 +31,6 @@ open class DatabaseContext(
     private val LOG by lazy { LoggerFactory.getLogger(DatabaseContext::class.java) }
     val dsl = DSL.using(SQLDialect.POSTGRES)!!
     val sqlClient: SqlClient
-    var inTransaction = false
-        private set
 
     constructor(vertx: Vertx, config: DatabaseConfig) : this(vertx, config, null)
     constructor(config: DatabaseConfig) : this(null, config)
@@ -87,46 +86,53 @@ open class DatabaseContext(
         }
     }
 
-    fun rxBeginTx(): Single<io.vertx.reactivex.sqlclient.Transaction> {
-        checkForExistingTx()
-        inTransaction = true
-        return (sqlClient as io.vertx.reactivex.pgclient.PgPool).rxGetConnection().flatMap { it.rxBegin() }
+    fun rxBeginTx(): Single<Pair<io.vertx.reactivex.sqlclient.SqlConnection, io.vertx.reactivex.sqlclient.Transaction>> {
+        return (sqlClient as io.vertx.reactivex.pgclient.PgPool).rxGetConnection()
+            .flatMap { connection ->
+                connection.rxBegin()
+                    .map { connection to it }
+            }
     }
 
-    suspend fun beginTx(): Transaction {
-        checkForExistingTx()
+    suspend fun beginTx(): Pair<SqlConnection, Transaction> {
         logBeginTx()
-        inTransaction = true
-        return (sqlClient.delegate as PgPool).connection.await().begin().await()
+        val connection = (sqlClient.delegate as PgPool).connection.await()
+        return connection to connection.begin().await()
     }
 
-    suspend fun commitTx(transaction: Transaction) {
+    suspend fun commitTx(connection: SqlConnection, transaction: Transaction) {
         logCommitTx()
-        inTransaction = false
-        transaction.commit().await()
+        try {
+            transaction.commit().await()
+        } finally {
+            connection.close().await()
+        }
     }
 
-    suspend fun rollbackTx(transaction: Transaction) {
+    suspend fun rollbackTx(connection: SqlConnection, transaction: Transaction) {
         logRollbackTx()
-        inTransaction = false
-        transaction.rollback().await()
+        try {
+            transaction.rollback().await()
+        } finally {
+            connection.close().await()
+        }
     }
 
-    fun rxCommitTx(transaction: io.vertx.reactivex.sqlclient.Transaction) {
+    fun commitTx(connection: io.vertx.reactivex.sqlclient.SqlConnection, transaction: io.vertx.reactivex.sqlclient.Transaction) {
         logCommitTx()
-        inTransaction = false
-        transaction.commit()
+        try {
+            transaction.commit()
+        } finally {
+            connection.close()
+        }
     }
 
-    fun rxRollbackTx(transaction: io.vertx.reactivex.sqlclient.Transaction) {
+    fun rollbackTx(connection: io.vertx.reactivex.sqlclient.SqlConnection, transaction: io.vertx.reactivex.sqlclient.Transaction) {
         logRollbackTx()
-        inTransaction = false
-        transaction.rollback()
-    }
-
-    private fun checkForExistingTx() {
-        if (inTransaction) {
-            LOG.info("Context is already in a transaction, please make sure you call one of the commit/rollback functions before starting a new tx.")
+        try {
+            transaction.rollback()
+        } finally {
+            connection.close()
         }
     }
 
@@ -137,20 +143,20 @@ open class DatabaseContext(
     private fun logCommitTx() {
         LOG.debug("Commiting transaction")
     }
-    
+
     private fun logRollbackTx() {
         LOG.debug("Rolling back transaction")
     }
 
-    // --------------------------------------------------------------------------------------------------------
-    // -- Transaction handler methods
-    // NOTE: these methods use the vertx context to store the current transaction
-    //  I'm not sure if this is working as expected, e.g if multiple REST calls access the database will
-    //  they use different contexts and therefore also different transactions?
-    //  In any case, anything put into the context stays there, even after the event completes
-    //  (if the tx is not removed after a completed call it's still there on the next call)
-    //
-    //  An alternative solution could be to use Kotlins Coroutine Context, but it's not clear how to add values to it.
+// --------------------------------------------------------------------------------------------------------
+// -- Transaction handler methods
+// NOTE: these methods use the vertx context to store the current transaction
+//  I'm not sure if this is working as expected, e.g if multiple REST calls access the database will
+//  they use different contexts and therefore also different transactions?
+//  In any case, anything put into the context stays there, even after the event completes
+//  (if the tx is not removed after a completed call it's still there on the next call)
+//
+//  An alternative solution could be to use Kotlins Coroutine Context, but it's not clear how to add values to it.
 
 //    fun rxBeginTx(): Single<Boolean> {
 //        val (ctx, tx) = getRxCtxTx()

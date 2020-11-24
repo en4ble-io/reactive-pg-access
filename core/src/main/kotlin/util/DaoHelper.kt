@@ -9,6 +9,7 @@ import io.en4ble.pgaccess.util.DaoHelperCommon.getSortFields
 import io.en4ble.pgaccess.util.DaoHelperCommon.getSql
 import io.en4ble.pgaccess.util.JooqHelper.toUUIDList
 import io.vertx.kotlin.coroutines.await
+import io.vertx.reactivex.sqlclient.SqlConnection
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.RowSet
 import io.vertx.sqlclient.SqlClient
@@ -135,7 +136,8 @@ object DaoHelper {
         update: Boolean
     ): RowSet<Row> {
         val sql = getSql(query, context)
-        val inTx = if (context.inTransaction) {
+        // TODO: this is not exactly true, in vert.x 3.x it used to be a check on Transaction but it's not a superclass of SqlClient anymore.
+        val inTx = if (client is SqlConnection) {
             "[Tx]"
         } else {
             "[NoTx]"
