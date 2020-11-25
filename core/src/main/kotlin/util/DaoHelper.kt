@@ -145,27 +145,32 @@ object DaoHelper {
         if (LOG.isTraceEnabled) {
             LOG.trace("{} about to run {}", inTx, sql)
         }
-        val result = if (query.bindValues.isEmpty()) {
-            if (LOG.isTraceEnabled) {
-                LOG.trace("{} about to run {}: {}", inTx, if (update) "update" else "query", sql)
+        try {
+            val result = if (query.bindValues.isEmpty()) {
+                if (LOG.isTraceEnabled) {
+                    LOG.trace("{} about to run {}: {}", inTx, if (update) "update" else "query", sql)
+                }
+                client.query(sql).execute().await()
+            } else {
+                val params = JooqHelper.params(query)
+                if (LOG.isTraceEnabled) {
+                    LOG.trace(
+                        "{} about to run {}: {}",
+                        inTx,
+                        if (update) "update" else "query",
+                        getQueryForLogging(sql, params)
+                    )
+                }
+                client.preparedQuery(sql).execute(params).await()
             }
-            client.query(sql).execute().await()
-        } else {
-            val params = JooqHelper.params(query)
             if (LOG.isTraceEnabled) {
-                LOG.trace(
-                    "{} about to run {}: {}",
-                    inTx,
-                    if (update) "update" else "query",
-                    getQueryForLogging(sql, params)
-                )
+                LOG.trace("{} query returned {} results", inTx, result.size())
             }
-            client.preparedQuery(sql).execute(params).await()
+            return result
+        } catch (e: Exception) {
+            LOG.error("${e.message}\nsql: $sql", e)
+            throw e
         }
-        if (LOG.isTraceEnabled) {
-            LOG.trace("{} query returned {} results", inTx, result.size())
-        }
-        return result
     }
 
 }

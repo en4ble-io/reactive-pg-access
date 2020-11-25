@@ -160,7 +160,7 @@ object RxDaoHelper {
             }
             client.preparedQuery(sql).rxExecute(params)
         }.doOnError {
-            LOG.error(it.message, it)
+            LOG.error("${it.message}\nsql: $sql", it)
             throw it
         }.map {
             if (LOG.isTraceEnabled) {
