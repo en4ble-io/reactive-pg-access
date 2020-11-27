@@ -140,25 +140,26 @@ object RxDaoHelper {
         } else {
             "[NoTx]"
         }
-        if (LOG.isTraceEnabled) {
-            LOG.trace("{} about to run {}", inTx, sql)
-        }
         return if (query.bindValues.isEmpty()) {
             if (LOG.isTraceEnabled) {
                 LOG.trace("{} about to run {}: {}", inTx, if (update) "update" else "query", sql)
             }
             client.query(sql).rxExecute()
         } else {
-            val params = JooqHelper.rxParams(query)
-            if (LOG.isTraceEnabled) {
-                LOG.trace(
-                    "{} about to run {}: {}",
-                    inTx,
-                    if (update) "update" else "query",
-                    getQueryForLogging(sql, params.delegate)
-                )
+            if (context.config.preparedStatements) {
+                val params = JooqHelper.rxParams(query)
+                if (LOG.isTraceEnabled) {
+                    LOG.trace(
+                        "{} about to run {}: {}",
+                        inTx,
+                        if (update) "update" else "query",
+                        getQueryForLogging(sql, params.delegate)
+                    )
+                }
+                client.preparedQuery(sql).rxExecute(params)
+            } else {
+                client.query(sql).rxExecute()
             }
-            client.preparedQuery(sql).rxExecute(params)
         }.doOnError {
             LOG.error("${it.message}\nsql: $sql", it)
             throw it

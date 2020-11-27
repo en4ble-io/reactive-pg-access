@@ -142,9 +142,6 @@ object DaoHelper {
         } else {
             "[NoTx]"
         }
-        if (LOG.isTraceEnabled) {
-            LOG.trace("{} about to run {}", inTx, sql)
-        }
         try {
             val result = if (query.bindValues.isEmpty()) {
                 if (LOG.isTraceEnabled) {
@@ -152,16 +149,20 @@ object DaoHelper {
                 }
                 client.query(sql).execute().await()
             } else {
-                val params = JooqHelper.params(query)
-                if (LOG.isTraceEnabled) {
-                    LOG.trace(
-                        "{} about to run {}: {}",
-                        inTx,
-                        if (update) "update" else "query",
-                        getQueryForLogging(sql, params)
-                    )
+                if (context.config.preparedStatements) {
+                    val params = JooqHelper.rxParams(query)
+                    if (LOG.isTraceEnabled) {
+                        LOG.trace(
+                            "{} about to run {}: {}",
+                            inTx,
+                            if (update) "update" else "query",
+                            getQueryForLogging(sql, params.delegate)
+                        )
+                    }
+                    client.preparedQuery(sql).execute(params.delegate).await()
+                } else {
+                    client.query(sql).execute().await()
                 }
-                client.preparedQuery(sql).execute(params).await()
             }
             if (LOG.isTraceEnabled) {
                 LOG.trace("{} query returned {} results", inTx, result.size())

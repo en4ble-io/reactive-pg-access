@@ -14,6 +14,10 @@ import io.vertx.sqlclient.SqlConnection
 import io.vertx.sqlclient.Transaction
 import org.jooq.Configuration
 import org.jooq.SQLDialect
+import org.jooq.conf.MappedSchema
+import org.jooq.conf.RenderMapping
+import org.jooq.conf.Settings
+import org.jooq.conf.StatementType
 import org.jooq.impl.CatalogImpl
 import org.jooq.impl.DSL
 import org.jooq.impl.SchemaImpl
@@ -29,7 +33,20 @@ open class DatabaseContext(
     val validator: Validator? = null // optional validator, will be used before create
 ) {
     private val LOG by lazy { LoggerFactory.getLogger(DatabaseContext::class.java) }
-    val dsl = DSL.using(SQLDialect.POSTGRES)!!
+    val dsl = DSL.using(SQLDialect.POSTGRES,
+        if (config.preparedStatements) {
+            Settings().withStatementType(StatementType.PREPARED_STATEMENT)
+        } else {
+            Settings().withStatementType(StatementType.STATIC_STATEMENT)
+        }.withRenderMapping(RenderMapping()
+            // replace hard coded _SCHEMA_ with configured schema
+            // this is useful for shared/reused schema definitions
+            .withSchemata(
+                MappedSchema().withInput("_SCHEMA_")
+                    .withOutput(config.schema)
+            )
+        )
+    )
     val sqlClient: SqlClient
 
     constructor(vertx: Vertx, config: DatabaseConfig) : this(vertx, config, null)

@@ -17,7 +17,13 @@ data class DatabaseConfig(
     var maxPoolSize: Int = 10,
     var username: String = "postgres",
     var password: String = "postgres",
-    var ssl: Boolean = false
+    var ssl: Boolean = false,
+    /**
+     * Prepared statements don't go well with connection pools like PgBouncer (e.g. on Digital Ocean)
+     * when running in transaction mode. Default: false (instructs jOOQ to render static statements)
+     * @see http://www.pgbouncer.org/faq.html
+     */
+    var preparedStatements: Boolean = false
 ) {
     val url: String
         get() = "jdbc:postgresql://$host:$port/$database"

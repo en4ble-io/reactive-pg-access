@@ -22,7 +22,7 @@ internal object DaoHelperCommon {
     private val LOG by lazy { LoggerFactory.getLogger(DaoHelperCommon::class.java) }
     private val MAPPERS = HashMap<String, ObjectMapper>()
 
-    fun getQueryForLogging(query: Query, context: DatabaseContext?): String {
+    fun getQueryForLogging(query: Query, context: DatabaseContext): String {
         return getQueryForLogging(getSql(query, context), JooqHelper.params(query))
     }
 
@@ -71,20 +71,27 @@ internal object DaoHelperCommon {
         }
     }
 
-    fun getSql(query: Query, context: DatabaseContext?): String {
-        val sb = StringBuilder()
-        var i = 1
-        query.sql.forEach {
-            if (it == '?') {
-                sb.append('$').append(i)
-                i++
+    fun getSql(query: Query, context: DatabaseContext): String {
+        val sql = if (query.bindValues.isEmpty()) {
+            query.sql
+        } else {
+            if (context.config.preparedStatements) {
+                // rewrite placeholders of prepared statements
+                // (jOOQ/JDBC uses '?', we need '$' with index)
+                val sb = StringBuilder()
+                var i = 1
+                query.sql.forEach {
+                    if (it == '?') {
+                        sb.append('$').append(i)
+                        i++
+                    } else {
+                        sb.append(it)
+                    }
+                }
+                sb.toString()
             } else {
-                sb.append(it)
+                query.sql
             }
-        }
-        var sql = sb.toString()
-        if (context?.config?.schema != null) {
-            sql = sql.replace("_SCHEMA_", context.config.schema)
         }
         return sql
     }
