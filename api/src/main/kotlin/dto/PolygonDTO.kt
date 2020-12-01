@@ -8,4 +8,12 @@ import javax.validation.constraints.NotEmpty
  *
  * @author Mark Hofmann (mark@en4ble.io)
  */
-data class PolygonDTO(@NotEmpty var points: List<PointDTO>?) : Serializable
+data class PolygonDTO(@NotEmpty var points: List<PointDTO>? = null) : Serializable {
+    /**
+     * This value is used by jOOQ when inlining parameters.
+     * Don't touch it!
+     */
+    override fun toString(): String {
+        return points?.joinToString(",") ?: ""
+    }
+}

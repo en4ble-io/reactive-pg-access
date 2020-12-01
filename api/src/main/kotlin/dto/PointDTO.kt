@@ -28,4 +28,12 @@ data class PointDTO(@get:NotEmpty var x: String = "0.0", @get:NotEmpty var y: St
     @Hidden
     @JsonIgnore
     val getLat: String = y
+
+    /**
+     * This value is used by jOOQ when inlining parameters.
+     * Don't touch it!
+     */
+    override fun toString(): String {
+        return "($x,$y)"
+    }
 }

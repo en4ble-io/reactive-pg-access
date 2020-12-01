@@ -1,6 +1,7 @@
 package io.en4ble.pgaccess.dto
 
 import java.io.Serializable
+import kotlin.math.abs
 
 /**
  * Data object used to send an interval.
@@ -15,4 +16,12 @@ data class IntervalDTO(
     var minutes: Int = 0,
     var seconds: Int = 0,
     var microseconds: Int = 0
-) : Serializable
+) : Serializable {
+    /**
+     * This value is used by jOOQ when inlining parameters.
+     * Don't touch it!
+     */
+    override fun toString(): String {
+        return """$years years $months months $days days $hours hours $minutes minutes $seconds${if (microseconds == 0) "" else "." + abs(microseconds)} seconds"""
+    }
+}

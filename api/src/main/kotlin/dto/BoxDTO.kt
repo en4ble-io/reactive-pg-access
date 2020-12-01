@@ -9,4 +9,12 @@ import javax.validation.constraints.NotNull
  * @author Mark Hofmann (mark@en4ble.io)
  */
 data class BoxDTO(@get:NotNull var ne: PointDTO? = null, @get:NotNull var sw: PointDTO? = null) :
-    Serializable
+    Serializable {
+    /**
+     * This value is used by jOOQ when inlining parameters.
+     * Don't touch it!
+     */
+    override fun toString(): String {
+        return listOf(ne, sw).joinToString(",")
+    }
+}

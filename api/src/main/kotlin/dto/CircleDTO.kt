@@ -8,4 +8,12 @@ import javax.validation.constraints.NotNull
  *
  * @author Mark Hofmann (mark@en4ble.io)
  */
-data class CircleDTO(@get:NotNull var centre: PointDTO? = null, @get:NotNull var radius: String? = null) : Serializable
+data class CircleDTO(@get:NotNull var centre: PointDTO? = null, @get:NotNull var radius: String? = null) : Serializable {
+    /**
+     * This value is used by jOOQ when inlining parameters.
+     * Don't touch it!
+     */
+    override fun toString(): String {
+        return listOf(centre.toString(), radius).joinToString(",")
+    }
+}
