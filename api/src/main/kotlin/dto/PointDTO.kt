@@ -13,20 +13,28 @@ import java.io.Serializable
 data class PointDTO(var x: Double = 0.0, var y: Double = 0.0) : Serializable {
 
     /**
-     * Convenience method to get the x coordinate = longitude
+     * Convenience method to work with the x coordinate = longitude
      * @return the x value
      */
-    @Hidden
-    @JsonIgnore
-    fun getLng(): Double = x
+    var lng: Double
+        @Hidden
+        @JsonIgnore
+        get() = x
+        set(value) {
+            x = value
+        }
 
     /**
-     * Convenience method to get the y coordinate = latitude
+     * Convenience method to work with the y coordinate = latitude
      * @return the y value
      */
-    @Hidden
-    @JsonIgnore
-    val getLat: Double = y
+    var lat: Double
+        @Hidden
+        @JsonIgnore
+        get() = y
+        set(value) {
+            y = value
+        }
 
     /**
      * This value is used by jOOQ when inlining parameters.
