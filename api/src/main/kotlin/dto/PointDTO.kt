@@ -11,7 +11,7 @@ import javax.validation.constraints.NotEmpty
  * @author Mark Hofmann (mark@en4ble.io)
  */
 @Suppress("unused")
-data class PointDTO(@get:NotEmpty var x: String = "0.0", @get:NotEmpty var y: String = "0.0") : Serializable {
+data class PointDTO(@get:NotEmpty var x: Double = 0.0, @get:NotEmpty var y: Double = 0.0) : Serializable {
 
     /**
      * Convenience method to get the x coordinate = longitude
@@ -19,7 +19,7 @@ data class PointDTO(@get:NotEmpty var x: String = "0.0", @get:NotEmpty var y: St
      */
     @Hidden
     @JsonIgnore
-    fun getLng(): String = x
+    fun getLng(): Double = x
 
     /**
      * Convenience method to get the y coordinate = latitude
@@ -27,7 +27,7 @@ data class PointDTO(@get:NotEmpty var x: String = "0.0", @get:NotEmpty var y: St
      */
     @Hidden
     @JsonIgnore
-    val getLat: String = y
+    val getLat: Double = y
 
     /**
      * This value is used by jOOQ when inlining parameters.

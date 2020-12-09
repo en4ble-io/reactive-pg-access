@@ -7,7 +7,7 @@ import java.io.Serializable
  *
  * @author Mark Hofmann (mark@en4ble.io)
  */
-data class LineDTO(var a: String? = null, var b: String? = null, var c: String? = null) : Serializable {
+data class LineDTO(var a: Double? = null, var b: Double? = null, var c: Double? = null) : Serializable {
     /**
      * This value is used by jOOQ when inlining parameters.
      * Don't touch it!

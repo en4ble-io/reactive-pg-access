@@ -61,11 +61,11 @@ object JooqHelper {
         }
         return when (value) {
             is PointDTO -> getPoint(value)
-            is LineDTO -> Line(value.a!!.toDouble(), value.b!!.toDouble(), value.c!!.toDouble())
+            is LineDTO -> Line(value.a!!, value.b!!, value.c!!)
             is LineSegmentDTO -> LineSegment(getPoint(value.a), getPoint(value.b))
             is PolygonDTO -> Polygon(value.points?.map { getPoint(it) })
             is PathDTO -> Path(value.isOpen, value.points?.map { getPoint(it) })
-            is CircleDTO -> Circle(getPoint(value.centre), value.radius!!.toDouble())
+            is CircleDTO -> Circle(getPoint(value.centre), value.radius!!)
             is BoxDTO -> Box(getPoint(value.sw), getPoint(value.ne))
             is IntervalDTO -> Interval(
                 value.days,
@@ -148,7 +148,7 @@ object JooqHelper {
 
     fun getPointDTO(point: Point?): PointDTO? {
         if (point == null) return null
-        return PointDTO(point.x.toString(), point.y.toString())
+        return PointDTO(point.x, point.y)
     }
 
     fun getPointDTOs(points: Array<Point>?): Array<PointDTO>? {
@@ -157,7 +157,7 @@ object JooqHelper {
 
     fun getLineDTO(line: Line?): LineDTO? {
         if (line == null) return null
-        return LineDTO(line.a.toString(), line.b.toString(), line.c.toString())
+        return LineDTO(line.a, line.b, line.c)
     }
 
     fun getLineDTOs(lines: Array<Line>?): Array<LineDTO>? {
@@ -202,7 +202,7 @@ object JooqHelper {
 
     fun getCircleDTO(circle: Circle?): CircleDTO? {
         if (circle == null) return null
-        return CircleDTO(getPointDTO(circle.centerPoint), circle.radius.toString())
+        return CircleDTO(getPointDTO(circle.centerPoint), circle.radius)
     }
 
     fun getCircleDTOs(circles: Array<Circle>?): Array<CircleDTO>? {

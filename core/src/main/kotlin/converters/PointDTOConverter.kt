@@ -14,15 +14,15 @@ class PointDTOConverter : Converter<Any, PointDTO> {
         }
 
         val point = `object` as Point
-        return PointDTO(point.x.toString(), point.y.toString())
+        return PointDTO(point.x, point.y)
     }
 
     override fun to(position: PointDTO?): Any? {
-        if (position?.x == null || position.y == null) {
+        if (position == null) {
             return null
         }
 
-        return Point(position.x!!.toDouble(), position.y!!.toDouble())
+        return Point(position.x, position.y)
     }
 
     override fun fromType(): Class<Any> {
