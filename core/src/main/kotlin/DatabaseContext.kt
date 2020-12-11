@@ -13,6 +13,7 @@ import io.vertx.sqlclient.PoolOptions
 import io.vertx.sqlclient.SqlConnection
 import io.vertx.sqlclient.Transaction
 import org.jooq.Configuration
+import org.jooq.DSLContext
 import org.jooq.SQLDialect
 import org.jooq.conf.MappedSchema
 import org.jooq.conf.RenderMapping
@@ -33,7 +34,7 @@ open class DatabaseContext(
     val validator: Validator? = null // optional validator, will be used before create
 ) {
     private val LOG by lazy { LoggerFactory.getLogger(DatabaseContext::class.java) }
-    val dsl = DSL.using(SQLDialect.POSTGRES,
+    val dsl: DSLContext = DSL.using(SQLDialect.POSTGRES,
         if (config.preparedStatements) {
             Settings().withStatementType(StatementType.PREPARED_STATEMENT)
         } else {
