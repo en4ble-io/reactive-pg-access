@@ -1,7 +1,9 @@
 package io.en4ble.pgaccess.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.Hidden
+import io.swagger.v3.oas.annotations.media.Schema
 import java.io.Serializable
 
 /**
@@ -10,30 +12,38 @@ import java.io.Serializable
  * @author Mark Hofmann (mark@en4ble.io)
  */
 @Suppress("unused")
-data class PointDTO(var x: Double = 0.0, var y: Double = 0.0) : Serializable {
+@Schema(name = "Point")
+data class PointDTO(
+    @JsonProperty(required = true)
+    var lng: Double = 0.0,
+    @JsonProperty(required = true)
+    var lat: Double = 0.0
+) : Serializable {
 
     /**
      * Convenience method to work with the x coordinate = longitude
-     * @return the x value
      */
-    var lng: Double
+    var x
         @Hidden
         @JsonIgnore
-        get() = x
+        get() = lng
+        @JsonIgnore
+        @Hidden
         set(value) {
-            x = value
+            lng = value
         }
 
     /**
      * Convenience method to work with the y coordinate = latitude
-     * @return the y value
      */
-    var lat: Double
+    var y
         @Hidden
         @JsonIgnore
-        get() = y
+        get() = lat
+        @Hidden
+        @JsonIgnore
         set(value) {
-            y = value
+            lat = value
         }
 
     /**
