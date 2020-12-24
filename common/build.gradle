@@ -7,7 +7,7 @@ dependencies {
     api project(":api")
     api project(":config")
 
-    api "org.jooq:jooq:$jooqVersion"
+    api "org.jooq:jooq"
 
     api "io.vertx:vertx-lang-kotlin"
     api "io.vertx:vertx-lang-kotlin-coroutines"
@@ -15,19 +15,8 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core"
 
-    api "org.slf4j:slf4j-api:$slf4jVersion"
+    api "org.slf4j:slf4j-api"
 
     testImplementation "org.apache.logging.log4j:log4j-core"
     testImplementation "org.junit.jupiter:junit-jupiter-api"
 }
-
-//publishing {
-//    publications {
-//        mavenJava(MavenPublication) {
-//            from components.java
-//            afterEvaluate {
-//                artifactId = archivesBaseName
-//            }
-//        }
-//    }
-//}
