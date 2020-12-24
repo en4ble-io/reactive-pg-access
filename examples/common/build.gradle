@@ -5,7 +5,7 @@ plugins {
 subprojects {
     apply plugin: 'kotlin'
     apply plugin: 'maven'
-    apply plugin: 'idea'
+//    apply plugin: 'idea'
 
 
     version "0.1"
@@ -63,10 +63,10 @@ subprojects {
         tests packageTests
     }
 
-    idea {
-        module {
-            downloadJavadoc = false
-            downloadSources = true
-        }
-    }
+//    idea {
+//        module {
+//            downloadJavadoc = false
+//            downloadSources = true
+//        }
+//    }
 }

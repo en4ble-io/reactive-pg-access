@@ -1,37 +1,25 @@
+apply plugin: "io.en4ble.project"
+
 description = 'async db access with jooq'
 
 dependencies {
     api project(":common")
 
-    api "org.jooq:jooq:$jooqVersion"
+    api "org.jooq:jooq"
 
-    api "io.vertx:vertx-rx-java2:$vertxVersion"
-    api "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
-    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    api "io.vertx:vertx-rx-java2"
+    api "io.reactivex.rxjava2:rxkotlin"
+    api "com.fasterxml.jackson.core:jackson-core"
+    api "com.fasterxml.jackson.core:jackson-databind"
 
-    api "io.vertx:vertx-pg-client:$vertxVersion"
-    api "io.vertx:vertx-lang-kotlin:$vertxVersion"
-    api "io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion"
+    api "io.vertx:vertx-pg-client"
+    api "io.vertx:vertx-lang-kotlin"
+    api "io.vertx:vertx-lang-kotlin-coroutines"
 
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$kotlinxVersion"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxVersion"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core"
 
-    api "org.slf4j:slf4j-api:$slf4jVersion"
+    api "org.slf4j:slf4j-api"
 
-    testImplementation"org.apache.logging.log4j:log4j-core:$log4jVersion"
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId archivesBaseName
-            from components.java
-            // define which artifacts should be published
-            artifact sourcesJar
-        }
-    }
-}
-repositories {
-    mavenCentral()
+    testImplementation "org.apache.logging.log4j:log4j-core"
 }
