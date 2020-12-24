@@ -7,7 +7,7 @@ jobs:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: en4bleio/circle-java-8
     steps:
       - checkout
       - restore_cache:
