@@ -1,14 +1,24 @@
-plugins {
-    id 'io.en4ble.project'
-}
-
 description = "generator for jooq"
 
 dependencies {
     api project(":core")
-    api "org.jooq:jooq"
-    api "org.jooq:jooq-codegen"
+    api "org.jooq:jooq:$jooqVersion"
+    api "org.jooq:jooq-codegen:$jooqVersion"
 
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    api "org.slf4j:slf4j-api"
+    api "org.slf4j:slf4j-api:$slf4jVersion"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId archivesBaseName
+            from components.java
+            // define which artifacts should be published
+            artifact sourcesJar
+        }
+    }
+}
+repositories {
+    mavenCentral()
 }

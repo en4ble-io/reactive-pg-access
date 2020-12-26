@@ -1,21 +1,27 @@
-plugins {
-    id 'io.en4ble.project'
-}
-
 description = "Common classes for external API definitions"
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
     // validation
-    api "org.hibernate.validator:hibernate-validator"
-    api "org.glassfish:jakarta.el"
+    api "org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion"
+    api "org.glassfish:jakarta.el:$glassfishElVersion"
 
     // openapi documentation
-    api "javax.ws.rs:javax.ws.rs-api"
-    api "io.swagger.core.v3:swagger-annotations"
+    api "javax.ws.rs:javax.ws.rs-api:$jaxrsVersion"
+    api "io.swagger.core.v3:swagger-annotations:$swaggerVersion"
 
-    api "com.fasterxml.jackson.core:jackson-annotations"
+    api "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testImplementation"org.junit.jupiter:junit-jupiter-api:$junitVersion"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId archivesBaseName
+            from components.java
+            artifact sourcesJar
+        }
+    }
 }

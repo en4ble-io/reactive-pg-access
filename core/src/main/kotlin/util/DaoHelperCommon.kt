@@ -97,22 +97,22 @@ internal object DaoHelperCommon {
     }
 
     fun uuidList(row: Row, i: Int): List<UUID>? {
-        val jsonArray = row.getUUIDArray(i) ?: return null
+        val jsonArray = row.getArrayOfUUIDs(i) ?: return null
         return jsonArray.toList()
     }
 
     fun stringList(row: Row, i: Int): List<String>? {
-        val jsonArray = row.getStringArray(i) ?: return null
+        val jsonArray = row.getArrayOfStrings(i) ?: return null
         return jsonArray.toList()
     }
 
     fun integerList(row: Row, i: Int): List<Int>? {
-        val jsonArray = row.getIntegerArray(i) ?: return null
+        val jsonArray = row.getArrayOfIntegers(i) ?: return null
         return jsonArray.toList()
     }
 
     fun charList(row: Row, i: Int): List<Char>? {
-        val jsonArray = row.getStringArray(i) ?: return null
+        val jsonArray = row.getArrayOfStrings(i) ?: return null
         return jsonArray.map { it.toCharArray()[0] }.toList()
     }
 

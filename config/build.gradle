@@ -1,9 +1,15 @@
-plugins {
-    id 'io.en4ble.project'
-}
-
 description = "Configuration classes"
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId archivesBaseName
+            from components.java
+            artifact sourcesJar
+        }
+    }
 }
