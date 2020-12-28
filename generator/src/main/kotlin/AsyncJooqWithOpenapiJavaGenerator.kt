@@ -694,7 +694,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
             }
         } else {
             if (reactive) {
-                out.tab(3).println("return io.reactivex.Single.just(io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT)")
+                out.tab(3)
+                    .println("return io.reactivex.Single.just(io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT)")
             } else {
                 out.tab(3).println("return io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT")
             }
@@ -834,7 +835,7 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 fqn.substring(fqn.lastIndexOf(".") + 1)
             }
         }
-        return if (userType.startsWith("_")) typeName + "Array" else typeName
+        return if (userType.startsWith("_")) "ArrayOf${typeName}s" else typeName
     }
 
     private fun getSqlClientType(type: DataTypeDefinition): Class<*>? {
@@ -972,43 +973,43 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val offset = getOffset(pos)
         val typeName = when (userType) {
             "bpchar" -> "String"
-            "_bpchar" -> "StringArray"
+            "_bpchar" -> "ArrayOfStrings"
             "varchar" -> "String"
-            "_varchar" -> "StringArray"
+            "_varchar" -> "ArrayOfStrings"
             "text" -> "String"
-            "_text" -> "StringArray"
+            "_text" -> "ArrayOfStrings"
             "name" -> "String"
-            "_name" -> "StringArray"
+            "_name" -> "ArrayOfStrings"
 
             // numeric types
             "numeric" -> "Numeric"
-            "_numeric" -> "NumericArray"
+            "_numeric" -> "ArrayOfNumerics"
             "int2" -> "Short"
-            "_int2" -> "ShortArray"
+            "_int2" -> "ArrayOfShorts"
             "int4" -> "Integer"
-            "_int4" -> "IntegerArray"
+            "_int4" -> "ArrayOfIntegers"
             "int8" -> "Long"
-            "_int8" -> "LongArray"
+            "_int8" -> "ArrayOfLongs"
             "float4" -> "Float"
-            "_float4" -> "FloatArray"
+            "_float4" -> "ArrayOfFloats"
             "float8" -> "Double"
-            "_float8" -> "DoubleArray"
+            "_float8" -> "ArrayOfDoubles"
             "bool" -> "Boolean"
-            "_bool" -> "BooleanArray"
+            "_bool" -> "ArrayOfBooleans"
             "bytea" -> "Buffer"
-            "_bytea" -> "BufferArray"
+            "_bytea" -> "ArrayOfBuffers"
 
             // date + time
             "date" -> "LocalDate"
-            "_date" -> "LocalDateArray"
+            "_date" -> "ArrayOfLocalDates"
             "time" -> "LocalTime"
-            "_time" -> "LocalTimeArray"
+            "_time" -> "ArrayOfLocalTimes"
             "timetz" -> "OffsetTime"
-            "_timetz" -> "OffsetTimeArray"
+            "_timetz" -> "ArrayOfOffsetTimes"
             "timestamp" -> "LocalDateTime"
-            "_timestamp" -> "LocalDateTimeArray"
+            "_timestamp" -> "ArrayOfLocalDateTimes"
             "timestamptz" -> "OffsetDateTime"
-            "_timestamptz" -> "OffsetDateTimeArray"
+            "_timestamptz" -> "ArrayOfOffsetDateTimes"
 
             // json
 //            "json" -> "Json"
@@ -1033,9 +1034,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
 //            "_circle" -> "CircleArray"
 
             "uuid" -> "UUID"
-            "_uuid" -> "UUIDArray"
+            "_uuid" -> "ArrayOfUUIDs"
             "interval" -> "Interval"
-            "_interval" -> "IntervalArray"
+            "_interval" -> "ArrayOfIntervals"
 
             "serial2" -> "Short"
             "serial4" -> "Integer"
@@ -1440,7 +1441,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
 
                     out.tab(1)
                         .println("suspend fun readBy$colClass(vararg values:$colType, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<$pType> {")
-                    out.tab(2).println("return read($colIdentifier.`in`(values.toList()),$fullJavaTableName, orderBy)")
+                    out.tab(2)
+                        .println("return read($colIdentifier.`in`(values.toList()),$fullJavaTableName, orderBy)")
                     out.tab(1).println("}")
                     out.tab(1)
                         .println("fun rxReadBy$colClass(vararg values:$colType, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<$pType>> {")
@@ -1454,7 +1456,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                     out.tab(1).println("}")
                     out.tab(1)
                         .println("fun rxReadBy$colClass(vararg values:$colType, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<$pType>> {")
-                    out.tab(2).println("return rxRead($colIdentifier.`in`(values.toList()),$fullJavaTableName, page)")
+                    out.tab(2)
+                        .println("return rxRead($colIdentifier.`in`(values.toList()),$fullJavaTableName, page)")
                     out.tab(1).println("}")
                 }
                 // readOneBy[Column]([T])
@@ -1522,7 +1525,8 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         out.tab(1).println(")")
 
         out.tab(1).println("private fun getOrderFieldNames(): List<String> {")
-        out.tab(2).println("    return dbFieldMap.filterNot { it.value.name.startsWith(\"internal_\") || it.key==\"id\" }.map { it.key }")
+        out.tab(2)
+            .println("    return dbFieldMap.filterNot { it.value.name.startsWith(\"internal_\") || it.key==\"id\" }.map { it.key }")
         out.tab(1).println("}")
 
         out.tab(1).println("override fun getDbField(dtoField: String): org.jooq.Field<*> {")
