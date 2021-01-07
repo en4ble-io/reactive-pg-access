@@ -835,7 +835,9 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
                 fqn.substring(fqn.lastIndexOf(".") + 1)
             }
         }
-        return if (userType.startsWith("_")) "ArrayOf${typeName}s" else typeName
+        return if (userType.startsWith("_")) "ArrayOf${typeName}s" else {
+            if (typeName == "Object") "Value" else typeName
+        }
     }
 
     private fun getSqlClientType(type: DataTypeDefinition): Class<*>? {
