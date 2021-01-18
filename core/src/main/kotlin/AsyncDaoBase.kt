@@ -294,6 +294,16 @@ protected constructor(
         return rxReadPage(condition, baseId, arrayOf(baseValue), orderBy, pageSize)
     }
 
+    fun <ID, ORDER_BY> rxReadPageCustomOrder(
+        condition: Condition? = null,
+        baseId: ID?,
+        baseValues: Array<Any?>,
+        orderBy: List<SortField<ORDER_BY>>,
+        pageSize: Int
+    ): Single<List<DTO>> {
+        return rxReadPage<ID>(getReadPageQueryOrderBy(condition, orderBy, baseId), baseId, baseValues, pageSize)
+    }
+
     fun <ID> rxReadPage(
         condition: Condition? = null,
         baseId: ID?,
@@ -302,7 +312,20 @@ protected constructor(
         pageSize: Int
     ): Single<List<DTO>> {
         checkValuesAndOrderBy(baseValues, orderBy)
-        val baseQuery = getReadPageQuery(condition, orderBy, baseId)
+        return rxReadPage<ID>(getReadPageQuery(condition, orderBy, baseId), baseId, baseValues, pageSize)
+    }
+
+    suspend fun <ID> readPage(page: PageDTO<ID>): List<DTO> {
+        return readPage(null, page)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <ID> rxReadPage(
+        baseQuery: SelectSeekStepN<Record>,
+        baseId: ID?,
+        baseValues: Array<Any?>,
+        pageSize: Int
+    ): Single<List<DTO>> {
         return if (baseId != null) {
             val array = arrayOf(*baseValues, baseId)
             val query = baseQuery.seek(*array)
@@ -310,10 +333,6 @@ protected constructor(
         } else {
             rxQuery(baseQuery.limit(pageSize))
         }.map { map(it.delegate as RowSet<Row>) }
-    }
-
-    suspend fun <ID> readPage(page: PageDTO<ID>): List<DTO> {
-        return readPage(null, page)
     }
 
     suspend fun <ID> readPage(condition: Condition? = null, page: PageDTO<ID>): List<DTO> {
@@ -346,6 +365,7 @@ protected constructor(
         return readPage(condition, baseId, arrayOf(baseValue), orderBy, pageSize)
     }
 
+
     /**
      * Reads a page using "keyset pagination" via jOOQs seek method.
      * @param baseId The id of the last entry of the last page.
@@ -361,7 +381,25 @@ protected constructor(
         pageSize: Int
     ): List<DTO> {
         checkValuesAndOrderBy(baseValues, orderBy)
-        val baseQuery = getReadPageQuery(condition, orderBy, baseId)
+        return readPage<ID>(getReadPageQuery(condition, orderBy, baseId), baseId, baseValues, pageSize)
+    }
+
+    suspend fun <ID, ORDER_BY> readPageCustomOrder(
+        condition: Condition? = null,
+        baseId: ID?,
+        baseValues: Array<Any?>,
+        orderBy: List<SortField<ORDER_BY>>,
+        pageSize: Int
+    ): List<DTO> {
+        return readPage(getReadPageQueryOrderBy(condition, orderBy, baseId), baseId, baseValues, pageSize)
+    }
+
+    private suspend fun <ID> readPage(
+        baseQuery: SelectSeekStepN<Record>,
+        baseId: ID?,
+        baseValues: Array<Any?>,
+        pageSize: Int
+    ): List<DTO> {
         val res = if (baseId != null) {
             val array = arrayOf(*baseValues, baseId)
             val query = baseQuery.seek(*array)
@@ -369,9 +407,9 @@ protected constructor(
         } else {
             query(baseQuery.limit(pageSize))
         }
-
         return map(res)
     }
+
 
     protected fun checkValuesAndOrderBy(baseValues: Array<Any?>, orderBy: List<OrderDTO>) {
         val baseValuesSize = baseValues.size
@@ -408,6 +446,19 @@ protected constructor(
         return map(res)
     }
 
+    protected fun getOrderByList(orderBy: List<OrderDTO>) =
+        orderBy.map { order -> getOrderBy(order) }.toMutableList()
+
+    protected fun getOrderBy(order: OrderDTO): SortField<out Any> {
+        val sortDirection = order.direction
+        val orderField = getDbField(order.field)
+        return if (sortDirection === SortDirection.ASC)
+            orderField.asc()
+        else
+            orderField.desc()
+    }
+
+
     protected fun getReadPageQuery(
         condition: Condition,
         offset: Int,
@@ -417,31 +468,31 @@ protected constructor(
         return select.orderBy(getOrderByList(orderBy)).offset(offset)
     }
 
-    protected fun getOrderByList(orderBy: List<OrderDTO>) =
-        orderBy.map { order -> getOrderBy(order) }.toMutableList()
-
-    protected fun getOrderBy(order: OrderDTO): SortField<*> {
-        val sortDirection = order.direction
-        val orderField = getDbField(order.field)
-        return if (sortDirection === SortDirection.ASC)
-            orderField.asc()
-        else
-            orderField.desc()
-    }
-
     @Suppress("UNCHECKED_CAST")
     protected fun <ID> getReadPageQuery(
         condition: Condition?,
         orderBy: List<OrderDTO>,
         baseId: ID?
     ): SelectSeekStepN<Record> {
+        val offset = getOrderByList(orderBy)
+        return getReadPageQueryOrderBy(condition, offset, baseId)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    protected fun <ID, ORDER_BY> getReadPageQueryOrderBy(
+        condition: Condition?,
+        orderBy: List<SortField<out ORDER_BY>>,
+        baseId: ID?
+    ): SelectSeekStepN<Record> {
         val idField = primaryKeyField<ID>()
-            ?: throw RuntimeException("The read page query requires a primary key field in the table/view ${table().name}.\n" +
-                " Either add a primary key to the table or override the function primaryKeyField() in ${this.javaClass.name} to return the desired primary key field of the view\n" +
-                " example:\n" +
-                "    override fun <ID> primaryKeyField(): TableField<ProfileListRecord, ID>? {\n" +
-                "        return ProfileList.PROFILE_LIST.ID as TableField<ProfileListRecord, ID>\n" +
-                "    }")
+            ?: throw RuntimeException(
+                "The read page query requires a primary key field in the table/view ${table().name}.\n" +
+                    " Either add a primary key to the table or override the function primaryKeyField() in ${this.javaClass.name} to return the desired primary key field of the view\n" +
+                    " example:\n" +
+                    "    override fun <ID> primaryKeyField(): TableField<ProfileListRecord, ID>? {\n" +
+                    "        return ProfileList.PROFILE_LIST.ID as TableField<ProfileListRecord, ID>\n" +
+                    "    }"
+            )
         val baseSelect = dsl.select().from(table())
         val select =
             if (condition != null) {
@@ -454,9 +505,7 @@ protected constructor(
             throw ValidationException("Given base id does not match type of database id (${idField.type}")
         }
 
-        val orderByList = getOrderByList(orderBy)
-        orderByList.add(idField.desc())
-        return select.orderBy(*orderByList.toTypedArray())
+        return select.orderBy(*orderBy.toTypedArray(), idField.desc())
     }
 
     /**
