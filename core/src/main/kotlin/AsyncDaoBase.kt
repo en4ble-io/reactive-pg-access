@@ -268,8 +268,8 @@ protected constructor(
         return rxReadPage(
             condition,
             page.baseId,
-            arrayOf(getBaseValue(page.baseValue, page.orderBy.field)),
-            listOf(page.orderBy),
+            getBaseValues(page.orderByList, page.baseValues),
+            page.orderBy,
             page.size
         )
     }
@@ -297,11 +297,16 @@ protected constructor(
     fun <ID, ORDER_BY> rxReadPageCustomOrder(
         condition: Condition? = null,
         baseId: ID?,
-        baseValues: Array<Any?>,
+        baseValues: Array<Any?>?,
         orderBy: List<SortField<ORDER_BY>>,
         pageSize: Int
     ): Single<List<DTO>> {
-        return rxReadPage<ID>(getReadPageQueryOrderBy(condition, orderBy, baseId), baseId, baseValues, pageSize)
+        return rxReadPage<ID>(
+            getReadPageQueryOrderBy(condition, orderBy, baseId),
+            baseId,
+            baseValues ?: emptyArray(),
+            pageSize
+        )
     }
 
     fun <ID> rxReadPage(
@@ -339,8 +344,8 @@ protected constructor(
         return readPage(
             condition,
             page.baseId,
-            arrayOf(getBaseValue(page.baseValue, page.orderBy.field)),
-            listOf(page.orderBy),
+            getBaseValues(page.orderByList, page.baseValues),
+            page.orderBy,
             page.size
         )
     }
@@ -355,15 +360,15 @@ protected constructor(
         return readPage(condition, baseId, arrayOf(baseValue), listOf(orderBy), pageSize)
     }
 
-    suspend fun <ID> readPage(
-        condition: Condition? = null,
-        baseId: ID?,
-        baseValue: Any?,
-        orderBy: List<OrderDTO>,
-        pageSize: Int
-    ): List<DTO> {
-        return readPage(condition, baseId, arrayOf(baseValue), orderBy, pageSize)
-    }
+//    suspend fun <ID> readPage(
+//        condition: Condition? = null,
+//        baseId: ID?,
+//        baseValues: Array<Any?>,
+//        orderBy: List<OrderDTO>,
+//        pageSize: Int
+//    ): List<DTO> {
+//        return readPage(condition, baseId, baseValue, orderBy, pageSize)
+//    }
 
 
     /**
@@ -387,11 +392,16 @@ protected constructor(
     suspend fun <ID, ORDER_BY> readPageCustomOrder(
         condition: Condition? = null,
         baseId: ID?,
-        baseValues: Array<Any?>,
+        baseValues: Array<Any?>?,
         orderBy: List<SortField<ORDER_BY>>,
         pageSize: Int
     ): List<DTO> {
-        return readPage(getReadPageQueryOrderBy(condition, orderBy, baseId), baseId, baseValues, pageSize)
+        return readPage(
+            getReadPageQueryOrderBy(condition, orderBy, baseId),
+            baseId,
+            baseValues ?: emptyArray(),
+            pageSize
+        )
     }
 
     private suspend fun <ID> readPage(
@@ -968,6 +978,15 @@ protected constructor(
     protected fun <O> jsonArray(o: List<O>?): JsonArray? {
         return if (o == null) null else JsonArray(o)
     }
+
+    private fun getBaseValues(orderBy: List<OrderDTO>, baseValues: List<String?>?): Array<Any?> {
+        if (baseValues == null) return emptyArray()
+        val fieldsAndValues = orderBy.map { it.field }.zip(baseValues)
+        return fieldsAndValues.map { (field, value) ->
+            getBaseValue(value, field)
+        }.toTypedArray()
+    }
+
 
     fun getBaseValue(jsonStringBaseValue: String?, fieldName: String): Any? {
         val baseValue = jsonStringBaseValue ?: return null
