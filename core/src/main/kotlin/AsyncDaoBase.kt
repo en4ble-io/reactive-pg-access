@@ -277,21 +277,11 @@ protected constructor(
     fun <ID> rxReadPage(
         condition: Condition? = null,
         baseId: ID?,
-        baseValue: Any?,
+        baseValues: Array<Any?>,
         orderBy: OrderDTO,
         pageSize: Int
     ): Single<List<DTO>> {
-        return rxReadPage(condition, baseId, arrayOf(baseValue), listOf(orderBy), pageSize)
-    }
-
-    fun <ID> rxReadPage(
-        condition: Condition? = null,
-        baseId: ID?,
-        baseValue: Any?,
-        orderBy: List<OrderDTO>,
-        pageSize: Int
-    ): Single<List<DTO>> {
-        return rxReadPage(condition, baseId, arrayOf(baseValue), orderBy, pageSize)
+        return rxReadPage(condition, baseId, baseValues, listOf(orderBy), pageSize)
     }
 
     fun <ID, ORDER_BY> rxReadPageCustomOrder(
@@ -316,7 +306,7 @@ protected constructor(
         orderBy: List<OrderDTO>,
         pageSize: Int
     ): Single<List<DTO>> {
-        checkValuesAndOrderBy(baseValues, orderBy)
+        checkValuesAndOrderBy(baseId, baseValues, orderBy)
         return rxReadPage<ID>(getReadPageQuery(condition, orderBy, baseId), baseId, baseValues, pageSize)
     }
 
@@ -353,11 +343,11 @@ protected constructor(
     suspend fun <ID> readPage(
         condition: Condition? = null,
         baseId: ID?,
-        baseValue: Any?,
+        baseValues: Array<Any?>,
         orderBy: OrderDTO,
         pageSize: Int
     ): List<DTO> {
-        return readPage(condition, baseId, arrayOf(baseValue), listOf(orderBy), pageSize)
+        return readPage(condition, baseId, baseValues, listOf(orderBy), pageSize)
     }
 
 //    suspend fun <ID> readPage(
@@ -385,7 +375,7 @@ protected constructor(
         orderBy: List<OrderDTO>,
         pageSize: Int
     ): List<DTO> {
-        checkValuesAndOrderBy(baseValues, orderBy)
+        checkValuesAndOrderBy(baseId, baseValues, orderBy)
         return readPage<ID>(getReadPageQuery(condition, orderBy, baseId), baseId, baseValues, pageSize)
     }
 
@@ -421,10 +411,10 @@ protected constructor(
     }
 
 
-    protected fun checkValuesAndOrderBy(baseValues: Array<Any?>, orderBy: List<OrderDTO>) {
+    protected fun checkValuesAndOrderBy(baseId: Any?, baseValues: Array<Any?>, orderBy: List<OrderDTO>) {
         val baseValuesSize = baseValues.size
         val orderBySize = orderBy.size
-        if (baseValuesSize != orderBySize) {
+        if (baseId != null && baseValuesSize != orderBySize) {
             throw ValidationException("baseValues size ($baseValuesSize) does not match orderBy size ($orderBySize)")
         }
         // baseValue type must match type of orderBy field
