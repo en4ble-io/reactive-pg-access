@@ -379,6 +379,39 @@ protected constructor(
         return readPage<ID>(getReadPageQuery(condition, orderBy, baseId), baseId, baseValues, pageSize)
     }
 
+    suspend fun <ID> readPage(
+        selectFrom: Table<RECORD>,
+        condition: Condition,
+        baseId: ID?,
+        baseValues: Array<Any?>,
+        orderBy: List<OrderDTO>,
+        pageSize: Int
+    ): List<DTO> {
+        checkValuesAndOrderBy(baseId, baseValues, orderBy)
+        return readPage(
+            getReadPageQueryOrderBy(selectFrom, condition, getOrderByList(orderBy), baseId),
+            baseId,
+            baseValues,
+            pageSize
+        )
+    }
+
+    suspend fun <ID, ORDER_BY, SELECT : Table<RECORD>> readPageCustomOrder(
+        selectFrom: SELECT,
+        condition: Condition?,
+        baseId: ID?,
+        baseValues: Array<Any?>?,
+        orderBy: List<SortField<ORDER_BY>>,
+        pageSize: Int
+    ): List<DTO> {
+        return readPage(
+            getReadPageQueryOrderBy(selectFrom, condition, orderBy, baseId),
+            baseId,
+            baseValues ?: emptyArray(),
+            pageSize
+        )
+    }
+
     suspend fun <ID, ORDER_BY> readPageCustomOrder(
         condition: Condition? = null,
         baseId: ID?,
@@ -458,7 +491,6 @@ protected constructor(
             orderField.desc()
     }
 
-
     protected fun getReadPageQuery(
         condition: Condition,
         offset: Int,
@@ -484,6 +516,16 @@ protected constructor(
         orderBy: List<SortField<out ORDER_BY>>,
         baseId: ID?
     ): SelectSeekStepN<Record> {
+        return getReadPageQueryOrderBy(table(), condition, orderBy, baseId)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    protected fun <ID, ORDER_BY> getReadPageQueryOrderBy(
+        selectFrom: Table<RECORD>,
+        condition: Condition?,
+        orderBy: List<SortField<out ORDER_BY>>,
+        baseId: ID?
+    ): SelectSeekStepN<Record> {
         val idField = primaryKeyField<ID>()
             ?: throw RuntimeException(
                 "The read page query requires a primary key field in the table/view ${table().name}.\n" +
@@ -493,7 +535,8 @@ protected constructor(
                     "        return ProfileList.PROFILE_LIST.ID as TableField<ProfileListRecord, ID>\n" +
                     "    }"
             )
-        val baseSelect = dsl.select().from(table())
+
+        val baseSelect = dsl.select().from(selectFrom)
         val select =
             if (condition != null) {
                 baseSelect.where(condition)
