@@ -219,15 +219,29 @@ protected constructor(
     }
 
     suspend fun readUUIDs(
-        idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null
+        idField: TableField<*, *>, condition: Condition
     ): List<UUID> {
-        return readUUIDs(idField, condition, page, context.sqlClient.delegate)
+        return readUUIDs(idField, condition, null, context.sqlClient.delegate)
+    }
+
+    suspend fun readUUIDs(
+        idField: TableField<*, *>, selectFrom: Table<*>, condition: Condition, page: PagingDTO? = null
+    ): List<UUID> {
+        return readUUIDs(idField, selectFrom, condition, page, context.sqlClient.delegate)
     }
 
     suspend fun readUUIDs(
         idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null, client: io.vertx.sqlclient.SqlClient
     ): List<UUID> {
-        val query = dsl.select(idField).from(idField.table).where(condition)
+        return readUUIDs(idField, idField.table, condition, page, client)
+    }
+
+    suspend fun readUUIDs(
+        idField: TableField<*, *>,
+        selectFrom: Table<*>,
+        condition: Condition, page: PagingDTO? = null, client: io.vertx.sqlclient.SqlClient
+    ): List<UUID> {
+        val query = dsl.select(idField).from(selectFrom).where(condition)
         return DaoHelper.readUUIDs(query, page, client, context)
     }
 
@@ -380,7 +394,7 @@ protected constructor(
     }
 
     suspend fun <ID> readPage(
-        selectFrom: Table<RECORD>,
+        selectFrom: Table<*>,
         condition: Condition,
         baseId: ID?,
         baseValues: Array<Any?>,
@@ -521,7 +535,7 @@ protected constructor(
 
     @Suppress("UNCHECKED_CAST")
     protected fun <ID, ORDER_BY> getReadPageQueryOrderBy(
-        selectFrom: Table<RECORD>,
+        selectFrom: Table<*>,
         condition: Condition?,
         orderBy: List<SortField<out ORDER_BY>>,
         baseId: ID?
