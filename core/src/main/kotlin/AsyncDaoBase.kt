@@ -283,7 +283,7 @@ protected constructor(
             condition,
             page.baseId,
             getBaseValues(page.orderByList, page.baseValues),
-            page.orderBy,
+            page.orderByList,
             page.size
         )
     }
@@ -349,7 +349,7 @@ protected constructor(
             condition,
             page.baseId,
             getBaseValues(page.orderByList, page.baseValues),
-            page.orderBy,
+            page.orderByList,
             page.size
         )
     }

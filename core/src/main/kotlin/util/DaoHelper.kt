@@ -161,6 +161,13 @@ object DaoHelper {
                     }
                     client.preparedQuery(sql).execute(params.delegate).await()
                 } else {
+                    if (LOG.isTraceEnabled) {
+                        LOG.trace(
+                            "{} about to run {}: {}",
+                            inTx,
+                            if (update) "update" else "query", sql
+                        )
+                    }
                     client.query(sql).execute().await()
                 }
             }

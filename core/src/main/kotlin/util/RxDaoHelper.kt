@@ -158,6 +158,13 @@ object RxDaoHelper {
                 }
                 client.preparedQuery(sql).rxExecute(params)
             } else {
+                if (LOG.isTraceEnabled) {
+                    LOG.trace(
+                        "{} about to run {}: {}",
+                        inTx,
+                        if (update) "update" else "query", sql
+                    )
+                }
                 client.query(sql).rxExecute()
             }
         }.doOnError {
