@@ -631,6 +631,7 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
         out.tab(1).header("IDENTITY definitions");
         out.println();
 
+        GeneratorStrategy strategy = getStrategy();
         for (TableDefinition table : database.getTables(schema)) {
             try {
                 IdentityDefinition identity = table.getIdentity();
@@ -638,10 +639,10 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
                 if (identity != null) {
                     empty = false;
 
-                    final String identityType = out.ref(getStrategy().getFullJavaClassName(identity.getColumn().getContainer(), Mode.RECORD));
+                    final String identityType = out.ref(strategy.getFullJavaClassName(identity.getColumn().getContainer(), Mode.RECORD));
                     final String columnTypeFull = getJavaType(identity.getColumn().getType(resolver()));
                     final String columnType = out.ref(columnTypeFull);
-                    final String identityId = getStrategy().getJavaIdentifier(identity.getColumn().getContainer());
+                    final String identityId = strategy.getJavaIdentifier(identity.getColumn().getContainer());
                     final int block = allIdentities.size() / INITIALISER_SIZE;
 
                     printDeprecationIfUnknownType(out, columnTypeFull);
@@ -670,14 +671,13 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
                 for (UniqueKeyDefinition uniqueKey : uniqueKeys) {
                     empty = false;
 
-                    final String keyType = out.ref(getStrategy().getFullJavaClassName(uniqueKey.getTable(), Mode.RECORD));
-                    final String keyId = getStrategy().getJavaIdentifier(uniqueKey);
+                    final String keyType = out.ref(strategy.getFullJavaClassName(uniqueKey.getTable(), Mode.RECORD));
+                    final String keyId = strategy.getJavaIdentifier(uniqueKey);
                     final int block = allUniqueKeys.size() / INITIALISER_SIZE;
 
-                    if (scala)
-                        out.tab(1).println("val %s = UniqueKeys%s.%s", keyId, block, keyId);
-                    else
-                        out.tab(1).println("public static final %s<%s> %s = UniqueKeys%s.%s;", UniqueKey.class, keyType, keyId, block, keyId);
+//                    out.tab(1).println("// strategy: " + strategy.getClass().getName());
+//                    out.tab(1).println("// definition: " + uniqueKey.getClass().getName());
+                    out.tab(1).println("public static final %s<%s> %s = UniqueKeys%s.%s;", UniqueKey.class, keyType, keyId, block, keyId);
 
                     allUniqueKeys.add(uniqueKey);
                 }
@@ -697,9 +697,9 @@ public class ExtendedJavaGenerator extends AbstractGenerator {
                 for (ForeignKeyDefinition foreignKey : foreignKeys) {
                     empty = false;
 
-                    final String keyType = out.ref(getStrategy().getFullJavaClassName(foreignKey.getKeyTable(), Mode.RECORD));
-                    final String referencedType = out.ref(getStrategy().getFullJavaClassName(foreignKey.getReferencedTable(), Mode.RECORD));
-                    final String keyId = getStrategy().getJavaIdentifier(foreignKey);
+                    final String keyType = out.ref(strategy.getFullJavaClassName(foreignKey.getKeyTable(), Mode.RECORD));
+                    final String referencedType = out.ref(strategy.getFullJavaClassName(foreignKey.getReferencedTable(), Mode.RECORD));
+                    final String keyId = strategy.getJavaIdentifier(foreignKey);
                     final int block = allForeignKeys.size() / INITIALISER_SIZE;
 
                     if (scala)

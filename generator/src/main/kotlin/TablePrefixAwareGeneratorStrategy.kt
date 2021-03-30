@@ -2,11 +2,9 @@ package io.en4ble.pgaccess.generator
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.en4ble.pgaccess.generator.JooqGeneratorUtils.getColumnNameWithoutTablePrefix
+import io.en4ble.pgaccess.generator.JooqGeneratorUtils.getTablePrefix
 import org.jooq.codegen.GeneratorStrategy
-import org.jooq.meta.CatalogDefinition
-import org.jooq.meta.Definition
-import org.jooq.meta.SchemaDefinition
-import org.jooq.meta.TypedElementDefinition
+import org.jooq.meta.*
 import org.jooq.tools.StringUtils
 import java.io.File
 import java.io.Serializable
@@ -62,14 +60,19 @@ open class TablePrefixAwareGeneratorStrategy : VertxGeneratorStrategy() {
     private fun getCustomOutputName(definition: Definition): String {
         var outputName = definition.outputName
         val index = outputName.indexOf('_')
-        if (isColumn(definition)) {
-            //      System.out.println("definition is column: " + outputName);
-            val table = getTable(definition)
-            outputName = getColumnNameWithoutTablePrefix(table.outputName, outputName)
+        if (definition is UniqueKeyDefinition) {
+            // avoid name collisions if the same (foreign) key name is used in multiple tables
+            outputName = getTablePrefix(definition.table.name) + "_" + outputName
         } else {
-            //      System.out.println("definition is table: " + outputName);
-            if (index == 1 || index == 2) {
-                outputName = outputName.substring(index + 1)
+            if (isColumn(definition)) {
+                //      System.out.println("definition is column: " + outputName);
+                val table = getTable(definition)
+                outputName = getColumnNameWithoutTablePrefix(table.outputName, outputName)
+            } else {
+                //      System.out.println("definition is table: " + outputName);
+                if (index == 1 || index == 2) {
+                    outputName = outputName.substring(index + 1)
+                }
             }
         }
         return outputName

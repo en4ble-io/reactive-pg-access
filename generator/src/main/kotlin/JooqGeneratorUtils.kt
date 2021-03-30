@@ -14,7 +14,7 @@ object JooqGeneratorUtils {
         return columnName
     }
 
-    private fun getTablePrefix(tableName: String): String {
+    fun getTablePrefix(tableName: String): String {
         val tablePrefix = StringBuilder()
         val chars = tableName.toCharArray()
         for (i in chars.indices) {
