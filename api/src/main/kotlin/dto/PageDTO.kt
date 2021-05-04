@@ -38,12 +38,10 @@ open class PageDTO<ID> {
     var orderBy: OrderDTO = OrderDTO()
 
     @Valid
-    var orderByList: List<OrderDTO> = listOf(OrderDTO())
+    var orderByList: List<OrderDTO> = listOf()
         get() {
-            return if (field.isEmpty()) {
+            return field.ifEmpty {
                 listOf(orderBy)
-            } else {
-                field
             }
         }
 }
