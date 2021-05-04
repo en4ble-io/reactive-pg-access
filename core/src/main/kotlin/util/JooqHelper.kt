@@ -266,6 +266,16 @@ object JooqHelper {
         )
     }
 
+    fun stDWithin(left: Field<*>, location: PointDTO, distanceField: Field<*>): Condition {
+        return DSL.condition(
+            "public.ST_DWITHIN({0}, public.geography(public.ST_MakePoint({1},{2})), {3}) = TRUE",
+            left,
+            location.x,
+            location.y,
+            distanceField
+        )
+    }
+
     fun stDWithin(left: Field<*>, location: PointDTO, distance: Int): Condition {
         return DSL.condition(
             "public.ST_DWITHIN({0}, public.geography(public.ST_MakePoint({1},{2})), {3}) = TRUE",
