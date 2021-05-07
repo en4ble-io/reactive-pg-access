@@ -18,7 +18,7 @@ open class PageDTO<ID> {
         description = "The String representations of the values of the last displayed elements that are to be used for ordering. " +
             "Must correspond to the fields of the orderBy attribute."
     )
-    var baseValues: List<String>? = null
+    var baseValues: List<Any>? = null
         get() {
             return if (field == null && baseValue != null) {
                 listOf(baseValue!!)
@@ -28,7 +28,7 @@ open class PageDTO<ID> {
         }
 
     @Deprecated("use baseValues instead")
-    var baseValue: String? = null
+    var baseValue: Any? = null
 
     /** The maximum number of results that should be returned. Default: 10  */
     @Schema(defaultValue = "10", description = "The maximum number of results that should be returned.")

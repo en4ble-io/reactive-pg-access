@@ -331,12 +331,20 @@ protected constructor(
     @Suppress("UNCHECKED_CAST")
     private fun <ID> rxReadPage(
         baseQuery: SelectSeekStepN<Record>,
+        page: PageDTO<ID>
+    ): Single<List<DTO>> {
+        return rxReadPage(baseQuery, page.baseId, page.baseValues?.toTypedArray(), page.size)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <ID> rxReadPage(
+        baseQuery: SelectSeekStepN<Record>,
         baseId: ID?,
-        baseValues: Array<Any?>,
+        baseValues: Array<Any?>?,
         pageSize: Int
     ): Single<List<DTO>> {
         return if (baseId != null) {
-            val array = arrayOf(*baseValues, baseId)
+            val array = arrayOf(*baseValues!!, baseId)
             val query = baseQuery.seek(*array)
             rxQuery(query.limit(pageSize))
         } else {
@@ -391,6 +399,25 @@ protected constructor(
     ): List<DTO> {
         checkValuesAndOrderBy(baseId, baseValues, orderBy)
         return readPage<ID>(getReadPageQuery(condition, orderBy, baseId), baseId, baseValues, pageSize)
+    }
+
+    suspend fun <ID> readPage(
+        selectFrom: Table<*>,
+        condition: Condition,
+        page: PageDTO<ID>
+    ): List<DTO> {
+        val baseId = page.baseId
+        if (baseId != null) {
+            checkValuesAndOrderBy(baseId, page.baseValues?.toTypedArray(), page.orderByList)
+        }
+        return readPage(
+            selectFrom,
+            condition,
+            baseId,
+            page.baseValues?.toTypedArray() ?: emptyArray(),
+            page.orderByList,
+            page.size
+        )
     }
 
     suspend fun <ID> readPage(
@@ -458,7 +485,13 @@ protected constructor(
     }
 
 
-    protected fun checkValuesAndOrderBy(baseId: Any?, baseValues: Array<Any?>, orderBy: List<OrderDTO>) {
+    protected fun checkValuesAndOrderBy(baseId: Any?, baseValues: Array<Any?>?, orderBy: List<OrderDTO>?) {
+        if (baseValues == null || orderBy == null) {
+            if (baseId != null) {
+                throw ValidationException("baseValues and orderBy must not be empty if baseId is defined.")
+            }
+            return
+        }
         val baseValuesSize = baseValues.size
         val orderBySize = orderBy.size
         if (baseId != null && baseValuesSize != orderBySize) {
@@ -468,9 +501,10 @@ protected constructor(
         for (i in baseValues.indices) {
             val baseValue = baseValues[i] ?: continue
             val orderField = orderBy[i].field
-            val dbField = getDbField(orderField)
-            if (!dbField.type.isInstance(baseValue)) {
-                throw RuntimeException("order field has type ${baseValue.javaClass} but must be ${dbField.type}")
+            getDbField(orderField).type.let { dbFieldType ->
+                if (!dbFieldType.isInstance(baseValue)) {
+                    throw RuntimeException("order field has type ${baseValue.javaClass} but must be $dbFieldType")
+                }
             }
         }
     }
@@ -1026,7 +1060,7 @@ protected constructor(
         return if (o == null) null else JsonArray(o)
     }
 
-    private fun getBaseValues(orderBy: List<OrderDTO>, baseValues: List<String?>?): Array<Any?> {
+    private fun getBaseValues(orderBy: List<OrderDTO>, baseValues: List<Any>?): Array<Any?> {
         if (baseValues == null) return emptyArray()
         val fieldsAndValues = orderBy.map { it.field }.zip(baseValues)
         return fieldsAndValues.map { (field, value) ->
@@ -1035,7 +1069,7 @@ protected constructor(
     }
 
 
-    fun getBaseValue(jsonStringBaseValue: String?, fieldName: String): Any? {
+    fun getBaseValue(jsonStringBaseValue: Any?, fieldName: String): Any? {
         val baseValue = jsonStringBaseValue ?: return null
         val dbField = getDbField(fieldName)
         if (dbField.type.isInstance(baseValue)) {
