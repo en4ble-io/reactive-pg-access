@@ -2,6 +2,7 @@
 
 package io.en4ble.pgaccess
 
+import io.en4ble.pgaccess.exceptions.MultiClientException
 import io.reactivex.Single
 import io.vertx.kotlin.coroutines.await
 import io.vertx.pgclient.PgConnectOptions
@@ -25,54 +26,185 @@ import org.jooq.impl.SchemaImpl
 import org.slf4j.LoggerFactory
 import javax.validation.Validator
 
-/** @author Mark Hofmann (mark@en4ble.io)
- */
+interface DatabaseContext {
+    companion object {
+        const val DEFAULT_CLIENT_ID = "DEFAULT_CLIENT"
+
+        suspend fun getSingleDatabaseContext(context: DatabaseContext) =
+            if (context is MultiDatabaseContext) context.current() else toSingleDatabaseContext(context)
+
+        fun getSingleDatabaseContext(context: DatabaseContext, clientId: String? = null) =
+            if (context is MultiDatabaseContext) {
+                if (clientId != null) {
+                    context.databaseContexts[clientId]
+                        ?: throw MultiClientException("no context for client id: $clientId found.")
+                } else {
+                    throw MultiClientException("need client id to get context")
+                }
+            } else toSingleDatabaseContext(context)
+
+        fun toSingleDatabaseContext(context: DatabaseContext): SingleDatabaseContext {
+            return if (context !is SingleDatabaseContext) throw RuntimeException("SingleDatabaseContext required but is ${context.javaClass.name}") else context
+        }
+    }
+
+    //    fun config(clientId: String = DEFAULT_CLIENT_ID): DatabaseConfig
+//
+//    fun validator(clientId: String = DEFAULT_CLIENT_ID): Validator?  // optional validator, will be used before create
+//
+//    fun dsl(clientId: String = DEFAULT_CLIENT_ID): DSLContext
+//
+//    fun sqlClient(clientId: String = DEFAULT_CLIENT_ID): SqlClient
+    fun config(): DatabaseConfig
+
+    fun validator(): Validator?  // optional validator, will be used before create
+
+    fun dsl(): DSLContext
+
+    fun sqlClient(): SqlClient
+
+    suspend fun beginTx(): Pair<SqlConnection, Transaction>
+
+    suspend fun commitTx(connection: SqlConnection, transaction: Transaction)
+
+    suspend fun rollbackTx(connection: SqlConnection, transaction: Transaction)
+
+}
+
+@Suppress("MemberVisibilityCanBePrivate", "unused")
+interface MultiDatabaseContext : DatabaseContext {
+
+    val databaseContexts: Map<String, SingleDatabaseContext>
+
+    suspend fun currentClientId(): String
+
+    suspend fun current(): SingleDatabaseContext
+
+    fun hasClientId(clientId: String) = databaseContexts.containsKey(clientId)
+
+    private fun getDsl(): DSLContext {
+        // even when using multiple databases, they still have to use the same database DSL (it's all Postgresql)
+        // so it's save to use the first entry for all
+        return databaseContexts.values.first().dsl()
+    }
+
+    private fun getValidator(): Validator? {
+        // All contexts share the same validator
+        return databaseContexts.values.first().validator()
+    }
+
+    fun context(clientId: String): SingleDatabaseContext {
+        return (databaseContexts[clientId]
+            ?: throw RuntimeException("no database context found for client id: $clientId"))
+    }
+
+    fun config(clientId: String): DatabaseConfig {
+        return context(clientId).config()
+    }
+
+    fun dsl(clientId: String): DSLContext {
+        return getDsl()
+    }
+
+    fun validator(clientId: String): Validator? {
+        return getValidator()
+    }
+
+    fun sqlClient(clientId: String): SqlClient {
+        return context(clientId).sqlClient()
+    }
+
+    suspend fun beginTx(clientId: String): Pair<SqlConnection, Transaction> {
+        return context(clientId).beginTx()
+    }
+
+    suspend fun commitTx(clientId: String, connection: SqlConnection, transaction: Transaction) {
+        context(clientId).commitTx(connection, transaction)
+    }
+
+    suspend fun rollbackTx(clientId: String, connection: SqlConnection, transaction: Transaction) {
+        context(clientId).rollbackTx(connection, transaction)
+    }
+
+    override fun config(): DatabaseConfig {
+        throw NotImplementedException("config(clientId:String)")
+    }
+
+    override fun dsl(): DSLContext {
+        return getDsl()
+    }
+
+    override fun sqlClient(): SqlClient {
+        throw NotImplementedException("sqlClient(clientId:String)")
+    }
+
+    override fun validator(): Validator? {
+        return getValidator()
+    }
+
+    override suspend fun beginTx(): Pair<SqlConnection, Transaction> {
+        throw NotImplementedException("beginTx(clientId:String)")
+    }
+
+    override suspend fun commitTx(connection: SqlConnection, transaction: Transaction) {
+        throw NotImplementedException("commit(clientId:String)")
+    }
+
+    override suspend fun rollbackTx(connection: SqlConnection, transaction: Transaction) {
+        throw NotImplementedException("rollbackTx(clientId:String, connection: SqlConnection, transaction: Transaction)")
+    }
+
+    private class NotImplementedException(method: String) :
+        RuntimeException("Not implemented in MultiDatabaseContext, use $method")
+
+}
+
 @Suppress("MemberVisibilityCanBePrivate")
-open class DatabaseContext(
+open class SingleDatabaseContext(
     val vertx: Vertx?,
-    val config: DatabaseConfig,
-    val validator: Validator? = null // optional validator, will be used before create
-) {
+    private val config: DatabaseConfig,
+    /**
+     * optional validator, will be used before create.
+     * NOTE: inside a MultiDatabaseContext all SDC share the same validator
+     */
+    private val validator: Validator? = null
+) : DatabaseContext {
     private val LOG by lazy { LoggerFactory.getLogger(DatabaseContext::class.java) }
-    val dsl: DSLContext = DSL.using(SQLDialect.POSTGRES,
+
+    private val sqlClient: SqlClient
+
+    private val dsl: DSLContext = DSL.using(
+        SQLDialect.POSTGRES,
         if (config.preparedStatements) {
             Settings().withStatementType(StatementType.PREPARED_STATEMENT)
         } else {
             Settings().withStatementType(StatementType.STATIC_STATEMENT)
-        }.withRenderMapping(RenderMapping()
-            // replace hard coded _SCHEMA_ with configured schema
-            // this is useful for shared/reused schema definitions
-            .withSchemata(
-                MappedSchema().withInput("_SCHEMA_")
-                    .withOutput(config.schema)
-            )
+        }.withRenderMapping(
+            RenderMapping()
+                // replace hard coded _SCHEMA_ with configured schema
+                // this is useful for shared/reused schema definitions
+                .withSchemata(
+                    MappedSchema().withInput("_SCHEMA_")
+                        .withOutput(config.schema)
+                )
         )
     )
-    val sqlClient: SqlClient
+
+    private val configuration: Configuration
+        get() = dsl.configuration()
+
 
     constructor(vertx: Vertx, config: DatabaseConfig) : this(vertx, config, null)
     constructor(config: DatabaseConfig) : this(null, config)
 
-    constructor(databaseContext: DatabaseContext) : this(
+    constructor(databaseContext: SingleDatabaseContext) : this(
         databaseContext.vertx,
         databaseContext.config,
         databaseContext.validator
     )
 
-    companion object {
-        fun getSchemaImpl(schemaName: String, catalog: String?) =
-            SchemaImpl(schemaName, if (catalog != null) CatalogImpl(catalog) else null)
-    }
-
-    val configuration: Configuration
-        get() = dsl.configuration()
-
     init {
         this.sqlClient = initSqlClient()
-    }
-
-    private fun sqlClient(): SqlClient {
-        return sqlClient
     }
 
     private fun initSqlClient(): SqlClient {
@@ -104,21 +236,29 @@ open class DatabaseContext(
         }
     }
 
-    fun rxBeginTx(): Single<Pair<io.vertx.reactivex.sqlclient.SqlConnection, io.vertx.reactivex.sqlclient.Transaction>> {
-        return (sqlClient as io.vertx.reactivex.pgclient.PgPool).rxGetConnection()
-            .flatMap { connection ->
-                connection.rxBegin()
-                    .map { connection to it }
-            }
+    override fun config(): DatabaseConfig {
+        return config
     }
 
-    suspend fun beginTx(): Pair<SqlConnection, Transaction> {
+    override fun validator(): Validator? {
+        return validator
+    }
+
+    override fun dsl(): DSLContext {
+        return dsl
+    }
+
+    override fun sqlClient(): SqlClient {
+        return sqlClient
+    }
+
+    override suspend fun beginTx(): Pair<SqlConnection, Transaction> {
         logBeginTx()
         val connection = (sqlClient.delegate as PgPool).connection.await()
         return connection to connection.begin().await()
     }
 
-    suspend fun commitTx(connection: SqlConnection, transaction: Transaction) {
+    override suspend fun commitTx(connection: SqlConnection, transaction: Transaction) {
         logCommitTx()
         try {
             transaction.commit().await()
@@ -127,7 +267,7 @@ open class DatabaseContext(
         }
     }
 
-    suspend fun rollbackTx(connection: SqlConnection, transaction: Transaction) {
+    override suspend fun rollbackTx(connection: SqlConnection, transaction: Transaction) {
         logRollbackTx()
         try {
             transaction.rollback().await()
@@ -136,7 +276,18 @@ open class DatabaseContext(
         }
     }
 
-    fun commitTx(connection: io.vertx.reactivex.sqlclient.SqlConnection, transaction: io.vertx.reactivex.sqlclient.Transaction) {
+    fun rxBeginTx(): Single<Pair<io.vertx.reactivex.sqlclient.SqlConnection, io.vertx.reactivex.sqlclient.Transaction>> {
+        return (sqlClient as io.vertx.reactivex.pgclient.PgPool).rxGetConnection()
+            .flatMap { connection ->
+                connection.rxBegin()
+                    .map { connection to it }
+            }
+    }
+
+    fun rxCommitTx(
+        connection: io.vertx.reactivex.sqlclient.SqlConnection,
+        transaction: io.vertx.reactivex.sqlclient.Transaction
+    ) {
         logCommitTx()
         try {
             transaction.commit()
@@ -145,7 +296,10 @@ open class DatabaseContext(
         }
     }
 
-    fun rollbackTx(connection: io.vertx.reactivex.sqlclient.SqlConnection, transaction: io.vertx.reactivex.sqlclient.Transaction) {
+    fun rxRollbackTx(
+        connection: io.vertx.reactivex.sqlclient.SqlConnection,
+        transaction: io.vertx.reactivex.sqlclient.Transaction
+    ) {
         logRollbackTx()
         try {
             transaction.rollback()
@@ -164,6 +318,11 @@ open class DatabaseContext(
 
     private fun logRollbackTx() {
         LOG.debug("Rolling back transaction")
+    }
+
+    companion object {
+        fun getSchemaImpl(schemaName: String, catalog: String?) =
+            SchemaImpl(schemaName, if (catalog != null) CatalogImpl(catalog) else null)
     }
 
 // --------------------------------------------------------------------------------------------------------

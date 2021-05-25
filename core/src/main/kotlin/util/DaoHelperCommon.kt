@@ -1,7 +1,7 @@
 package io.en4ble.pgaccess.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.en4ble.pgaccess.DatabaseContext
+import io.en4ble.pgaccess.DatabaseConfig
 import io.en4ble.pgaccess.converters.TypedEnumConverter
 import io.en4ble.pgaccess.dto.OrderDTO
 import io.en4ble.pgaccess.dto.PagingDTO
@@ -22,8 +22,8 @@ internal object DaoHelperCommon {
     private val LOG by lazy { LoggerFactory.getLogger(DaoHelperCommon::class.java) }
     private val MAPPERS = HashMap<String, ObjectMapper>()
 
-    fun getQueryForLogging(query: Query, context: DatabaseContext): String {
-        return getQueryForLogging(getSql(query, context), JooqHelper.params(query))
+    fun getQueryForLogging(query: Query, config: DatabaseConfig): String {
+        return getQueryForLogging(getSql(query, config), JooqHelper.params(query))
     }
 
     fun getQueryForLogging(sql: String, params: Tuple): String {
@@ -71,11 +71,11 @@ internal object DaoHelperCommon {
         }
     }
 
-    fun getSql(query: Query, context: DatabaseContext): String {
-        val sql = if (query.bindValues.isEmpty()) {
+    fun getSql(query: Query, config: DatabaseConfig): String {
+        return if (query.bindValues.isEmpty()) {
             query.sql
         } else {
-            if (context.config.preparedStatements) {
+            if (config.preparedStatements) {
                 // rewrite placeholders of prepared statements
                 // (jOOQ/JDBC uses '?', we need '$' with index)
                 val sb = StringBuilder()
@@ -93,7 +93,6 @@ internal object DaoHelperCommon {
                 query.sql
             }
         }
-        return sql
     }
 
     fun uuidList(row: Row, i: Int): List<UUID>? {

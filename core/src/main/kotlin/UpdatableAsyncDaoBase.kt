@@ -1,5 +1,6 @@
 package io.en4ble.pgaccess
 
+import io.en4ble.pgaccess.DatabaseContext.Companion.toSingleDatabaseContext
 import io.en4ble.pgaccess.dto.PagingDTO
 import io.en4ble.pgaccess.mappers.JooqMapper
 import io.en4ble.pgaccess.util.DaoHelper
@@ -9,18 +10,7 @@ import io.reactivex.Single
 import io.vertx.reactivex.sqlclient.SqlClient
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.RowSet
-import org.jooq.Condition
-import org.jooq.Field
-import org.jooq.Query
-import org.jooq.SelectFieldOrAsterisk
-import org.jooq.SelectForUpdateStep
-import org.jooq.SelectLimitStep
-import org.jooq.Table
-import org.jooq.TableField
-import org.jooq.UpdatableRecord
-import org.jooq.UpdateConditionStep
-import org.jooq.UpdateSetMoreStep
-import org.jooq.UpdateSetStep
+import org.jooq.*
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 
@@ -40,19 +30,19 @@ constructor(
     }
 
     suspend fun delete(condition: Condition): Int {
-        return DaoHelper.update(dsl.deleteFrom(table).where(condition), context)
+        return DaoHelper.update(context.dsl().deleteFrom(table).where(condition), context)
     }
 
     suspend fun delete(condition: Condition, context: DatabaseContext): Int {
-        return DaoHelper.update(dsl.deleteFrom(table).where(condition), context)
+        return DaoHelper.update(context.dsl().deleteFrom(table).where(condition), context)
     }
 
     fun rxDelete(condition: Condition): Single<Int> {
-        return RxDaoHelper.update(dsl.deleteFrom(table).where(condition), context)
+        return RxDaoHelper.update(context.dsl().deleteFrom(table).where(condition), toSingleDatabaseContext(context))
     }
 
     fun rxDelete(condition: Condition, context: DatabaseContext): Single<Int> {
-        return RxDaoHelper.update(dsl.deleteFrom(table).where(condition), context)
+        return RxDaoHelper.update(context.dsl().deleteFrom(table).where(condition), toSingleDatabaseContext(context))
     }
 
     suspend fun update(query: Query, context: DatabaseContext): Int {
@@ -60,31 +50,31 @@ constructor(
     }
 
     suspend fun update(query: Query, client: io.vertx.sqlclient.SqlClient, context: DatabaseContext): Int {
-        return DaoHelper.update(query, client, context)
+        return DaoHelper.update(query, client, toSingleDatabaseContext(context))
     }
 
     fun rxUpdate(query: Query, context: DatabaseContext): Single<Int> {
-        return RxDaoHelper.update(query, context)
+        return RxDaoHelper.update(query, toSingleDatabaseContext(context))
     }
 
     fun rxUpdate(query: Query, client: SqlClient, context: DatabaseContext): Single<Int> {
-        return RxDaoHelper.update(query, client, context)
+        return RxDaoHelper.update(query, client, toSingleDatabaseContext(context))
     }
 
     suspend fun update(query: Query): Int {
-        return DaoHelper.update(query, context)
+        return DaoHelper.update(query, toSingleDatabaseContext(context))
     }
 
     suspend fun update(query: Query, client: io.vertx.sqlclient.SqlClient): Int {
-        return DaoHelper.update(query, client, context)
+        return DaoHelper.update(query, client, toSingleDatabaseContext(context))
     }
 
     fun rxUpdate(query: Query): Single<Int> {
-        return RxDaoHelper.update(query, context)
+        return RxDaoHelper.update(query, toSingleDatabaseContext(context))
     }
 
     fun rxUpdate(query: Query, client: SqlClient): Single<Int> {
-        return RxDaoHelper.update(query, client, context)
+        return RxDaoHelper.update(query, client, toSingleDatabaseContext(context))
     }
 
     fun addLimit(query: SelectLimitStep<*>, page: PagingDTO): SelectForUpdateStep<*> {
@@ -1605,7 +1595,7 @@ constructor(
         table: Table<RECORD>,
         updatedField: TableField<RECORD, LocalDateTime>?
     ): UpdateSetStep<RECORD> {
-        val update = dsl.update(table)
+        val update = context.dsl().update(table)
         return if (updatedField == null) update else update.set(updatedField, now())
     }
 

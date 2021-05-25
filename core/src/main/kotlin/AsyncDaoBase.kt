@@ -1,5 +1,7 @@
 package io.en4ble.pgaccess
 
+import io.en4ble.pgaccess.DatabaseContext.Companion.getSingleDatabaseContext
+import io.en4ble.pgaccess.DatabaseContext.Companion.toSingleDatabaseContext
 import io.en4ble.pgaccess.dto.OrderDTO
 import io.en4ble.pgaccess.dto.PageDTO
 import io.en4ble.pgaccess.dto.PagingDTO
@@ -27,7 +29,7 @@ import javax.validation.ValidationException
 
 /** @author Mark Hofmann (mark@en4ble.io)
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress("unused", "MemberVisibilityCanBePrivate", "UNCHECKED_CAST")
 abstract class AsyncDaoBase<RECORD : Record, DTO>
 protected constructor(
     @Suppress("CanBeParameter") protected val context: DatabaseContext,
@@ -36,9 +38,7 @@ protected constructor(
 ) {
     protected val LOG by lazy { LoggerFactory.getLogger(AsyncDaoBase::class.java) }
 
-    protected val dsl: DSLContext = context.dsl
-
-    protected val sqlClient: SqlClient = context.sqlClient
+    protected val dsl: DSLContext = context.dsl()
 
     protected open fun <ID> primaryKeyField(): TableField<RECORD, ID>? {
         val primaryKeyFields = table().primaryKey?.fields
@@ -53,20 +53,13 @@ protected constructor(
         return table
     }
 
+    // -- query optional
     suspend fun queryOptional(query: Query): Optional<Row> {
         return DaoHelper.queryOptional(query, context)
     }
 
     suspend fun queryOptional(query: Query, client: io.vertx.sqlclient.SqlClient): Optional<Row> {
-        return DaoHelper.queryOptional(query, client, context)
-    }
-
-    fun rxQueryOptional(query: Query): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
-        return RxDaoHelper.queryOptional(query, context)
-    }
-
-    fun rxQueryOptional(query: Query, client: SqlClient): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
-        return RxDaoHelper.queryOptional(query, client, context)
+        return DaoHelper.queryOptional(query, client, toSingleDatabaseContext(context))
     }
 
     suspend fun queryOptional(query: Query, context: DatabaseContext): Optional<Row> {
@@ -76,47 +69,52 @@ protected constructor(
     suspend fun queryOptional(
         query: Query,
         client: io.vertx.sqlclient.SqlClient,
-        context: DatabaseContext
+        context: SingleDatabaseContext
     ): Optional<Row> {
         return DaoHelper.queryOptional(query, client, context)
+    }
+
+    fun rxQueryOptional(query: Query, clientId: String? = null): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
+        val sc = getSingleDatabaseContext(context, clientId)
+        return RxDaoHelper.queryOptional(query, sc)
+    }
+
+    fun rxQueryOptional(
+        query: Query,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
+        val sc = getSingleDatabaseContext(context, clientId)
+        return RxDaoHelper.queryOptional(query, client, sc)
     }
 
     fun rxQueryOptional(
         query: Query,
         context: DatabaseContext
     ): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
-        return RxDaoHelper.queryOptional(query, context)
+        val sc = toSingleDatabaseContext(context)
+        return RxDaoHelper.queryOptional(query, sc)
     }
 
     fun rxQueryOptional(
         query: Query, client: SqlClient, context: DatabaseContext
     ): Single<Optional<io.vertx.reactivex.sqlclient.Row>> {
-        return RxDaoHelper.queryOptional(query, client, context)
+        val sc = toSingleDatabaseContext(context)
+        return RxDaoHelper.queryOptional(query, client, sc)
     }
 
+    // -- query
+
     suspend fun query(condition: Condition, context: DatabaseContext): RowSet<Row> {
-        return DaoHelper.query(getQuery(condition, table()), context)
+        return DaoHelper.query(getQuery(condition, table(), dsl), context)
     }
 
     suspend fun query(
         condition: Condition,
         client: io.vertx.sqlclient.SqlClient,
-        context: DatabaseContext
+        context: SingleDatabaseContext
     ): RowSet<Row> {
-        return DaoHelper.query(getQuery(condition, table()), client, context)
-    }
-
-    fun rxQuery(
-        condition: Condition, client: SqlClient, context: DatabaseContext
-    ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
-        return RxDaoHelper.query(getQuery(condition, table()), client, context)
-    }
-
-    fun rxQuery(
-        condition: Condition,
-        context: DatabaseContext
-    ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
-        return RxDaoHelper.query(getQuery(condition, table()), context)
+        return DaoHelper.query(getQuery(condition, table(), dsl), client, context)
     }
 
     suspend fun query(query: Query, context: DatabaseContext): RowSet<Row> {
@@ -124,14 +122,31 @@ protected constructor(
     }
 
     suspend fun query(query: Query, client: io.vertx.sqlclient.SqlClient, context: DatabaseContext): RowSet<Row> {
-        return DaoHelper.query(query, client, context)
+        val sc = toSingleDatabaseContext(context)
+        return DaoHelper.query(query, client, sc)
+    }
+
+    fun rxQuery(
+        condition: Condition, client: SqlClient, context: DatabaseContext
+    ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
+        val sc = toSingleDatabaseContext(context)
+        return RxDaoHelper.query(getQuery(condition, table(), dsl), client, sc)
+    }
+
+    fun rxQuery(
+        condition: Condition,
+        context: DatabaseContext
+    ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
+        val sc = toSingleDatabaseContext(context)
+        return RxDaoHelper.query(getQuery(condition, table(), dsl), sc)
     }
 
     fun rxQuery(
         query: Query,
         context: DatabaseContext
     ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
-        return RxDaoHelper.query(query, context)
+        val sc = toSingleDatabaseContext(context)
+        return RxDaoHelper.query(query, sc)
     }
 
     fun rxQuery(
@@ -139,28 +154,33 @@ protected constructor(
         client: SqlClient,
         context: DatabaseContext
     ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
-        return RxDaoHelper.query(query, client, context)
+        val sc = toSingleDatabaseContext(context)
+        return RxDaoHelper.query(query, client, sc)
     }
 
     suspend fun queryOne(condition: Condition, context: DatabaseContext): Row {
-        return DaoHelper.queryOne(getQuery(condition, table()), context)
+        val sc = toSingleDatabaseContext(context)
+        return DaoHelper.queryOne(getQuery(condition, table(), dsl), sc)
     }
 
     suspend fun queryOne(condition: Condition, client: io.vertx.sqlclient.SqlClient, context: DatabaseContext): Row {
-        return DaoHelper.queryOne(getQuery(condition, table()), client, context)
+        val sc = toSingleDatabaseContext(context)
+        return DaoHelper.queryOne(getQuery(condition, table(), dsl), client, sc)
     }
 
     fun rxQueryOne(
         condition: Condition,
         context: DatabaseContext
     ): Single<io.vertx.reactivex.sqlclient.Row> {
-        return RxDaoHelper.queryOne(getQuery(condition, table()), context)
+        val sc = toSingleDatabaseContext(context)
+        return RxDaoHelper.queryOne(getQuery(condition, table(), dsl), sc)
     }
 
     fun rxQueryOne(
         condition: Condition, client: SqlClient, context: DatabaseContext
     ): Single<io.vertx.reactivex.sqlclient.Row> {
-        return RxDaoHelper.queryOne(getQuery(condition, table()), client, context)
+        val sc = toSingleDatabaseContext(context)
+        return RxDaoHelper.queryOne(getQuery(condition, table(), dsl), client, sc)
     }
 
     suspend fun queryOne(query: Query, context: DatabaseContext): Row {
@@ -168,7 +188,8 @@ protected constructor(
     }
 
     suspend fun queryOne(query: Query, client: io.vertx.sqlclient.SqlClient, context: DatabaseContext): Row {
-        return DaoHelper.queryOne(query, client, context)
+        val sc = toSingleDatabaseContext(context)
+        return DaoHelper.queryOne(query, client, sc)
     }
 
     suspend fun query(query: Query): RowSet<Row> {
@@ -176,7 +197,8 @@ protected constructor(
     }
 
     suspend fun query(query: Query, client: io.vertx.sqlclient.SqlClient): RowSet<Row> {
-        return DaoHelper.query(query, client, context)
+        val sc = toSingleDatabaseContext(context)
+        return DaoHelper.query(query, client, sc)
     }
 
     suspend fun queryOne(query: Query): Row {
@@ -184,11 +206,13 @@ protected constructor(
     }
 
     suspend fun queryOne(query: Query, client: io.vertx.sqlclient.SqlClient): Row {
-        return DaoHelper.queryOne(query, client, context)
+        val sc = toSingleDatabaseContext(context)
+        return DaoHelper.queryOne(query, client, sc)
     }
 
     fun rxQueryOne(query: Query, context: DatabaseContext): Single<io.vertx.reactivex.sqlclient.Row> {
-        return RxDaoHelper.queryOne(query, context)
+        val sc = toSingleDatabaseContext(context)
+        return RxDaoHelper.queryOne(query, sc)
     }
 
     fun rxQueryOne(
@@ -196,38 +220,52 @@ protected constructor(
         client: SqlClient,
         context: DatabaseContext
     ): Single<io.vertx.reactivex.sqlclient.Row> {
-        return RxDaoHelper.queryOne(query, client, context)
-    }
-
-    fun rxQuery(query: Query): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
-        return RxDaoHelper.query(query, context)
+        val sc = toSingleDatabaseContext(context)
+        return RxDaoHelper.queryOne(query, client, sc)
     }
 
     fun rxQuery(
         query: Query,
-        client: SqlClient
+        clientId: String? = null
     ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
-        return RxDaoHelper.query(query, client, context)
+        val sc = getSingleDatabaseContext(context, clientId)
+        return RxDaoHelper.query(query, sc)
     }
 
-    fun rxQueryOne(query: Query): Single<io.vertx.reactivex.sqlclient.Row> {
-        return RxDaoHelper.queryOne(query, context)
+    fun rxQuery(
+        query: Query,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row>> {
+        val sc = getSingleDatabaseContext(context, clientId)
+        return RxDaoHelper.query(query, client, sc)
     }
 
-    fun rxQueryOne(query: Query, client: SqlClient): Single<io.vertx.reactivex.sqlclient.Row> {
-        return RxDaoHelper.queryOne(query, client, context)
+    fun rxQueryOne(query: Query, clientId: String? = null): Single<io.vertx.reactivex.sqlclient.Row> {
+        val sc = getSingleDatabaseContext(context, clientId)
+        return RxDaoHelper.queryOne(query, sc)
     }
 
+    fun rxQueryOne(
+        query: Query,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<io.vertx.reactivex.sqlclient.Row> {
+        val sc = getSingleDatabaseContext(context, clientId)
+        return RxDaoHelper.queryOne(query, client, sc)
+    }
+
+    // read uuids
     suspend fun readUUIDs(
         idField: TableField<*, *>, condition: Condition
     ): List<UUID> {
-        return readUUIDs(idField, condition, null, context.sqlClient.delegate)
+        return readUUIDs(idField, condition, null, context.sqlClient().delegate)
     }
 
     suspend fun readUUIDs(
         idField: TableField<*, *>, selectFrom: Table<*>, condition: Condition, page: PagingDTO? = null
     ): List<UUID> {
-        return readUUIDs(idField, selectFrom, condition, page, context.sqlClient.delegate)
+        return readUUIDs(idField, selectFrom, condition, page, context.sqlClient().delegate)
     }
 
     suspend fun readUUIDs(
@@ -241,21 +279,28 @@ protected constructor(
         selectFrom: Table<*>,
         condition: Condition, page: PagingDTO? = null, client: io.vertx.sqlclient.SqlClient
     ): List<UUID> {
+        val sc = toSingleDatabaseContext(context)
         val query = dsl.select(idField).from(selectFrom).where(condition)
-        return DaoHelper.readUUIDs(query, page, client, context)
+        return DaoHelper.readUUIDs(query, page, client, sc)
     }
 
     fun rxReadUUIDs(
-        idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null
+        idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null, clientId: String? = null
     ): Single<List<UUID>> {
-        return rxReadUUIDs(idField, condition, page, context.sqlClient)
+        val sc = getSingleDatabaseContext(context, clientId)
+        return rxReadUUIDs(idField, condition, page, sc.sqlClient())
     }
 
     fun rxReadUUIDs(
-        idField: TableField<*, *>, condition: Condition, page: PagingDTO? = null, client: SqlClient
+        idField: TableField<*, *>,
+        condition: Condition,
+        page: PagingDTO? = null,
+        client: SqlClient,
+        clientId: String? = null
     ): Single<List<UUID>> {
+        val sc = getSingleDatabaseContext(context, clientId)
         val query = dsl.select(idField).from(idField.table).where(condition)
-        return RxDaoHelper.readUUIDs(query, page, client, context)
+        return RxDaoHelper.readUUIDs(query, page, client, sc)
     }
 
     suspend fun readUUIDs(query: Query, page: PagingDTO? = null): List<UUID> {
@@ -263,28 +308,37 @@ protected constructor(
     }
 
     suspend fun readUUIDs(query: Query, page: PagingDTO? = null, client: SqlClient): List<UUID> {
-        return DaoHelper.readUUIDs(query, page, client.delegate, context)
+        val sc = toSingleDatabaseContext(context)
+        return DaoHelper.readUUIDs(query, page, client.delegate, sc)
     }
 
-    fun rxReadUUIDs(query: Query, page: PagingDTO? = null): Single<List<UUID>> {
-        return RxDaoHelper.readUUIDs(query, page, context)
+    fun rxReadUUIDs(query: Query, page: PagingDTO? = null, clientId: String? = null): Single<List<UUID>> {
+        val sc = getSingleDatabaseContext(context, clientId)
+        return RxDaoHelper.readUUIDs(query, page, sc)
     }
 
-    fun rxReadUUIDs(query: Query, page: PagingDTO? = null, client: SqlClient): Single<List<UUID>> {
-        return RxDaoHelper.readUUIDs(query, page, client, context)
+    fun rxReadUUIDs(
+        query: Query,
+        page: PagingDTO? = null,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<List<UUID>> {
+        val sc = getSingleDatabaseContext(context, clientId)
+        return RxDaoHelper.readUUIDs(query, page, client, sc)
     }
 
-    fun <ID> rxReadPage(page: PageDTO<ID>): Single<List<DTO>> {
-        return rxReadPage(null, page)
+    fun <ID> rxReadPage(page: PageDTO<ID>, clientId: String? = null): Single<List<DTO>> {
+        return rxReadPage(null, page, clientId)
     }
 
-    fun <ID> rxReadPage(condition: Condition? = null, page: PageDTO<ID>): Single<List<DTO>> {
+    fun <ID> rxReadPage(condition: Condition? = null, page: PageDTO<ID>, clientId: String? = null): Single<List<DTO>> {
         return rxReadPage(
             condition,
             page.baseId,
             getBaseValues(page.orderByList, page.baseValues),
             page.orderByList,
-            page.size
+            page.size,
+            clientId
         )
     }
 
@@ -293,9 +347,10 @@ protected constructor(
         baseId: ID?,
         baseValues: Array<Any?>,
         orderBy: OrderDTO,
-        pageSize: Int
+        pageSize: Int,
+        clientId: String? = null
     ): Single<List<DTO>> {
-        return rxReadPage(condition, baseId, baseValues, listOf(orderBy), pageSize)
+        return rxReadPage(condition, baseId, baseValues, listOf(orderBy), pageSize, clientId)
     }
 
     fun <ID, ORDER_BY> rxReadPageCustomOrder(
@@ -303,13 +358,15 @@ protected constructor(
         baseId: ID?,
         baseValues: Array<Any?>?,
         orderBy: List<SortField<ORDER_BY>>,
-        pageSize: Int
+        pageSize: Int,
+        clientId: String? = null
     ): Single<List<DTO>> {
         return rxReadPage<ID>(
             getReadPageQueryOrderBy(condition, orderBy, baseId),
             baseId,
             baseValues ?: emptyArray(),
-            pageSize
+            pageSize,
+            clientId
         )
     }
 
@@ -318,10 +375,11 @@ protected constructor(
         baseId: ID?,
         baseValues: Array<Any?>,
         orderBy: List<OrderDTO>,
-        pageSize: Int
+        pageSize: Int,
+        clientId: String? = null
     ): Single<List<DTO>> {
         checkValuesAndOrderBy(baseId, baseValues, orderBy)
-        return rxReadPage<ID>(getReadPageQuery(condition, orderBy, baseId), baseId, baseValues, pageSize)
+        return rxReadPage<ID>(getReadPageQuery(condition, orderBy, baseId), baseId, baseValues, pageSize, clientId)
     }
 
     suspend fun <ID> readPage(page: PageDTO<ID>): List<DTO> {
@@ -331,9 +389,10 @@ protected constructor(
     @Suppress("UNCHECKED_CAST")
     private fun <ID> rxReadPage(
         baseQuery: SelectSeekStepN<Record>,
-        page: PageDTO<ID>
+        page: PageDTO<ID>,
+        clientId: String? = null
     ): Single<List<DTO>> {
-        return rxReadPage(baseQuery, page.baseId, page.baseValues?.toTypedArray(), page.size)
+        return rxReadPage(baseQuery, page.baseId, page.baseValues?.toTypedArray(), page.size, clientId)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -341,14 +400,15 @@ protected constructor(
         baseQuery: SelectSeekStepN<Record>,
         baseId: ID?,
         baseValues: Array<Any?>?,
-        pageSize: Int
+        pageSize: Int,
+        clientId: String? = null
     ): Single<List<DTO>> {
         return if (baseId != null) {
             val array = arrayOf(*baseValues!!, baseId)
             val query = baseQuery.seek(*array)
-            rxQuery(query.limit(pageSize))
+            rxQuery(query.limit(pageSize), clientId)
         } else {
-            rxQuery(baseQuery.limit(pageSize))
+            rxQuery(baseQuery.limit(pageSize), clientId)
         }.map { map(it.delegate as RowSet<Row>) }
     }
 
@@ -386,8 +446,8 @@ protected constructor(
     /**
      * Reads a page using "keyset pagination" via jOOQs seek method.
      * @param baseId The id of the last entry of the last page.
-     * @param baseValue The value of the last entry of the last page that is used for sorting. Must match the type of the field in the OrderDTO.
-     * @param order Information on how to sort the list.
+     * @param baseValues The value(s) of the last entry(ies) of the last page that is used for sorting. Must match the type of the field in the OrderDTO.
+     * @param orderBy Information on how to sort the list.
      * @param pageSize The maximum number of results to return.
      */
     suspend fun <ID> readPage(
@@ -622,40 +682,45 @@ protected constructor(
         return read(dsl.select().from(table), table, client)
     }
 
-    fun rxReadAll(): Single<List<DTO>> {
-        return rxRead(dsl.select().from(table), table)
+    fun rxReadAll(clientId: String? = null): Single<List<DTO>> {
+        return rxRead(dsl.select().from(table), table, clientId)
     }
 
-    fun rxReadAll(table: Table<RECORD>): Single<List<DTO>> {
-        return rxRead(dsl.select().from(table), table)
+    fun rxReadAll(table: Table<RECORD>, clientId: String? = null): Single<List<DTO>> {
+        return rxRead(dsl.select().from(table), table, clientId)
     }
 
-    fun rxReadAll(client: SqlClient): Single<List<DTO>> {
-        return rxRead(dsl.select().from(table), table, client)
+    fun rxReadAll(client: SqlClient, clientId: String? = null): Single<List<DTO>> {
+        return rxRead(dsl.select().from(table), table, client, clientId)
     }
 
-    fun rxReadAll(table: Table<RECORD>? = null, client: SqlClient): Single<List<DTO>> {
-        return rxRead(dsl.select().from(table), table ?: this.table, client)
+    fun rxReadAll(table: Table<RECORD>? = null, client: SqlClient, clientId: String? = null): Single<List<DTO>> {
+        return rxRead(dsl.select().from(table), table ?: this.table, client, clientId)
     }
 
     suspend fun read(condition: Condition, table: Table<RECORD>): List<DTO> {
-        return read(getQuery(condition, table), table)
+        return read(getQuery(condition, table, dsl), table)
     }
 
     suspend fun read(condition: Condition, table: Table<RECORD>, client: io.vertx.sqlclient.SqlClient): List<DTO> {
-        return read(getQuery(condition, table), table, client)
+        return read(getQuery(condition, table, dsl), table, client)
     }
 
-    fun rxRead(condition: Condition, table: Table<RECORD>): Single<List<DTO>> {
-        return rxRead(getQuery(condition, table), table)
+    fun rxRead(condition: Condition, table: Table<RECORD>, clientId: String? = null): Single<List<DTO>> {
+        return rxRead(getQuery(condition, table, dsl), table, clientId)
     }
 
-    fun rxRead(condition: Condition, table: Table<RECORD>, client: SqlClient): Single<List<DTO>> {
-        return rxRead(getQuery(condition, table), table, client)
+    fun rxRead(
+        condition: Condition,
+        table: Table<RECORD>,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<List<DTO>> {
+        return rxRead(getQuery(condition, table, dsl), table, client, clientId)
     }
 
     suspend fun read(condition: Condition, table: Table<RECORD>, page: PagingDTO?): List<DTO> {
-        return read(getQuery(condition, table), table, page)
+        return read(getQuery(condition, table, dsl), table, page)
     }
 
     suspend fun read(
@@ -664,15 +729,26 @@ protected constructor(
         page: PagingDTO?,
         client: io.vertx.sqlclient.SqlClient
     ): List<DTO> {
-        return read(getQuery(condition, table), table, page, client)
+        return read(getQuery(condition, table, dsl), table, page, client)
     }
 
-    fun rxRead(condition: Condition, table: Table<RECORD>, page: PagingDTO?): Single<List<DTO>> {
-        return rxRead(getQuery(condition, table), table, page)
+    fun rxRead(
+        condition: Condition,
+        table: Table<RECORD>,
+        page: PagingDTO?,
+        clientId: String? = null
+    ): Single<List<DTO>> {
+        return rxRead(getQuery(condition, table, dsl), table, page, clientId)
     }
 
-    fun rxRead(condition: Condition, table: Table<RECORD>, page: PagingDTO?, client: SqlClient): Single<List<DTO>> {
-        return rxRead(getQuery(condition, table), table, page, client)
+    fun rxRead(
+        condition: Condition,
+        table: Table<RECORD>,
+        page: PagingDTO?,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<List<DTO>> {
+        return rxRead(getQuery(condition, table, dsl), table, page, client, clientId)
     }
 
     suspend fun read(condition: Condition, orderBy: List<OrderDTO>): List<DTO> {
@@ -683,12 +759,17 @@ protected constructor(
         return read(condition, table(), PagingDTO(orderBy), client)
     }
 
-    fun rxRead(condition: Condition, orderBy: List<OrderDTO>): Single<List<DTO>> {
-        return rxRead(condition, table(), PagingDTO(orderBy))
+    fun rxRead(condition: Condition, orderBy: List<OrderDTO>, clientId: String? = null): Single<List<DTO>> {
+        return rxRead(condition, table(), PagingDTO(orderBy), clientId)
     }
 
-    fun rxRead(condition: Condition, orderBy: List<OrderDTO>, client: SqlClient): Single<List<DTO>> {
-        return rxRead(condition, table(), PagingDTO(orderBy), client)
+    fun rxRead(
+        condition: Condition,
+        orderBy: List<OrderDTO>,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<List<DTO>> {
+        return rxRead(condition, table(), PagingDTO(orderBy), client, clientId)
     }
 
     suspend fun read(condition: Condition, table: Table<RECORD>, orderBy: List<OrderDTO>): List<DTO> {
@@ -704,17 +785,23 @@ protected constructor(
         return read(condition, table, PagingDTO(orderBy), client)
     }
 
-    fun rxRead(condition: Condition, table: Table<RECORD>, orderBy: List<OrderDTO>): Single<List<DTO>> {
-        return rxRead(condition, table, PagingDTO(orderBy))
+    fun rxRead(
+        condition: Condition,
+        table: Table<RECORD>,
+        orderBy: List<OrderDTO>,
+        clientId: String? = null
+    ): Single<List<DTO>> {
+        return rxRead(condition, table, PagingDTO(orderBy), clientId)
     }
 
     fun rxRead(
         condition: Condition,
         table: Table<RECORD>,
         orderBy: List<OrderDTO>,
-        client: SqlClient
+        client: SqlClient,
+        clientId: String? = null
     ): Single<List<DTO>> {
-        return rxRead(condition, table, PagingDTO(orderBy), client)
+        return rxRead(condition, table, PagingDTO(orderBy), client, clientId)
     }
 
     suspend fun read(query: Query, table: Table<RECORD>): List<DTO> {
@@ -725,12 +812,12 @@ protected constructor(
         return read(query, table, null, client)
     }
 
-    fun rxRead(query: Query, table: Table<RECORD>): Single<List<DTO>> {
-        return rxRead(query, table, null)
+    fun rxRead(query: Query, table: Table<RECORD>, clientId: String? = null): Single<List<DTO>> {
+        return rxRead(query, table, null, clientId)
     }
 
-    fun rxRead(query: Query, table: Table<RECORD>, client: SqlClient): Single<List<DTO>> {
-        return rxRead(query, table, null, client)
+    fun rxRead(query: Query, table: Table<RECORD>, client: SqlClient, clientId: String? = null): Single<List<DTO>> {
+        return rxRead(query, table, null, client, clientId)
     }
 
     suspend fun read(
@@ -747,40 +834,50 @@ protected constructor(
         page: PagingDTO?,
         client: io.vertx.sqlclient.SqlClient
     ): List<DTO> {
-        return DaoHelper.read(query, table, page, client, context).map { map(it, table) }
-    }
-
-    fun rxRead(
-        query: Query,
-        table: Table<RECORD>,
-        page: PagingDTO?
-    ): Single<List<DTO>> {
-        return RxDaoHelper.read(query, table, page, context).map { map(it.delegate as RowSet<Row>, table) }
+        val sc = toSingleDatabaseContext(context)
+        return DaoHelper.read(query, table, page, client, sc).map { map(it, table) }
     }
 
     fun rxRead(
         query: Query,
         table: Table<RECORD>,
         page: PagingDTO?,
-        client: SqlClient
+        clientId: String? = null
     ): Single<List<DTO>> {
-        return RxDaoHelper.read(query, table, page, client, context).map { map(it.delegate as RowSet<Row>, table) }
+        val sc = getSingleDatabaseContext(context, clientId)
+        return RxDaoHelper.read(query, table, page, sc).map { map(it.delegate as RowSet<Row>, table) }
+    }
+
+    fun rxRead(
+        query: Query,
+        table: Table<RECORD>,
+        page: PagingDTO?,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<List<DTO>> {
+        val sc = getSingleDatabaseContext(context, clientId)
+        return RxDaoHelper.read(query, table, page, client, sc).map { map(it.delegate as RowSet<Row>, table) }
     }
 
     suspend fun readOne(condition: Condition, table: Table<RECORD>): DTO {
-        return readOne(getQuery(condition, table), table)
+        return readOne(getQuery(condition, table, dsl), table)
     }
 
     suspend fun readOne(condition: Condition, table: Table<RECORD>, client: io.vertx.sqlclient.SqlClient): DTO {
-        return readOne(getQuery(condition, table), table, client)
+        return readOne(getQuery(condition, table, dsl), table, client)
     }
 
-    fun rxReadOne(condition: Condition, table: Table<RECORD>): Single<DTO> {
-        return rxReadOne(getQuery(condition, table), table)
+    fun rxReadOne(condition: Condition, table: Table<RECORD>, clientId: String? = null): Single<DTO> {
+        return rxReadOne(getQuery(condition, table, dsl), table, clientId)
     }
 
-    fun rxReadOne(condition: Condition, table: Table<RECORD>, client: SqlClient): Single<DTO> {
-        return rxReadOne(getQuery(condition, table), table, client)
+    fun rxReadOne(
+        condition: Condition,
+        table: Table<RECORD>,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<DTO> {
+        return rxReadOne(getQuery(condition, table, dsl), table, client, clientId)
     }
 
     suspend fun readOne(query: Query, table: Table<RECORD>): DTO {
@@ -791,20 +888,20 @@ protected constructor(
         return map(queryOne(query, client), table)
     }
 
-    fun rxReadOne(query: Query, table: Table<RECORD>): Single<DTO> {
-        return rxQueryOne(query).map {
+    fun rxReadOne(query: Query, table: Table<RECORD>, clientId: String? = null): Single<DTO> {
+        return rxQueryOne(query, clientId).map {
             map(it.delegate, table)
         }
     }
 
-    fun rxReadOne(query: Query, table: Table<RECORD>, client: SqlClient): Single<DTO> {
-        return rxQueryOne(query, client).map {
+    fun rxReadOne(query: Query, table: Table<RECORD>, client: SqlClient, clientId: String? = null): Single<DTO> {
+        return rxQueryOne(query, client, clientId).map {
             map(it.delegate, table)
         }
     }
 
     suspend fun readOptional(condition: Condition, table: Table<RECORD>): Optional<DTO> {
-        return readOptional(getQuery(condition, table), table)
+        return readOptional(getQuery(condition, table, dsl), table)
     }
 
     suspend fun readOptional(
@@ -812,38 +909,49 @@ protected constructor(
         table: Table<RECORD>,
         client: io.vertx.sqlclient.SqlClient
     ): Optional<DTO> {
-        return readOptional(getQuery(condition, table), table, client)
+        return readOptional(getQuery(condition, table, dsl), table, client)
     }
 
-    fun rxReadOptional(condition: Condition, table: Table<RECORD>): Single<Optional<DTO>> {
-        return rxReadOptional(getQuery(condition, table), table)
+    fun rxReadOptional(condition: Condition, table: Table<RECORD>, clientId: String? = null): Single<Optional<DTO>> {
+        return rxReadOptional(getQuery(condition, table, dsl), table, clientId)
     }
 
-    fun rxReadOptional(condition: Condition, table: Table<RECORD>, client: SqlClient): Single<Optional<DTO>> {
-        return rxReadOptional(getQuery(condition, table), table, client)
+    fun rxReadOptional(
+        condition: Condition,
+        table: Table<RECORD>,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<Optional<DTO>> {
+        return rxReadOptional(getQuery(condition, table, dsl), table, client, clientId)
     }
 
     suspend fun readOptional(query: Query, table: Table<RECORD>): Optional<DTO> {
-        return readOptional(query, table, context.sqlClient.delegate)
+        return readOptional(query, table, context.sqlClient().delegate)
     }
 
     suspend fun readOptional(query: Query, table: Table<RECORD>, client: io.vertx.sqlclient.SqlClient): Optional<DTO> {
         val res = queryOptional(query, client)
         return if (res.isPresent) {
-            Optional.of(map(res.get(), table))
+            Optional.of(map(res.get(), table)!!)
         } else {
             Optional.empty()
         }
     }
 
-    fun rxReadOptional(query: Query, table: Table<RECORD>): Single<Optional<DTO>> {
-        return rxReadOptional(query, table, context.sqlClient)
+    fun rxReadOptional(query: Query, table: Table<RECORD>, clientId: String? = null): Single<Optional<DTO>> {
+        val sc = getSingleDatabaseContext(context, clientId)
+        return rxReadOptional(query, table, sc.sqlClient(), clientId)
     }
 
-    fun rxReadOptional(query: Query, table: Table<RECORD>, client: SqlClient): Single<Optional<DTO>> {
-        return rxQueryOptional(query, client).map {
+    fun rxReadOptional(
+        query: Query,
+        table: Table<RECORD>,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<Optional<DTO>> {
+        return rxQueryOptional(query, client, clientId).map {
             if (it.isPresent) {
-                Optional.of(map(it.get().delegate, table))
+                Optional.of(map(it.get().delegate, table)!!)
             } else {
                 Optional.empty()
             }
@@ -858,81 +966,93 @@ protected constructor(
         return queryOne(countQuery, client).getInteger(0)
     }
 
-    fun rxReadCount(countQuery: Query): Single<Int> {
-        return rxQueryOne(countQuery).map { it.getInteger(0) }
+    fun rxReadCount(countQuery: Query, clientId: String? = null): Single<Int> {
+        return rxQueryOne(countQuery, clientId).map { it.getInteger(0) }
     }
 
-    fun rxReadCount(countQuery: Query, client: SqlClient): Single<Int> {
-        return rxQueryOne(countQuery, client).map { it.getInteger(0) }
+    fun rxReadCount(countQuery: Query, client: SqlClient, clientId: String? = null): Single<Int> {
+        return rxQueryOne(countQuery, client, clientId).map { it.getInteger(0) }
     }
 
     suspend fun readCount(countCondition: Condition): Int {
-        return readCount(getCountQuery(countCondition, table))
+        return readCount(getCountQuery(countCondition, table, dsl))
     }
 
     suspend fun readCount(countCondition: Condition, client: io.vertx.sqlclient.SqlClient): Int {
-        return readCount(getCountQuery(countCondition, table), client)
+        return readCount(getCountQuery(countCondition, table, dsl), client)
     }
 
-    fun rxReadCount(countCondition: Condition): Single<Int> {
-        return rxReadCount(getCountQuery(countCondition, table))
+    fun rxReadCount(countCondition: Condition, clientId: String? = null): Single<Int> {
+        return rxReadCount(getCountQuery(countCondition, table, dsl), clientId)
     }
 
-    fun rxReadCount(countCondition: Condition, client: SqlClient): Single<Int> {
-        return rxReadCount(getCountQuery(countCondition, table), client)
+    fun rxReadCount(countCondition: Condition, client: SqlClient, clientId: String? = null): Single<Int> {
+        return rxReadCount(getCountQuery(countCondition, table, dsl), client, clientId)
     }
 
     suspend fun readCount(countCondition: Condition, table: Table<*>): Int {
-        return readCount(getQuery(countCondition, table))
+        return readCount(getQuery(countCondition, table, dsl))
     }
 
     suspend fun readCount(countCondition: Condition, table: Table<*>, client: io.vertx.sqlclient.SqlClient): Int {
-        return readCount(getCountQuery(countCondition, table), client)
+        return readCount(getCountQuery(countCondition, table, dsl), client)
     }
 
-    fun rxReadCount(countCondition: Condition, table: Table<*>): Single<Int> {
-        return rxReadCount(getCountQuery(countCondition, table))
+    fun rxReadCount(countCondition: Condition, table: Table<*>, clientId: String? = null): Single<Int> {
+        return rxReadCount(getCountQuery(countCondition, table, dsl), clientId)
     }
 
-    fun rxReadCount(countCondition: Condition, table: Table<*>, client: SqlClient): Single<Int> {
-        return rxReadCount(getCountQuery(countCondition, table), client)
+    fun rxReadCount(
+        countCondition: Condition,
+        table: Table<*>,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<Int> {
+        return rxReadCount(getCountQuery(countCondition, table, dsl), client, clientId)
     }
 
-    private fun getQuery(condition: Condition, table: Table<*>) = dsl.select().from(table).where(condition)
-    private fun getCountQuery(condition: Condition, table: Table<*>) = dsl.selectCount().from(table).where(condition)
+    private fun getQuery(condition: Condition, table: Table<*>, dsl: DSLContext) =
+        dsl.select().from(table).where(condition)
+
+    private fun getCountQuery(condition: Condition, table: Table<*>, dsl: DSLContext) =
+        dsl.selectCount().from(table).where(condition)
 
     abstract suspend fun read(query: Query): List<DTO>
     abstract suspend fun read(query: Query, client: io.vertx.sqlclient.SqlClient): List<DTO>
-    abstract fun rxRead(query: Query): Single<List<DTO>>
-    abstract fun rxRead(query: Query, client: SqlClient): Single<List<DTO>>
+    abstract fun rxRead(query: Query, clientId: String? = null): Single<List<DTO>>
+    abstract fun rxRead(query: Query, client: SqlClient, clientId: String? = null): Single<List<DTO>>
 
-    abstract fun rxReadCount(): Single<Int>
+    abstract fun rxReadCount(clientId: String? = null): Single<Int>
     abstract suspend fun readCount(): Int
 
     abstract suspend fun read(condition: Condition): List<DTO>
     abstract suspend fun read(condition: Condition, client: io.vertx.sqlclient.SqlClient): List<DTO>
-    abstract fun rxRead(condition: Condition): Single<List<DTO>>
-    abstract fun rxRead(condition: Condition, client: SqlClient): Single<List<DTO>>
+    abstract fun rxRead(condition: Condition, clientId: String? = null): Single<List<DTO>>
+    abstract fun rxRead(condition: Condition, client: SqlClient, clientId: String? = null): Single<List<DTO>>
 
     abstract suspend fun readOne(condition: Condition): DTO
     abstract suspend fun readOne(condition: Condition, client: io.vertx.sqlclient.SqlClient): DTO
-    abstract fun rxReadOne(condition: Condition): Single<DTO>
-    abstract fun rxReadOne(condition: Condition, client: SqlClient): Single<DTO>
+    abstract fun rxReadOne(condition: Condition, clientId: String? = null): Single<DTO>
+    abstract fun rxReadOne(condition: Condition, client: SqlClient, clientId: String? = null): Single<DTO>
 
     abstract suspend fun readOne(query: Query): DTO
     abstract suspend fun readOne(query: Query, client: io.vertx.sqlclient.SqlClient): DTO
-    abstract fun rxReadOne(query: Query): Single<DTO>
-    abstract fun rxReadOne(query: Query, client: SqlClient): Single<DTO>
+    abstract fun rxReadOne(query: Query, clientId: String? = null): Single<DTO>
+    abstract fun rxReadOne(query: Query, client: SqlClient, clientId: String? = null): Single<DTO>
 
     abstract suspend fun readOptional(query: Query): Optional<DTO>
     abstract suspend fun readOptional(query: Query, client: io.vertx.sqlclient.SqlClient): Optional<DTO>
-    abstract fun rxReadOptional(query: Query): Single<Optional<DTO>>
-    abstract fun rxReadOptional(query: Query, client: SqlClient): Single<Optional<DTO>>
+    abstract fun rxReadOptional(query: Query, clientId: String? = null): Single<Optional<DTO>>
+    abstract fun rxReadOptional(query: Query, client: SqlClient, clientId: String? = null): Single<Optional<DTO>>
 
     abstract suspend fun readOptional(condition: Condition): Optional<DTO>
     abstract suspend fun readOptional(condition: Condition, client: io.vertx.sqlclient.SqlClient): Optional<DTO>
-    abstract fun rxReadOptional(condition: Condition): Single<Optional<DTO>>
-    abstract fun rxReadOptional(condition: Condition, client: SqlClient): Single<Optional<DTO>>
+    abstract fun rxReadOptional(condition: Condition, clientId: String? = null): Single<Optional<DTO>>
+    abstract fun rxReadOptional(
+        condition: Condition,
+        client: SqlClient,
+        clientId: String? = null
+    ): Single<Optional<DTO>>
 
     abstract fun map(row: Row, table: Table<RECORD>, offset: Int = 0): DTO
     abstract fun map(row: Row, offset: Int = 0): DTO
@@ -947,7 +1067,7 @@ protected constructor(
 
     // ----------- CRUD helper methods
 
-    fun tsVector(language: String, text: String): Field<Any>? {
+    fun tsVector(language: String, text: String): Field<Any> {
         return JooqHelper.tsVector(language, text)
     }
 
@@ -1079,10 +1199,12 @@ protected constructor(
     }
 
     protected fun validate(dto: Any?) {
-        if (dto != null && context.validator != null) {
-            val validationErrors = context.validator.validate(dto)
-            if (validationErrors.isNotEmpty()) {
-                throw ConstraintViolationException(validationErrors)
+        val validator = context.validator()
+        if (dto != null && validator != null) {
+            validator.validate(dto)?.let { validationErrors ->
+                if (validationErrors.isNotEmpty()) {
+                    throw ConstraintViolationException(validationErrors)
+                }
             }
         }
     }
