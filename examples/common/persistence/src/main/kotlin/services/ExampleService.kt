@@ -4,19 +4,9 @@ import io.en4ble.examples.dao.ExampleDao
 import io.en4ble.examples.dto.TestDTO
 import io.en4ble.examples.jooq.tables.Example.EXAMPLE
 import io.en4ble.examples.jooq.tables.pojos.ExampleDto
-import io.en4ble.pgaccess.dto.BoxDTO
-import io.en4ble.pgaccess.dto.CircleDTO
-import io.en4ble.pgaccess.dto.LineDTO
-import io.en4ble.pgaccess.dto.LineSegmentDTO
-import io.en4ble.pgaccess.dto.PathDTO
-import io.en4ble.pgaccess.dto.PointDTO
-import io.en4ble.pgaccess.dto.PolygonDTO
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.OffsetTime
-import java.util.UUID
+import io.en4ble.pgaccess.dto.*
+import java.time.*
+import java.util.*
 import kotlin.random.Random
 
 /**
@@ -175,5 +165,5 @@ open class ExampleService(protected val exampleDao: ExampleDao) {
     private fun randomCircle() = CircleDTO(randomPoint(), Random.nextDouble(0.9, 10.0))
 
     private fun randomPoint() =
-        PointDTO(Random.nextDouble(0.1, 90.0).toString(), Random.nextDouble(0.1, 90.0).toString())
+        PointDTO(Random.nextDouble(0.1, 90.0), Random.nextDouble(0.1, 90.0))
 }

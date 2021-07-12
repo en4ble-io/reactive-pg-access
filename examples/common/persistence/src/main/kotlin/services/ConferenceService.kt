@@ -7,7 +7,7 @@ import io.en4ble.examples.enums.ConferenceState
 import io.en4ble.examples.jooq.tables.pojos.ConferenceDto
 import io.en4ble.examples.jooq.tables.pojos.ConferenceV1Dto
 import io.reactivex.Single
-import java.util.UUID
+import java.util.*
 
 /**
  *
@@ -20,7 +20,7 @@ open class ConferenceService(
 ) {
     fun createConference(form: ConferenceDto): Single<ConferenceV1Dto> {
         form.id = UUID.randomUUID()
-        return conferenceDao.rxCreateReturning(form)
+        return conferenceDao.rxCreateReturning(form, null)
             .map { toConferenceV1(it) }
     }
 

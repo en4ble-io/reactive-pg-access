@@ -18,7 +18,7 @@ import java.util.UUID;
 @io.swagger.v3.oas.annotations.media.Schema(name="ConferenceV1Dto")
 public class ConferenceV1Dto extends Object implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = 2117372454;
+    private static final long serialVersionUID = 513656210;
 
     private UUID            id;
     private String          name;
@@ -69,7 +69,7 @@ public class ConferenceV1Dto extends Object implements Serializable, Cloneable {
         return this;
     }
 
-    @org.hibernate.validator.constraints.Length(max = 30)
+    @javax.validation.constraints.Size(max = 30)
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name", maxLength=30)
     @com.fasterxml.jackson.annotation.JsonProperty(value="name", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getName() {

@@ -19,7 +19,7 @@ import java.util.UUID;
 @io.swagger.v3.oas.annotations.media.Schema(name="ConferenceForm", title="A simple conference.")
 public class ConferenceForm extends ConferenceDto implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = 1354193639;
+    private static final long serialVersionUID = -72008707;
 
 
     @javax.validation.constraints.NotNull
@@ -45,7 +45,7 @@ public class ConferenceForm extends ConferenceDto implements Serializable, Clone
      * The name of the conference.
      */
     @javax.validation.constraints.NotNull
-    @org.hibernate.validator.constraints.Length(min = 5, max = 30)
+    @javax.validation.constraints.Size(min = 5, max = 30)
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name", title="The name of the conference.", required=true, minLength=5, maxLength=30)
     @com.fasterxml.jackson.annotation.JsonProperty(value="name", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getName() {
@@ -55,7 +55,7 @@ public class ConferenceForm extends ConferenceDto implements Serializable, Clone
     /**
      * The description of the conference.
      */
-    @org.hibernate.validator.constraints.Length(min = 20, max = 2000)
+    @javax.validation.constraints.Size(min = 20, max = 2000)
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="about", title="The description of the conference.", minLength=20, maxLength=2000)
     @com.fasterxml.jackson.annotation.JsonProperty(value="about", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getAbout() {

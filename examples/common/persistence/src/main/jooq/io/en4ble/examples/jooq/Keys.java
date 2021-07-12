@@ -30,8 +30,8 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<ConferenceRecord> CONFERENCE_PK = UniqueKeys0.CONFERENCE_PK;
-    public static final UniqueKey<ExampleRecord> EXAMPLE_PK = UniqueKeys0.EXAMPLE_PK;
+    public static final UniqueKey<ConferenceRecord> C_T_CONFERENCE_PK = UniqueKeys0.C_T_CONFERENCE_PK;
+    public static final UniqueKey<ExampleRecord> E_P_EXAMPLE_PK = UniqueKeys0.E_P_EXAMPLE_PK;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -47,7 +47,7 @@ public class Keys {
     }
 
     private static class UniqueKeys0 {
-        public static final UniqueKey<ConferenceRecord> CONFERENCE_PK = Internal.createUniqueKey(Conference.CONFERENCE, "t_conference_pk", Conference.CONFERENCE.ID);
-        public static final UniqueKey<ExampleRecord> EXAMPLE_PK = Internal.createUniqueKey(Example.EXAMPLE, "p_example_pk", Example.EXAMPLE.UUID);
+        public static final UniqueKey<ConferenceRecord> C_T_CONFERENCE_PK = Internal.createUniqueKey(Conference.CONFERENCE, "t_conference_pk", Conference.CONFERENCE.ID);
+        public static final UniqueKey<ExampleRecord> E_P_EXAMPLE_PK = Internal.createUniqueKey(Example.EXAMPLE, "p_example_pk", Example.EXAMPLE.UUID);
     }
 }

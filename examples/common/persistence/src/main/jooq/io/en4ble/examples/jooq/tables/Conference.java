@@ -37,7 +37,7 @@ import org.jooq.impl.TableImpl;
  */
 public class Conference extends TableImpl<ConferenceRecord> implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = 737773616;
+    private static final long serialVersionUID = -121993374;
 
     /**
      * The reference instance of <code>pgaccess.p_conference</code>
@@ -151,12 +151,12 @@ public class Conference extends TableImpl<ConferenceRecord> implements Serializa
 
     @Override
     public UniqueKey<ConferenceRecord> getPrimaryKey() {
-        return Keys.CONFERENCE_PK;
+        return Keys.C_T_CONFERENCE_PK;
     }
 
     @Override
     public List<UniqueKey<ConferenceRecord>> getKeys() {
-        return Arrays.<UniqueKey<ConferenceRecord>>asList(Keys.CONFERENCE_PK);
+        return Arrays.<UniqueKey<ConferenceRecord>>asList(Keys.C_T_CONFERENCE_PK);
     }
 
     @Override

@@ -24,7 +24,7 @@ import org.jooq.impl.TableRecordImpl;
 @io.swagger.v3.oas.annotations.media.Schema(name="ConferenceV1Dto")
 public class ConferenceV1Record extends TableRecordImpl<ConferenceV1Record> implements Serializable, Cloneable, Record7<UUID, String, String, LocalDate, LocalDate, PointDTO, ConferenceState> {
 
-    private static final long serialVersionUID = 616779267;
+    private static final long serialVersionUID = -559298439;
 
     /**
      * Setter for <code>pgaccess.conference_v1.id</code>.
@@ -54,7 +54,7 @@ public class ConferenceV1Record extends TableRecordImpl<ConferenceV1Record> impl
     /**
      * Getter for <code>pgaccess.conference_v1.name</code>.
      */
-    @org.hibernate.validator.constraints.Length(max = 30)
+    @javax.validation.constraints.Size(max = 30)
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name", maxLength=30)
     @com.fasterxml.jackson.annotation.JsonProperty(value="name", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getName() {

@@ -15,6 +15,17 @@ import io.en4ble.pgaccess.dto.LineSegmentDTO;
 import io.en4ble.pgaccess.dto.PathDTO;
 import io.en4ble.pgaccess.dto.PointDTO;
 import io.en4ble.pgaccess.dto.PolygonDTO;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
@@ -28,23 +39,13 @@ import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
 
 /**
  * An example table containing all datatypes that are supported by reactive-pg-access.
  */
 public class Example extends TableImpl<ExampleRecord> implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = -68117740;
+    private static final long serialVersionUID = 239812276;
 
     /**
      * The reference instance of <code>pgaccess.p_example</code>
@@ -397,12 +398,12 @@ public class Example extends TableImpl<ExampleRecord> implements Serializable, C
 
     @Override
     public UniqueKey<ExampleRecord> getPrimaryKey() {
-        return Keys.EXAMPLE_PK;
+        return Keys.E_P_EXAMPLE_PK;
     }
 
     @Override
     public List<UniqueKey<ExampleRecord>> getKeys() {
-        return Arrays.<UniqueKey<ExampleRecord>>asList(Keys.EXAMPLE_PK);
+        return Arrays.<UniqueKey<ExampleRecord>>asList(Keys.E_P_EXAMPLE_PK);
     }
 
     @Override

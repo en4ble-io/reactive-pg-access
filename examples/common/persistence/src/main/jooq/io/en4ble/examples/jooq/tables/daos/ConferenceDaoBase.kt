@@ -30,20 +30,20 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     suspend fun readById(vararg values:UUID):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadById(vararg values:UUID):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadById(vararg values:UUID, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    suspend fun readById(vararg values:UUID, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<ConferenceDto> {
+    suspend fun readById(vararg values:UUID, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
     }
-    fun rxReadById(vararg values:UUID, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
+    fun rxReadById(vararg values:UUID, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy, clientId)
     }
     suspend fun readById(vararg values:UUID, page: io.en4ble.pgaccess.dto.PagingDTO):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
     }
-    fun rxReadById(vararg values:UUID, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
+    fun rxReadById(vararg values:UUID, page: io.en4ble.pgaccess.dto.PagingDTO, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page, clientId)
     }
 
     /**
@@ -52,14 +52,14 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     suspend fun readOneById(value:UUID):ConferenceDto {
         return readOne(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.eq(value),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadOneById(value:UUID):io.reactivex.Single<ConferenceDto> {
-        return rxReadOne(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.eq(value),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadOneById(value:UUID, clientId: String?):io.reactivex.Single<ConferenceDto> {
+        return rxReadOne(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.eq(value),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
     suspend fun readOptionalById(value:UUID):java.util.Optional<ConferenceDto> {
         return readOptional(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.eq(value),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadOptionalById(value:UUID):io.reactivex.Single<java.util.Optional<ConferenceDto>> {
-        return rxReadOptional(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.eq(value),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadOptionalById(value:UUID, clientId: String?):io.reactivex.Single<java.util.Optional<ConferenceDto>> {
+        return rxReadOptional(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ID.eq(value),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
 
     /**
@@ -68,20 +68,20 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     suspend fun readByCreated(vararg values:LocalDateTime):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.CREATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadByCreated(vararg values:LocalDateTime):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.CREATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadByCreated(vararg values:LocalDateTime, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.CREATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    suspend fun readByCreated(vararg values:LocalDateTime, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<ConferenceDto> {
+    suspend fun readByCreated(vararg values:LocalDateTime, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.CREATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
     }
-    fun rxReadByCreated(vararg values:LocalDateTime, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.CREATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
+    fun rxReadByCreated(vararg values:LocalDateTime, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.CREATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy, clientId)
     }
     suspend fun readByCreated(vararg values:LocalDateTime, page: io.en4ble.pgaccess.dto.PagingDTO):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.CREATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
     }
-    fun rxReadByCreated(vararg values:LocalDateTime, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.CREATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
+    fun rxReadByCreated(vararg values:LocalDateTime, page: io.en4ble.pgaccess.dto.PagingDTO, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.CREATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page, clientId)
     }
     override fun getUpdatedField(): org.jooq.TableField<ConferenceRecord, LocalDateTime> {
         return io.en4ble.examples.jooq.tables.Conference.CONFERENCE.UPDATED
@@ -93,20 +93,20 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     suspend fun readByUpdated(vararg values:LocalDateTime):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.UPDATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadByUpdated(vararg values:LocalDateTime):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.UPDATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadByUpdated(vararg values:LocalDateTime, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.UPDATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    suspend fun readByUpdated(vararg values:LocalDateTime, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<ConferenceDto> {
+    suspend fun readByUpdated(vararg values:LocalDateTime, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.UPDATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
     }
-    fun rxReadByUpdated(vararg values:LocalDateTime, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.UPDATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
+    fun rxReadByUpdated(vararg values:LocalDateTime, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.UPDATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy, clientId)
     }
     suspend fun readByUpdated(vararg values:LocalDateTime, page: io.en4ble.pgaccess.dto.PagingDTO):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.UPDATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
     }
-    fun rxReadByUpdated(vararg values:LocalDateTime, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.UPDATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
+    fun rxReadByUpdated(vararg values:LocalDateTime, page: io.en4ble.pgaccess.dto.PagingDTO, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.UPDATED.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page, clientId)
     }
 
     /**
@@ -115,20 +115,20 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     suspend fun readByName(vararg values:String):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.NAME.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadByName(vararg values:String):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.NAME.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadByName(vararg values:String, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.NAME.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    suspend fun readByName(vararg values:String, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<ConferenceDto> {
+    suspend fun readByName(vararg values:String, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.NAME.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
     }
-    fun rxReadByName(vararg values:String, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.NAME.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
+    fun rxReadByName(vararg values:String, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.NAME.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy, clientId)
     }
     suspend fun readByName(vararg values:String, page: io.en4ble.pgaccess.dto.PagingDTO):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.NAME.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
     }
-    fun rxReadByName(vararg values:String, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.NAME.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
+    fun rxReadByName(vararg values:String, page: io.en4ble.pgaccess.dto.PagingDTO, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.NAME.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page, clientId)
     }
 
     /**
@@ -137,20 +137,20 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     suspend fun readByAbout(vararg values:String):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ABOUT.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadByAbout(vararg values:String):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ABOUT.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadByAbout(vararg values:String, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ABOUT.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    suspend fun readByAbout(vararg values:String, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<ConferenceDto> {
+    suspend fun readByAbout(vararg values:String, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ABOUT.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
     }
-    fun rxReadByAbout(vararg values:String, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ABOUT.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
+    fun rxReadByAbout(vararg values:String, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ABOUT.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy, clientId)
     }
     suspend fun readByAbout(vararg values:String, page: io.en4ble.pgaccess.dto.PagingDTO):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ABOUT.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
     }
-    fun rxReadByAbout(vararg values:String, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ABOUT.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
+    fun rxReadByAbout(vararg values:String, page: io.en4ble.pgaccess.dto.PagingDTO, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.ABOUT.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page, clientId)
     }
 
     /**
@@ -159,20 +159,20 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     suspend fun readByStartDate(vararg values:LocalDate):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.START_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadByStartDate(vararg values:LocalDate):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.START_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadByStartDate(vararg values:LocalDate, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.START_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    suspend fun readByStartDate(vararg values:LocalDate, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<ConferenceDto> {
+    suspend fun readByStartDate(vararg values:LocalDate, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.START_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
     }
-    fun rxReadByStartDate(vararg values:LocalDate, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.START_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
+    fun rxReadByStartDate(vararg values:LocalDate, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.START_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy, clientId)
     }
     suspend fun readByStartDate(vararg values:LocalDate, page: io.en4ble.pgaccess.dto.PagingDTO):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.START_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
     }
-    fun rxReadByStartDate(vararg values:LocalDate, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.START_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
+    fun rxReadByStartDate(vararg values:LocalDate, page: io.en4ble.pgaccess.dto.PagingDTO, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.START_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page, clientId)
     }
 
     /**
@@ -181,20 +181,20 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     suspend fun readByEndDate(vararg values:LocalDate):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.END_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadByEndDate(vararg values:LocalDate):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.END_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadByEndDate(vararg values:LocalDate, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.END_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    suspend fun readByEndDate(vararg values:LocalDate, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<ConferenceDto> {
+    suspend fun readByEndDate(vararg values:LocalDate, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.END_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
     }
-    fun rxReadByEndDate(vararg values:LocalDate, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.END_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
+    fun rxReadByEndDate(vararg values:LocalDate, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.END_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy, clientId)
     }
     suspend fun readByEndDate(vararg values:LocalDate, page: io.en4ble.pgaccess.dto.PagingDTO):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.END_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
     }
-    fun rxReadByEndDate(vararg values:LocalDate, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.END_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
+    fun rxReadByEndDate(vararg values:LocalDate, page: io.en4ble.pgaccess.dto.PagingDTO, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.END_DATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page, clientId)
     }
 
     /**
@@ -203,20 +203,20 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     suspend fun readByState(vararg values:ConferenceState):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadByState(vararg values:ConferenceState):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadByState(vararg values:ConferenceState, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    suspend fun readByState(vararg values:ConferenceState, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<ConferenceDto> {
+    suspend fun readByState(vararg values:ConferenceState, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
     }
-    fun rxReadByState(vararg values:ConferenceState, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
+    fun rxReadByState(vararg values:ConferenceState, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy, clientId)
     }
     suspend fun readByState(vararg values:ConferenceState, page: io.en4ble.pgaccess.dto.PagingDTO):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
     }
-    fun rxReadByState(vararg values:ConferenceState, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
+    fun rxReadByState(vararg values:ConferenceState, page: io.en4ble.pgaccess.dto.PagingDTO, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page, clientId)
     }
 
     /**
@@ -225,20 +225,20 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     suspend fun readByLocation(vararg values:PointDTO):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.LOCATION.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
-    fun rxReadByLocation(vararg values:PointDTO):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.LOCATION.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    fun rxReadByLocation(vararg values:PointDTO, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.LOCATION.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    suspend fun readByLocation(vararg values:PointDTO, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):List<ConferenceDto> {
+    suspend fun readByLocation(vararg values:PointDTO, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.LOCATION.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
     }
-    fun rxReadByLocation(vararg values:PointDTO, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.LOCATION.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy)
+    fun rxReadByLocation(vararg values:PointDTO, orderBy: List<io.en4ble.pgaccess.dto.OrderDTO>, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.LOCATION.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, orderBy, clientId)
     }
     suspend fun readByLocation(vararg values:PointDTO, page: io.en4ble.pgaccess.dto.PagingDTO):List<ConferenceDto> {
         return read(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.LOCATION.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
     }
-    fun rxReadByLocation(vararg values:PointDTO, page: io.en4ble.pgaccess.dto.PagingDTO):io.reactivex.Single<List<ConferenceDto>> {
-        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.LOCATION.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page)
+    fun rxReadByLocation(vararg values:PointDTO, page: io.en4ble.pgaccess.dto.PagingDTO, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+        return rxRead(io.en4ble.examples.jooq.tables.Conference.CONFERENCE.LOCATION.`in`(values.toList()),io.en4ble.examples.jooq.tables.Conference.CONFERENCE, page, clientId)
     }
     private val dbFieldMap =
     hashMapOf<String, org.jooq.Field<*>>(
@@ -251,8 +251,11 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     "endDate" to io.en4ble.examples.jooq.tables.Conference.CONFERENCE.END_DATE,
     "state" to io.en4ble.examples.jooq.tables.Conference.CONFERENCE.STATE,
     "location" to io.en4ble.examples.jooq.tables.Conference.CONFERENCE.LOCATION)
+    private fun getOrderFieldNames(): List<String> {
+            return dbFieldMap.filterNot { it.value.name.startsWith("internal_") || it.key=="id" }.map { it.key }
+    }
     override fun getDbField(dtoField: String): org.jooq.Field<*> {
-    return dbFieldMap[dtoField] ?: throw javax.validation.ValidationException("Unknown field $dtoField")
+    return dbFieldMap[dtoField] ?: throw javax.validation.ValidationException("orderBy field '$dtoField' does not exist, must be one of "+getOrderFieldNames().joinToString(","))
     }
     override fun map(row:io.vertx.sqlclient.Row, table:org.jooq.Table<ConferenceRecord>,offset:Int): ConferenceDto {
         return io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(table).toDto(row, offset)
@@ -273,17 +276,23 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     override fun map(rs: io.vertx.reactivex.sqlclient.RowSet<io.vertx.reactivex.sqlclient.Row> , offset:Int):List<ConferenceDto> {
         return map(rs.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, offset)
     }
+    override fun rxReadCount(clientId: String?):io.reactivex.Single<Int> {
+    return rxReadCount(dsl.selectCount().from(io.en4ble.examples.jooq.tables.Conference.CONFERENCE), clientId)
+    }
+    override suspend fun readCount():Int {
+    return readCount(dsl.selectCount().from(io.en4ble.examples.jooq.tables.Conference.CONFERENCE))
+    }
     override suspend fun read(condition:org.jooq.Condition):List<ConferenceDto> {
     return read(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
     }
     override suspend fun read(condition:org.jooq.Condition,client:io.vertx.sqlclient.SqlClient):List<ConferenceDto> {
     return read(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
     }
-    override fun rxRead(condition:org.jooq.Condition):io.reactivex.Single<List<ConferenceDto>> {
-    return rxRead(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    override fun rxRead(condition:org.jooq.Condition, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+    return rxRead(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    override fun rxRead(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<List<ConferenceDto>> {
-    return rxRead(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
+    override fun rxRead(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+    return rxRead(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client, clientId)
     }
     override suspend fun read(query:org.jooq.Query):List<ConferenceDto> {
     return read(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
@@ -291,11 +300,11 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     override suspend fun read(query:org.jooq.Query,client:io.vertx.sqlclient.SqlClient):List<ConferenceDto> {
     return read(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
     }
-    override fun rxRead(query:org.jooq.Query):io.reactivex.Single<List<ConferenceDto>> {
-    return rxRead(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    override fun rxRead(query:org.jooq.Query, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+    return rxRead(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    override fun rxRead(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<List<ConferenceDto>> {
-    return rxRead(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
+    override fun rxRead(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
+    return rxRead(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client, clientId)
     }
     override suspend fun readOne(condition:org.jooq.Condition):ConferenceDto {
     return readOne(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
@@ -303,11 +312,11 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     override suspend fun readOne(condition:org.jooq.Condition,client:io.vertx.sqlclient.SqlClient):ConferenceDto {
     return readOne(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
     }
-    override fun rxReadOne(condition:org.jooq.Condition):io.reactivex.Single<ConferenceDto> {
-    return rxReadOne(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    override fun rxReadOne(condition:org.jooq.Condition, clientId: String?):io.reactivex.Single<ConferenceDto> {
+    return rxReadOne(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    override fun rxReadOne(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<ConferenceDto> {
-    return rxReadOne(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
+    override fun rxReadOne(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient, clientId: String?):io.reactivex.Single<ConferenceDto> {
+    return rxReadOne(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client, clientId)
     }
     override suspend fun readOne(query:org.jooq.Query):ConferenceDto {
     return readOne(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
@@ -315,11 +324,11 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     override suspend fun readOne(query:org.jooq.Query,client:io.vertx.sqlclient.SqlClient):ConferenceDto {
     return readOne(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
     }
-    override fun rxReadOne(query:org.jooq.Query):io.reactivex.Single<ConferenceDto> {
-    return rxReadOne(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    override fun rxReadOne(query:org.jooq.Query, clientId: String?):io.reactivex.Single<ConferenceDto> {
+    return rxReadOne(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    override fun rxReadOne(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<ConferenceDto> {
-    return rxReadOne(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
+    override fun rxReadOne(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient, clientId: String?):io.reactivex.Single<ConferenceDto> {
+    return rxReadOne(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client, clientId)
     }
     override suspend fun readOptional(condition:org.jooq.Condition):java.util.Optional<ConferenceDto> {
     return readOptional(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
@@ -327,11 +336,11 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     override suspend fun readOptional(condition:org.jooq.Condition,client:io.vertx.sqlclient.SqlClient):java.util.Optional<ConferenceDto> {
     return readOptional(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
     }
-    override fun rxReadOptional(condition:org.jooq.Condition):io.reactivex.Single<java.util.Optional<ConferenceDto>> {
-    return rxReadOptional(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    override fun rxReadOptional(condition:org.jooq.Condition, clientId: String?):io.reactivex.Single<java.util.Optional<ConferenceDto>> {
+    return rxReadOptional(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    override fun rxReadOptional(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<java.util.Optional<ConferenceDto>> {
-    return rxReadOptional(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
+    override fun rxReadOptional(condition:org.jooq.Condition,client:io.vertx.reactivex.sqlclient.SqlClient, clientId: String?):io.reactivex.Single<java.util.Optional<ConferenceDto>> {
+    return rxReadOptional(condition, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client, clientId)
     }
     override suspend fun readOptional(query:org.jooq.Query):java.util.Optional<ConferenceDto> {
     return readOptional(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
@@ -339,108 +348,177 @@ abstract class ConferenceDaoBase(dbContext:io.en4ble.pgaccess.DatabaseContext) :
     override suspend fun readOptional(query:org.jooq.Query,client:io.vertx.sqlclient.SqlClient):java.util.Optional<ConferenceDto> {
     return readOptional(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
     }
-    override fun rxReadOptional(query:org.jooq.Query):io.reactivex.Single<java.util.Optional<ConferenceDto>> {
-    return rxReadOptional(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
+    override fun rxReadOptional(query:org.jooq.Query, clientId: String?):io.reactivex.Single<java.util.Optional<ConferenceDto>> {
+    return rxReadOptional(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, clientId)
     }
-    override fun rxReadOptional(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<java.util.Optional<ConferenceDto>> {
-    return rxReadOptional(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client)
+    override fun rxReadOptional(query:org.jooq.Query,client:io.vertx.reactivex.sqlclient.SqlClient, clientId: String?):io.reactivex.Single<java.util.Optional<ConferenceDto>> {
+    return rxReadOptional(query, io.en4ble.examples.jooq.tables.Conference.CONFERENCE, client, clientId)
     }
     suspend fun update(dto:ConferenceDto, condition:org.jooq.Condition):Int {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+            return io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT
+        }
         return query(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition)).rowCount()
     }
-    fun rxUpdate(dto:ConferenceDto, condition:org.jooq.Condition):io.reactivex.Single<Int> {
+    fun rxUpdate(dto:ConferenceDto, condition:org.jooq.Condition, clientId: String?):io.reactivex.Single<Int> {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
-        return rxQuery(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition)).map{ it.delegate.rowCount() }
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+            return io.reactivex.Single.just(io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT)
+        }
+        return rxQuery(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition), clientId).map{ it.delegate.rowCount() }
     }
     suspend fun update(dto:ConferenceDto, condition:org.jooq.Condition, client:io.vertx.sqlclient.SqlClient):Int {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+            return io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT
+        }
         return query(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition), client).rowCount()
     }
-    fun rxUpdate(dto:ConferenceDto, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<Int> {
+    fun rxUpdate(dto:ConferenceDto, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient, clientId: String?):io.reactivex.Single<Int> {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
-        return rxQuery(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition),client).map{ it.delegate.rowCount() }
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+            return io.reactivex.Single.just(io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT)
+        }
+        return rxQuery(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition),client, clientId).map{ it.delegate.rowCount() }
     }
     suspend fun updateReturning(dto:ConferenceDto, condition:org.jooq.Condition):List<ConferenceDto> {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+        return read(condition)
+        }
         return map(query(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields())))
     }
     suspend fun updateReturningOne(dto:ConferenceDto, condition:org.jooq.Condition):ConferenceDto {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+        return readOne(condition)
+        }
         return map(queryOne(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields())))
     }
-    fun rxUpdateReturning(dto:ConferenceDto, condition:org.jooq.Condition):io.reactivex.Single<List<ConferenceDto>> {
+    fun rxUpdateReturning(dto:ConferenceDto, condition:org.jooq.Condition, clientId: String?):io.reactivex.Single<List<ConferenceDto>> {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
-        return rxQuery(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields())).map{ map(it.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>) }
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+        return rxRead(condition)
+        }
+        return rxQuery(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields()), clientId).map{ map(it.delegate as io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>) }
     }
-    fun rxUpdateReturningOne(dto:ConferenceDto, condition:org.jooq.Condition):io.reactivex.Single<ConferenceDto> {
+    fun rxUpdateReturningOne(dto:ConferenceDto, condition:org.jooq.Condition, clientId: String?):io.reactivex.Single<ConferenceDto> {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
-        return rxQueryOne(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields())).map{ map(it.delegate) }
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+        return rxReadOne(condition)
+        }
+        return rxQueryOne(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields()), clientId).map{ map(it.delegate) }
     }
     suspend fun updateReturning(dto:ConferenceDto, condition:org.jooq.Condition, client:io.vertx.sqlclient.SqlClient):ConferenceDto {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+        return readOne(condition)
+        }
         return map(queryOne(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields()), client))
     }
-    fun rxUpdateReturning(dto:ConferenceDto, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<ConferenceDto> {
+    fun rxUpdateReturning(dto:ConferenceDto, condition:org.jooq.Condition, client:io.vertx.reactivex.sqlclient.SqlClient, clientId: String?):io.reactivex.Single<ConferenceDto> {
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
-        return rxQueryOne(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields()),client).map{ map(it.delegate) }
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+        return rxReadOne(condition)
+        }
+        return rxQueryOne(dsl.update(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).set(map).where(condition).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields()),client, clientId).map{ map(it.delegate) }
     }
     suspend fun create(dto:ConferenceDto):Int {
         validate(dto)
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+            return io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT
+        }
         return query(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values)).rowCount()
     }
-    suspend fun create(dto:ConferenceDto,client:io.vertx.sqlclient.SqlClient):Int {
+    suspend fun create(dto:ConferenceDto, client:io.vertx.sqlclient.SqlClient):Int {
         validate(dto)
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+            return io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT
+        }
         return query(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values), client).rowCount()
     }
     suspend fun createReturning(dto:ConferenceDto):ConferenceDto {
         validate(dto)
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+        }
         return map(queryOne(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields())))
     }
     suspend fun createReturning(dto:ConferenceDto,client:io.vertx.sqlclient.SqlClient):ConferenceDto {
         validate(dto)
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+        }
         return map(queryOne(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields()), client))
     }
-    fun rxCreate(dto:ConferenceDto):io.reactivex.Single<Int> {
+    fun rxCreate(dto:ConferenceDto, clientId: String?):io.reactivex.Single<Int> {
         validate(dto)
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
-        return rxQuery(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values)).map{ it.delegate.rowCount() }
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+            return io.reactivex.Single.just(io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT)
+        }
+        return rxQuery(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values), clientId).map{ it.delegate.rowCount() }
     }
-    fun rxCreate(dto:ConferenceDto,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<Int> {
+    fun rxCreate(dto:ConferenceDto,client:io.vertx.reactivex.sqlclient.SqlClient, clientId: String?):io.reactivex.Single<Int> {
         validate(dto)
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
-        return rxQuery(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values), client).map{ it.delegate.rowCount() }
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+            return io.reactivex.Single.just(io.en4ble.pgaccess.PgAccessConstants.EMPTY_UPDATE_RESULT)
+        }
+        return rxQuery(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values), client, clientId).map{ it.delegate.rowCount() }
     }
-    fun rxCreateReturning(dto:ConferenceDto):io.reactivex.Single<ConferenceDto> {
+    fun rxCreateReturning(dto:ConferenceDto, clientId: String?):io.reactivex.Single<ConferenceDto> {
         validate(dto)
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
-        return rxQueryOne(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields())).map{ map(it.delegate) }
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+        }
+        return rxQueryOne(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields()), clientId).map{ map(it.delegate) }
     }
-    fun rxCreateReturning(dto:ConferenceDto,client:io.vertx.reactivex.sqlclient.SqlClient):io.reactivex.Single<ConferenceDto> {
+    fun rxCreateReturning(dto:ConferenceDto,client:io.vertx.reactivex.sqlclient.SqlClient, clientId: String?):io.reactivex.Single<ConferenceDto> {
         validate(dto)
         val mapper = io.en4ble.examples.jooq.tables.mappers.PgaccessMappers.getMapper<ConferenceDto>(io.en4ble.examples.jooq.tables.Conference.CONFERENCE)
         val map = mapper.getValueMap(dto)
-        return rxQueryOne(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields()), client).map{ map(it.delegate) }
+        if (map.entries.isEmpty()) {
+            LOG.debug("Provided dto is empty: {}",dto.javaClass.simpleName)
+            throw io.en4ble.pgaccess.exceptions.NoValuesException("Provided dto is empty: ${dto.javaClass}")
+        }
+        return rxQueryOne(dsl.insertInto(io.en4ble.examples.jooq.tables.Conference.CONFERENCE).columns(map.keys).values(map.values).returning(*io.en4ble.examples.jooq.tables.Conference.CONFERENCE.fields()), client, clientId).map{ map(it.delegate) }
     }
 }

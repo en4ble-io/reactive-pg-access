@@ -15,9 +15,9 @@ plugins {
 //    id 'org.springframework.boot'
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
     id "com.github.johnrengelman.shadow" version "4.0.2"
-    id "org.jetbrains.kotlin.jvm" version "1.3.50"
-    id "org.jetbrains.kotlin.kapt" version "1.3.50"
-    id "org.jetbrains.kotlin.plugin.allopen" version "1.3.50"
+    id "org.jetbrains.kotlin.jvm" version '1.5.10'
+    id "org.jetbrains.kotlin.kapt" version "1.5.10"
+    id "org.jetbrains.kotlin.plugin.allopen" version "1.5.10"
     id 'org.liquibase.gradle' version '2.0.0'
 }
 
@@ -55,6 +55,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-webflux')
     api group: 'io.projectreactor.addons', name: 'reactor-adapter', version: '3.2.3.RELEASE'
 
+    api "io.en4ble.reactive-pg-access:reactive-pg-access-core:$reactivePgAccessVersion"
+    compile("io.en4ble.examples:api:$version")
     compile("io.en4ble.examples:persistence:$version")
 
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
@@ -63,6 +65,7 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${kotlinxVersion}"
 
     api "com.fasterxml.jackson.module:jackson-module-kotlin"
+    api "io.swagger.core.v3:swagger-annotations:$swaggerVersion"
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('io.projectreactor:reactor-test')

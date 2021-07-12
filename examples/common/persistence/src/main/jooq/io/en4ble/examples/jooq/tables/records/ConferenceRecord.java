@@ -26,7 +26,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @io.swagger.v3.oas.annotations.media.Schema(name="ConferenceDto", title="A simple conference.")
 public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> implements Serializable, Cloneable, Record9<UUID, LocalDateTime, LocalDateTime, String, String, LocalDate, LocalDate, ConferenceState, PointDTO> {
 
-    private static final long serialVersionUID = -956988581;
+    private static final long serialVersionUID = -654052629;
 
     /**
      * Setter for <code>pgaccess.p_conference.c_id</code>.
@@ -93,7 +93,7 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
     /**
      * The name of the conference.
      */
-    @org.hibernate.validator.constraints.Length(min = 5, max = 30)
+    @javax.validation.constraints.Size(min = 5, max = 30)
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name", title="The name of the conference.", minLength=5, maxLength=30)
     @com.fasterxml.jackson.annotation.JsonProperty(value="name", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getName() {
@@ -114,7 +114,7 @@ public class ConferenceRecord extends UpdatableRecordImpl<ConferenceRecord> impl
     /**
      * The description of the conference.
      */
-    @org.hibernate.validator.constraints.Length(min = 20, max = 2000)
+    @javax.validation.constraints.Size(min = 20, max = 2000)
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="about", title="The description of the conference.", minLength=20, maxLength=2000)
     @com.fasterxml.jackson.annotation.JsonProperty(value="about", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getAbout() {

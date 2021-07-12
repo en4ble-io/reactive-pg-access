@@ -21,112 +21,112 @@ class ExampleDtoMapper:io.en4ble.pgaccess.mappers.AbstractJooqMapper<ExampleDto>
 override fun toDto(row:io.vertx.sqlclient.Row, offset:Int):ExampleDto {
         val dto = ExampleDto()
         dto.setUuid(row.getUUID(offset))
-        val uuidArray = row.getUUIDArray(offset+1)
+        val uuidArray = row.getArrayOfUUIDs(offset+1)
         if(uuidArray != null) {
             dto.setUuidArray(*uuidArray)
         }
         dto.setText(row.getString(offset+2))
-        val textArray = row.getStringArray(offset+3)
+        val textArray = row.getArrayOfStrings(offset+3)
         if(textArray != null) {
             dto.setTextArray(*textArray)
         }
         dto.setString(row.getString(offset+4))
-        val stringArray = row.getStringArray(offset+5)
+        val stringArray = row.getArrayOfStrings(offset+5)
         if(stringArray != null) {
             dto.setStringArray(*stringArray)
         }
         dto.setShortValue(row.getShort(offset+6))
-        val shortArray = row.getShortArray(offset+7)
+        val shortArray = row.getArrayOfShorts(offset+7)
         if(shortArray != null) {
             dto.setShortArray(*shortArray)
         }
         dto.setIntegerValue(row.getInteger(offset+8))
-        val integerArray = row.getIntegerArray(offset+9)
+        val integerArray = row.getArrayOfIntegers(offset+9)
         if(integerArray != null) {
             dto.setIntegerArray(*integerArray)
         }
         dto.setLongValue(row.getLong(offset+10))
-        val longArray = row.getLongArray(offset+11)
+        val longArray = row.getArrayOfLongs(offset+11)
         if(longArray != null) {
             dto.setLongArray(*longArray)
         }
         dto.setFloatValue(row.getFloat(offset+12))
-        val floatArray = row.getFloatArray(offset+13)
+        val floatArray = row.getArrayOfFloats(offset+13)
         if(floatArray != null) {
             dto.setFloatArray(*floatArray)
         }
         dto.setDoubleValue(row.getDouble(offset+14))
-        val doubleArray = row.getDoubleArray(offset+15)
+        val doubleArray = row.getArrayOfDoubles(offset+15)
         if(doubleArray != null) {
             dto.setDoubleArray(*doubleArray)
         }
         dto.setBooleanValue(row.getBoolean(offset+16))
-        val booleanArray = row.getBooleanArray(offset+17)
+        val booleanArray = row.getArrayOfBooleans(offset+17)
         if(booleanArray != null) {
             dto.setBooleanArray(*booleanArray)
         }
         dto.setDate(row.getLocalDate(offset+18))
-        val dateArray = row.getLocalDateArray(offset+19)
+        val dateArray = row.getArrayOfLocalDates(offset+19)
         if(dateArray != null) {
             dto.setDateArray(*dateArray)
         }
         dto.setTime(row.getLocalTime(offset+20))
-        val timeArray = row.getLocalTimeArray(offset+21)
+        val timeArray = row.getArrayOfLocalTimes(offset+21)
         if(timeArray != null) {
             dto.setTimeArray(*timeArray)
         }
         dto.setTimetz(row.getOffsetTime(offset+22))
-        val timetzArray = row.getOffsetTimeArray(offset+23)
+        val timetzArray = row.getArrayOfOffsetTimes(offset+23)
         if(timetzArray != null) {
             dto.setTimetzArray(*timetzArray)
         }
         dto.setDateTime(row.getLocalDateTime(offset+24))
-        val dateTimeArray = row.getLocalDateTimeArray(offset+25)
+        val dateTimeArray = row.getArrayOfLocalDateTimes(offset+25)
         if(dateTimeArray != null) {
             dto.setDateTimeArray(*dateTimeArray)
         }
         dto.setDateTimetz(row.getOffsetDateTime(offset+26))
-        val dateTimetzArray = row.getOffsetDateTimeArray(offset+27)
+        val dateTimetzArray = row.getArrayOfOffsetDateTimes(offset+27)
         if(dateTimetzArray != null) {
             dto.setDateTimetzArray(*dateTimetzArray)
         }
         dto.setPoint(io.en4ble.pgaccess.util.JooqHelper.getPointDTO(row.get(io.vertx.pgclient.data.Point::class.java,offset+28)))
-        val pointArray = io.en4ble.pgaccess.util.JooqHelper.getPointDTOs(row.getValues(io.vertx.pgclient.data.Point::class.java,offset+29))
+        val pointArray = io.en4ble.pgaccess.util.JooqHelper.getPointDTOs(row.get(Array<io.vertx.pgclient.data.Point>::class.java,offset+29))
         if(pointArray != null) {
             dto.setPointArray(*pointArray)
         }
         dto.setLine(io.en4ble.pgaccess.util.JooqHelper.getLineDTO(row.get(io.vertx.pgclient.data.Line::class.java,offset+30)))
-        val lineArray = io.en4ble.pgaccess.util.JooqHelper.getLineDTOs(row.getValues(io.vertx.pgclient.data.Line::class.java,offset+31))
+        val lineArray = io.en4ble.pgaccess.util.JooqHelper.getLineDTOs(row.get(Array<io.vertx.pgclient.data.Line>::class.java,offset+31))
         if(lineArray != null) {
             dto.setLineArray(*lineArray)
         }
         dto.setLineSegment(io.en4ble.pgaccess.util.JooqHelper.getLineSegmentDTO(row.get(io.vertx.pgclient.data.LineSegment::class.java,offset+32)))
-        val lineSegmentArray = io.en4ble.pgaccess.util.JooqHelper.getLineSegmentDTOs(row.getValues(io.vertx.pgclient.data.LineSegment::class.java,offset+33))
+        val lineSegmentArray = io.en4ble.pgaccess.util.JooqHelper.getLineSegmentDTOs(row.get(Array<io.vertx.pgclient.data.LineSegment>::class.java,offset+33))
         if(lineSegmentArray != null) {
             dto.setLineSegmentArray(*lineSegmentArray)
         }
         dto.setBox(io.en4ble.pgaccess.util.JooqHelper.getBoxDTO(row.get(io.vertx.pgclient.data.Box::class.java,offset+34)))
-        val boxArray = io.en4ble.pgaccess.util.JooqHelper.getBoxDTOs(row.getValues(io.vertx.pgclient.data.Box::class.java,offset+35))
+        val boxArray = io.en4ble.pgaccess.util.JooqHelper.getBoxDTOs(row.get(Array<io.vertx.pgclient.data.Box>::class.java,offset+35))
         if(boxArray != null) {
             dto.setBoxArray(*boxArray)
         }
         dto.setPath(io.en4ble.pgaccess.util.JooqHelper.getPathDTO(row.get(io.vertx.pgclient.data.Path::class.java,offset+36)))
-        val pathArray = io.en4ble.pgaccess.util.JooqHelper.getPathDTOs(row.getValues(io.vertx.pgclient.data.Path::class.java,offset+37))
+        val pathArray = io.en4ble.pgaccess.util.JooqHelper.getPathDTOs(row.get(Array<io.vertx.pgclient.data.Path>::class.java,offset+37))
         if(pathArray != null) {
             dto.setPathArray(*pathArray)
         }
         dto.setPolygon(io.en4ble.pgaccess.util.JooqHelper.getPolygonDTO(row.get(io.vertx.pgclient.data.Polygon::class.java,offset+38)))
-        val polygonArray = io.en4ble.pgaccess.util.JooqHelper.getPolygonDTOs(row.getValues(io.vertx.pgclient.data.Polygon::class.java,offset+39))
+        val polygonArray = io.en4ble.pgaccess.util.JooqHelper.getPolygonDTOs(row.get(Array<io.vertx.pgclient.data.Polygon>::class.java,offset+39))
         if(polygonArray != null) {
             dto.setPolygonArray(*polygonArray)
         }
         dto.setCircle(io.en4ble.pgaccess.util.JooqHelper.getCircleDTO(row.get(io.vertx.pgclient.data.Circle::class.java,offset+40)))
-        val circleArray = io.en4ble.pgaccess.util.JooqHelper.getCircleDTOs(row.getValues(io.vertx.pgclient.data.Circle::class.java,offset+41))
+        val circleArray = io.en4ble.pgaccess.util.JooqHelper.getCircleDTOs(row.get(Array<io.vertx.pgclient.data.Circle>::class.java,offset+41))
         if(circleArray != null) {
             dto.setCircleArray(*circleArray)
         }
         dto.setName(row.getString(offset+42))
-        val nameArray = row.getStringArray(offset+43)
+        val nameArray = row.getArrayOfStrings(offset+43)
         if(nameArray != null) {
             dto.setNameArray(*nameArray)
         }

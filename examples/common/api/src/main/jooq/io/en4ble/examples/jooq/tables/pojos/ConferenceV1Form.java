@@ -18,7 +18,7 @@ import java.util.UUID;
 @io.swagger.v3.oas.annotations.media.Schema(name="ConferenceV1Form")
 public class ConferenceV1Form extends ConferenceV1Dto implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = -1806789966;
+    private static final long serialVersionUID = 399960728;
 
 
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="id")
@@ -27,7 +27,7 @@ public class ConferenceV1Form extends ConferenceV1Dto implements Serializable, C
         return super.getId();
     }
 
-    @org.hibernate.validator.constraints.Length(max = 30)
+    @javax.validation.constraints.Size(max = 30)
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="name", maxLength=30)
     @com.fasterxml.jackson.annotation.JsonProperty(value="name", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getName() {

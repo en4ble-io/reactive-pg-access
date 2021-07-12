@@ -28,7 +28,7 @@ import java.util.UUID;
 @io.swagger.v3.oas.annotations.media.Schema(name="ExampleDto", title="An example table containing all datatypes that are supported by reactive-pg-access.")
 public class ExampleDto extends Object implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = -338338317;
+    private static final long serialVersionUID = -949808875;
 
     private UUID             uuid;
     private UUID[]           uuidArray;
@@ -256,7 +256,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
-    @org.hibernate.validator.constraints.Length(min = 10, max = 200)
+    @javax.validation.constraints.Size(min = 10, max = 200)
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="text", title="", minLength=10, maxLength=200)
     @com.fasterxml.jackson.annotation.JsonProperty(value="text", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getText() {
@@ -281,7 +281,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
-    @org.hibernate.validator.constraints.Length(min = 4, max = 20)
+    @javax.validation.constraints.Size(min = 4, max = 20)
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="string", title="", minLength=4, maxLength=20)
     @com.fasterxml.jackson.annotation.JsonProperty(value="string", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getString() {
@@ -795,7 +795,7 @@ public class ExampleDto extends Object implements Serializable, Cloneable {
         return this;
     }
 
-    @org.hibernate.validator.constraints.Length(max = 3)
+    @javax.validation.constraints.Size(max = 3)
     @io.swagger.v3.oas.annotations.media.Schema(accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE, name="state", maxLength=3)
     @com.fasterxml.jackson.annotation.JsonProperty(value="state", access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE)
     public String getState() {

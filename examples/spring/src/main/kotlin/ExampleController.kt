@@ -3,14 +3,9 @@ package io.en4ble.examples.spring
 import io.en4ble.examples.jooq.tables.pojos.ExampleDto
 import io.en4ble.examples.spring.dao.SpringExampleDao
 import io.en4ble.examples.spring.services.SpringExampleService
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.rx2.rxSingle
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.adapter.rxjava.RxJava2Adapter
 import reactor.core.publisher.Mono
 
@@ -27,7 +22,7 @@ class ExampleController {
 
     @PostMapping("/")
     fun create(): Mono<ExampleDto> {
-        return RxJava2Adapter.singleToMono(GlobalScope.rxSingle { exampleService.create() })
+        return RxJava2Adapter.singleToMono(rxSingle { exampleService.create() })
     }
 
     @GetMapping("/randomRx")
@@ -37,11 +32,11 @@ class ExampleController {
 
     @GetMapping("/randomCr")
     fun example2(): Mono<ExampleDto> {
-        return RxJava2Adapter.singleToMono(GlobalScope.rxSingle { exampleDao.readRandom() })
+        return RxJava2Adapter.singleToMono(rxSingle { exampleDao.readRandom() })
     }
 
     @PutMapping("/")
     fun update(): Mono<ExampleDto> {
-        return RxJava2Adapter.singleToMono(GlobalScope.rxSingle { exampleService.update() })
+        return RxJava2Adapter.singleToMono(rxSingle { exampleService.update() })
     }
 }

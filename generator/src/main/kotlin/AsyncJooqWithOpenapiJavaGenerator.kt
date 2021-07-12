@@ -1095,28 +1095,28 @@ open class AsyncJooqWithOpenapiJavaGenerator : ExtendedJavaGenerator() {
         val offset = getOffset(pos)
         val s = when (userType) {
             "point" -> "getPointDTO(row.get(io.vertx.pgclient.data.Point::class.java,$offset))"
-            "_point" -> "getPointDTOs(row.getValues(io.vertx.pgclient.data.Point::class.java,$offset))"
+            "_point" -> "getPointDTOs(row.get(Array<io.vertx.pgclient.data.Point>::class.java,$offset))"
 
             "line" -> "getLineDTO(row.get(io.vertx.pgclient.data.Line::class.java,$offset))"
-            "_line" -> "getLineDTOs(row.getValues(io.vertx.pgclient.data.Line::class.java,$offset))"
+            "_line" -> "getLineDTOs(row.get(Array<io.vertx.pgclient.data.Line>::class.java,$offset))"
 
             "lseg" -> "getLineSegmentDTO(row.get(io.vertx.pgclient.data.LineSegment::class.java,$offset))"
-            "_lseg" -> "getLineSegmentDTOs(row.getValues(io.vertx.pgclient.data.LineSegment::class.java,$offset))"
+            "_lseg" -> "getLineSegmentDTOs(row.get(Array<io.vertx.pgclient.data.LineSegment>::class.java,$offset))"
 
             "box" -> "getBoxDTO(row.get(io.vertx.pgclient.data.Box::class.java,$offset))"
-            "_box" -> "getBoxDTOs(row.getValues(io.vertx.pgclient.data.Box::class.java,$offset))"
+            "_box" -> "getBoxDTOs(row.get(Array<io.vertx.pgclient.data.Box>::class.java,$offset))"
 
             "path" -> "getPathDTO(row.get(io.vertx.pgclient.data.Path::class.java,$offset))"
-            "_path" -> "getPathDTOs(row.getValues(io.vertx.pgclient.data.Path::class.java,$offset))"
+            "_path" -> "getPathDTOs(row.get(Array<io.vertx.pgclient.data.Path>::class.java,$offset))"
 
             "polygon" -> "getPolygonDTO(row.get(io.vertx.pgclient.data.Polygon::class.java,$offset))"
-            "_polygon" -> "getPolygonDTOs(row.getValues(io.vertx.pgclient.data.Polygon::class.java,$offset))"
+            "_polygon" -> "getPolygonDTOs(row.get(Array<io.vertx.pgclient.data.Polygon>::class.java,$offset))"
 
             "circle" -> "getCircleDTO(row.get(io.vertx.pgclient.data.Circle::class.java,$offset))"
-            "_circle" -> "getCircleDTOs(row.getValues(io.vertx.pgclient.data.Circle::class.java,$offset))"
+            "_circle" -> "getCircleDTOs(row.get(Array<io.vertx.pgclient.data.Circle>::class.java,$offset))"
 
             "interval" -> "getIntervalDTO(row.get(io.vertx.pgclient.data.Interval::class.java,$offset))"
-            "_interval" -> "getIntervalDTOs(row.getValues(io.vertx.pgclient.data.Interval::class.java,$offset))"
+            "_interval" -> "getIntervalDTOs(row.get(Array<io.vertx.pgclient.data.Interval>::class.java,$offset))"
 
             else -> null
         }

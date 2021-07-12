@@ -1,13 +1,12 @@
 package io.en4ble.examples.dao
 
 import io.en4ble.examples.enums.ConferenceState
-import io.en4ble.examples.jooq.tables.Conference
 import io.en4ble.examples.jooq.tables.Conference.CONFERENCE
 import io.en4ble.examples.jooq.tables.daos.ConferenceDaoBase
 import io.en4ble.examples.jooq.tables.pojos.ConferenceDto
 import io.en4ble.pgaccess.DatabaseContext
 import io.reactivex.Single
-import java.util.UUID
+import java.util.*
 
 /**
  *
@@ -19,7 +18,7 @@ open class ConferenceDao(exampleContext: DatabaseContext) : ConferenceDaoBase(ex
         id: UUID,
         form: ConferenceDto
     ): Single<ConferenceDto> {
-        return rxUpdateReturningOne(form, Conference.CONFERENCE.ID.eq(id))
+        return rxUpdateReturningOne(form, CONFERENCE.ID.eq(id), null)
         // if you want to allow update of some fields only, you could use the approach below
         // or mark fields that should not be updated by the user as "readOnly" in the table definition
         // see the README of reactive-pg-access for more information
