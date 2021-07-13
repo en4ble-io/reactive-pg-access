@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.1.5.RELEASE'
+        springBootVersion = '2.5.0'
     }
     repositories {
         mavenLocal()
@@ -13,18 +13,18 @@ buildscript {
 
 plugins {
 //    id 'org.springframework.boot'
-    id "io.spring.dependency-management" version "1.0.6.RELEASE"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
     id "com.github.johnrengelman.shadow" version "4.0.2"
-    id "org.jetbrains.kotlin.jvm" version '1.5.10'
+    id "org.jetbrains.kotlin.jvm" version "1.5.10"
     id "org.jetbrains.kotlin.kapt" version "1.5.10"
     id "org.jetbrains.kotlin.plugin.allopen" version "1.5.10"
-    id 'org.liquibase.gradle' version '2.0.0'
+    id 'org.liquibase.gradle' version "2.0.0"
 }
 
 apply plugin: 'kotlin'
 apply plugin: 'org.springframework.boot'
 
-version "0.1"
+version "0.2-SNAPSHOT"
 group "io.en4ble.examples"
 
 bootJar {
@@ -52,23 +52,33 @@ repositories {
 
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-webflux')
-    api group: 'io.projectreactor.addons', name: 'reactor-adapter', version: '3.2.3.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation group: 'io.projectreactor.addons', name: 'reactor-adapter', version: '3.2.3.RELEASE'
 
-    api "io.en4ble.reactive-pg-access:reactive-pg-access-core:$reactivePgAccessVersion"
-    compile("io.en4ble.examples:api:$version")
-    compile("io.en4ble.examples:persistence:$version")
+    implementation("org.springframework.boot:spring-boot-starter-mustache")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
 
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    api "org.jetbrains.kotlin:kotlin-reflect"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${kotlinxVersion}"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${kotlinxVersion}"
+    implementation "io.en4ble.reactive-pg-access:reactive-pg-access-core:$reactivePgAccessVersion"
+    implementation "io.en4ble.examples:api:$version"
+    implementation "io.en4ble.examples:persistence:$version"
 
-    api "com.fasterxml.jackson.module:jackson-module-kotlin"
-    api "io.swagger.core.v3:swagger-annotations:$swaggerVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactor"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinxVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$kotlinxVersion"
 
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('io.projectreactor:reactor-test')
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
+    implementation "io.swagger.core.v3:swagger-annotations:$swaggerVersion"
+
+    testApi('org.springframework.boot:spring-boot-starter-test')
+    testApi('io.projectreactor:reactor-test')
 }
 
 compileKotlin {

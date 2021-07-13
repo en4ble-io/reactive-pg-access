@@ -20,7 +20,7 @@ dependencies {
     api "io.en4ble.reactive-pg-access:reactive-pg-access-core:$reactivePgAccessVersion"
     api "org.postgresql:postgresql:$postgresqlVersion"
 
-    compile('org.liquibase:liquibase-core:' + liquibaseVersion)
+    api('org.liquibase:liquibase-core:' + liquibaseVersion)
 
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     api "org.jetbrains.kotlin:kotlin-reflect"
@@ -127,12 +127,12 @@ jooqGenerate.doLast() {
     ant.move(file: sourceDir, tofile: targetDir)
 }
 
-//publishing {
-//    publications {
-//        mavenJava(MavenPublication) {
-//            artifactId archivesBaseName
-//            from components.java
-//            artifact sourcesJar
-//        }
-//    }
-//}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId archivesBaseName
+            from components.java
+            artifact sourcesJar
+        }
+    }
+}

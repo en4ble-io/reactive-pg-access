@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import kotlinx.coroutines.rx2.rxSingle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -53,8 +52,8 @@ class ConferenceController {
         ApiResponse(responseCode = "404", description = "The conference does not exist.")
     )
     @GetMapping("/{id}")
-    fun getConf(id: UUID): Mono<ConferenceV1Dto> {
-        return singleToMono(rxSingle { service.getConference(id) })
+    suspend fun getConf(id: UUID): ConferenceV1Dto {
+        return service.getConference(id)
     }
 
     @GetMapping("/random")

@@ -21,11 +21,11 @@ open class ExampleService(protected val exampleDao: ExampleDao) {
         form.booleanValue = true
         form.setBooleanArray(false, true)
 
-        form.box = randomBox()
-        form.setBoxArray(randomBox(), randomBox())
+//        form.box = randomBox()
+//        form.setBoxArray(randomBox(), randomBox())
 
-        form.circle = randomCircle()
-        form.setCircleArray(randomCircle(), randomCircle())
+//        form.circle = randomCircle()
+//        form.setCircleArray(randomCircle(), randomCircle())
 
         form.date = LocalDate.now()
         form.setDateArray(LocalDate.now(), LocalDate.now())
@@ -53,13 +53,13 @@ open class ExampleService(protected val exampleDao: ExampleDao) {
 //        form.jsonb = randomTestDTO()
 //        form.setJsonbArray(randomTestDTO(), randomTestDTO())
 
-        form.line = randomLine()
-        form.setLineArray(randomLine(), randomLine())
+//        form.line = randomLine()
+//        form.setLineArray(randomLine(), randomLine())
 
-        form.lineSegment = randomLineSegment()
-        form.setLineSegmentArray(
-            randomLineSegment(), randomLineSegment()
-        )
+//        form.lineSegment = randomLineSegment()
+//        form.setLineSegmentArray(
+//            randomLineSegment(), randomLineSegment()
+//        )
 
         form.longValue = Random.nextLong()
         form.setLongArray(Random.nextLong(), Random.nextLong())
@@ -75,8 +75,8 @@ open class ExampleService(protected val exampleDao: ExampleDao) {
         form.point = randomPoint()
         form.setPointArray(randomPoint(), randomPoint())
 
-        form.polygon = randomPolygon()
-        form.setPolygonArray(randomPolygon(), randomPolygon())
+//        form.polygon = randomPolygon()
+//        form.setPolygonArray(randomPolygon(), randomPolygon())
 
         form.string = randomString()
         form.setStringArray(randomString(), randomString())
