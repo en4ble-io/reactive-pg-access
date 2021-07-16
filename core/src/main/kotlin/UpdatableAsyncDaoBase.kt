@@ -62,7 +62,7 @@ constructor(
     }
 
     suspend fun update(query: Query): Int {
-        return DaoHelper.update(query, toSingleDatabaseContext(context))
+        return DaoHelper.update(query, context)
     }
 
     suspend fun update(query: Query, client: io.vertx.sqlclient.SqlClient): Int {
